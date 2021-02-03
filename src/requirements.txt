@@ -1,0 +1,7 @@
+flask
+dependency-injector
+pymysql
+pandas
+pyyaml
+werkzeug
+sqlalchemy
