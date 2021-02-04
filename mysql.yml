@@ -1,0 +1,46 @@
+version: '3.7'
+
+services:
+  mysql:
+    image: 'mysql:5.7.22'
+    container_name: mysql
+    volumes:
+      - /etc/localtime:/etc/localtime:ro
+      - /etc/timezone:/etc/timezone:ro
+      - 'mysql-data-1:/var/lib/mysql'
+      - './docker/database/mysql/conf.d:/etc/mysql/conf.d'
+      - './docker/database/mysql/init:/docker-entrypoint-initdb.d'
+    environment:
+      - MYSQL_ROOT_USER=${MYSQL_ROOT_USER}
+      - MYSQL_ROOT_PASSWORD=${MYSQL_ROOT_PASSWORD}
+    expose:
+      - '3306'
+    ports:
+      - '3306:3306'
+    networks:
+      mysql-network:
+        aliases:
+          - mysql
+          - database
+
+  phpmyadmin:
+    image: 'phpmyadmin/phpmyadmin:latest'
+    container_name: phpmyadmin
+    restart: always
+    volumes:
+      - /etc/localtime:/etc/localtime:ro
+      - /etc/timezone:/etc/timezone:ro
+    environment:
+      - PMA_HOST=mysql
+    expose:
+      - '80'
+    ports:
+      - '9001:80'
+    networks:
+      - mysql-network
+
+volumes:
+  mysql-data-1:
+
+networks:
+  mysql-network:

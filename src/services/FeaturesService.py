@@ -1,8 +1,9 @@
-import pandas as pd
+from ..repositories import FeatureRepository
 
 class FeaturesService:
 
-    def __init__(self, db_session):
+    def __init__(self, repository: FeatureRepository):
+        self.repo = repository
         pass
 
     def hello(self):

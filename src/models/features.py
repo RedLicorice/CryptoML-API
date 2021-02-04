@@ -4,16 +4,21 @@ from ..database import Base
 class Feature(Base):
     __tablename__ = 'features'
     id = Column(Integer, primary_key=True)
-    group = Column(String, nullable=False)  # Feature group for this series
-    day = Column(DateTime, nullable=False)  # Day these symbols correspond to
+    day = Column(DateTime, nullable=False)  # Day the measurement correspond to
     symbol = Column(String, nullable=False)  # Symbol ticker
     name = Column(String, nullable=False)  # Feature name
     value = Column(Float, nullable=True) # Feature value (We use continuous features so it should be OK)
 
+class FeatureGroup(Base):
+    __tablename__ = 'feature_groups'
+    id = Column(Integer, primary_key=True)
+    name = Column(String, nullable=False)  # Dataset (feature group) name
+    feature = Column(String, nullable=False)  # Included feature name
+
 class Target(Base):
     __tablename__ = 'targets'
     id = Column(Integer, primary_key=True)
-    day = Column(DateTime, nullable=False)  # Day these symbols correspond to
+    day = Column(DateTime, nullable=False)  # Day the target correspond to
     symbol = Column(String, nullable=False)  # Symbol ticker
-    name = Column(String, nullable=False)  # Feature group for this series
+    name = Column(String, nullable=False)  # Target name
     value = Column(Float, nullable=True) # Feature value (We use continuous features so it should be OK)

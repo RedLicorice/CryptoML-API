@@ -1,0 +1,26 @@
+version: '3.7'
+
+services:
+  ml-service:
+    image: redlicorice/cryptoml-api
+    build:
+      context: ./src
+      dockerfile: Dockerfile
+    hostname: mlservice
+    ports:
+      - "8000:5000"
+    networks:
+      - cryptoml-network
+      - mysql-network
+      - minio-network
+      - redis-network
+
+networks:
+  cryptoml-network:
+
+  minio-network:
+    external: true
+  mysql-network:
+    external: true
+  redis-network:
+    external: true

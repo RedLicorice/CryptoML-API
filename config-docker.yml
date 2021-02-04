@@ -1,7 +1,9 @@
 name: 'localhost-test'
 s3:
-  endpoint: 'http://localhost:9000'
+  endpoint: 'http://aws-s3:9000'
   access_key_id: 'minio'
   secret_access_key: 'minio123'
+redis:
+
 celery:
   

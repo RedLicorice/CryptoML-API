@@ -1,10 +1,6 @@
-from ..controllers.upload import index
+from .healthcheck import *
+from .upload import *
+from .index import *
 
-url_routes = [
-    {
-        'rule': '/',
-        'endpoint': 'index',
-        'view_func': index,
-        'methods': ['GET', 'POST']
-    }
-]
+
+

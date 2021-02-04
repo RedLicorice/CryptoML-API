@@ -1,1 +1,1 @@
-from .features import Feature, Target
+from .features import Feature, Target, FeatureGroup

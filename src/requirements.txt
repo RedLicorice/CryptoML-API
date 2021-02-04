@@ -3,5 +3,7 @@ dependency-injector
 pymysql
 pandas
 pyyaml
-werkzeug
+werkzeug # request validation
 sqlalchemy
+boto3 # aws s3 client
+celery # Queue
