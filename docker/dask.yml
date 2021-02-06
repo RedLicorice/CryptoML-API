@@ -1,0 +1,31 @@
+version: '3.7'
+
+services:
+  dask-scheduler:
+    build:
+      context: ./docker/dask
+      dockerfile: Dockerfile
+    hostname: dask-scheduler
+    command: ["dask-scheduler"]
+    #    volumes:
+    #      - ./notebooks:/notebooks
+    ports:
+      - "8786:8786"
+      - "8787:8787"
+    networks:
+      dask-network:
+
+  dask-worker:
+    build:
+      context: ./docker/dask
+      dockerfile: Dockerfile
+#    volumes:
+#      - ./notebooks:/notebooks
+    depends_on:
+      - dask-scheduler
+    command: ["dask-worker", "tcp://dask-scheduler:8786"]
+    networks:
+      dask-network:
+
+networks:
+  dask-network:

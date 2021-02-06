@@ -1,4 +1,5 @@
 flask
+flask-cli
 dependency-injector
 pymysql
 pandas
@@ -7,3 +8,6 @@ werkzeug # request validation
 sqlalchemy
 boto3 # aws s3 client
 celery # Queue
+celery[redis] # Redis support for Celery
+redis # Queue backend client
+python-dotenv

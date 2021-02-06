@@ -1,0 +1,54 @@
+version: '3.7'
+
+services:
+  redis:
+    image: 'redis:6-alpine'
+    build:
+      context: ./docker/redis
+      dockerfile: Dockerfile
+    container_name: redis
+    volumes:
+      - /etc/localtime:/etc/localtime:ro
+      - /etc/timezone:/etc/timezone:ro
+      - ./docker/redis/redis.conf:/redis.conf
+      - 'redis-data-1:/data'
+    expose:
+      - '6379'
+    ports:
+      - '6379:6379'
+    networks:
+      redis-network:
+        aliases:
+          - redis
+          - redisdb
+
+  redisinsight:
+    image: 'redislabs/redisinsight:latest'
+    container_name: redisinsight
+    restart: always
+    volumes:
+      - /etc/localtime:/etc/localtime:ro
+      - /etc/timezone:/etc/timezone:ro
+      - redisinsight-data-1:/db
+    depends_on:
+      - redis
+    expose:
+      - '8001'
+    ports:
+      - '8001:8001'
+    networks:
+      redis-network:
+        aliases:
+          - redisinsight
+    healthcheck:
+      test: [ "CMD", "curl", "-f", "http://localhost:8001/healthcheck" ]
+      interval: 30s
+      timeout: 20s
+      retries: 3
+
+volumes:
+  redis-data-1:
+  redisinsight-data-1:
+
+networks:
+  redis-network:

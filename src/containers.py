@@ -1,5 +1,6 @@
 from dependency_injector import containers, providers
 import boto3
+from celery import Celery
 from . import services
 from . import repositories
 from .database import get_session_factory
@@ -8,11 +9,12 @@ from .database import get_session_factory
 class Container(containers.DeclarativeContainer):
 
     config = providers.Configuration()
+    config.from_env('.env')
     config.from_yaml('config.yml')
 
     print("===== CryptoML - API =====")
     print("Providers configuration: {}".format(config.name()))
-    print('=== Connect S3 ===\n\tEndpoint: {}\n\tAccess Key: {}'.format(
+    print('=== Connect S3 ===\n\tS3 Endpoint: {}\n\tS3 Access Key: {}'.format(
         config.s3.endpoint(), config.s3.access_key_id()))
     # Connect to AWS S3 Service
     s3_client = providers.Factory(

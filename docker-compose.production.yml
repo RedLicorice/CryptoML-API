@@ -4,11 +4,26 @@ services:
   ml-service:
     image: redlicorice/cryptoml-api
     build:
-      context: ./src
+      context: .
       dockerfile: Dockerfile
     hostname: mlservice
     ports:
       - "8000:5000"
+    networks:
+      - cryptoml-network
+      - mysql-network
+      - minio-network
+      - redis-network
+
+  ml-worker1:
+    image: redlicorice/cryptoml-api-worker
+    build:
+      context: .
+      dockerfile: Dockerfile-worker
+    hostname: mlservice
+    volumes:
+      - './.env:/.env'
+      - './config-docker.yml:/config.yml'
     networks:
       - cryptoml-network
       - mysql-network

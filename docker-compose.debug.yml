@@ -1,0 +1,27 @@
+version: '3.7'
+
+services:
+  ml-worker1:
+    image: redlicorice/cryptoml-api-worker
+    build:
+      context: .
+      dockerfile: Dockerfile-worker
+    hostname: mlservice
+    volumes:
+      - './.env:/.env'
+      - './config-docker.yml:/config.yml'
+    networks:
+      - cryptoml-network
+      - mysql-network
+      - minio-network
+      - redis-network
+
+networks:
+  cryptoml-network:
+
+  minio-network:
+    external: true
+  mysql-network:
+    external: true
+  redis-network:
+    external: true

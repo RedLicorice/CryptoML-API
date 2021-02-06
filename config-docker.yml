@@ -1,9 +1,8 @@
 name: 'localhost-test'
 s3:
   endpoint: 'http://aws-s3:9000'
-  access_key_id: 'minio'
-  secret_access_key: 'minio123'
-redis:
-
+  access_key_id: minio
+  secret_access_key: minio123
 celery:
-  
+  broker: 'redis://redisdb:6379'
+  backend: 'redis://redisdb:6379'
