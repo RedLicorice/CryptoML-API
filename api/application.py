@@ -7,7 +7,7 @@ from .config import config
 app = None
 celery = None
 
-def create_app(routes=True) -> FastAPI:
+def create_app() -> FastAPI:
     global app, celery
 
     # Start Celery

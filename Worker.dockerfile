@@ -4,13 +4,13 @@ RUN apt-get update -y && \
     apt-get install -y python3-pip python3-dev redis-tools
 
 # We copy just the requirements.txt first to leverage Docker cache
-COPY ./src/requirements.txt /src/requirements.txt
+COPY ./api/requirements.txt /api/requirements.txt
 
-WORKDIR /src
+WORKDIR /api
 
 RUN pip3 install -r requirements.txt
 
-COPY ./src /src
+COPY ./api /api
 
 WORKDIR /
 COPY ./worker.py /worker.py
@@ -19,7 +19,7 @@ COPY ./.env /.env
 COPY ./config-docker.yml /config.yml
 
 RUN useradd -ms /bin/bash worker
-RUN chown -R worker:worker /src
+RUN chown -R worker:worker /api
 RUN chown worker:worker /worker.py
 RUN chown worker:worker /config.yml
 RUN chown worker:worker /.env

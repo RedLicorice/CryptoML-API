@@ -8,6 +8,7 @@ s3:
 celery:
   broker: 'redis://localhost:6379'
   backend: 'redis://localhost:6379'
+dask:
+  scheduler: 'tcp://localhost:8786'
 database:
   url: !ENV 'mysql+pymysql://${MYSQL_APP_USER}:${MYSQL_APP_PASSWORD}@localhost:3306/cryptoml?charset=utf8mb4'
-  # url: 'sqlite:///:memory:'

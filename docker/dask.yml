@@ -14,6 +14,8 @@ services:
       - "8787:8787"
     networks:
       dask-network:
+        aliases:
+          - daskscheduler
 
   dask-worker1:
     build:

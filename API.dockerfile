@@ -4,13 +4,13 @@ RUN apt-get update -y && \
     apt-get install -y python3-pip python3-dev
 
 # We copy just the requirements.txt first to leverage Docker cache
-COPY ./src/requirements.txt /src/requirements.txt
+COPY ./api/requirements.txt /api/requirements.txt
 
-WORKDIR /src
+WORKDIR /api
 
 RUN pip3 install -r requirements.txt
 
-COPY ./src /src
+COPY ./api /api
 
 WORKDIR /
 COPY ./app.py /app.py

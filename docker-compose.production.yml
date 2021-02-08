@@ -5,7 +5,7 @@ services:
     image: redlicorice/cryptoml-api
     build:
       context: .
-      dockerfile: Dockerfile
+      dockerfile: API.dockerfile
     hostname: mlservice
     ports:
       - "8000:5000"
@@ -19,7 +19,7 @@ services:
     image: redlicorice/cryptoml-api-worker
     build:
       context: .
-      dockerfile: Dockerfile-worker
+      dockerfile: Worker.dockerfile
     hostname: mlservice
     volumes:
       - './.env:/.env'

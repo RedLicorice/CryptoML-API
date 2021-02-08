@@ -1,0 +1,18 @@
+# ML
+numpy
+pandas
+sklearn
+statsmodels
+imbalanced-learn
+xgboost
+git+https://github.com/RedLicorice/sklearn-genetic.git@master
+git+https://github.com/g8a9/pyti.git@master
+# Distributed ML Client
+dask
+dask[dataframe]
+dask[delayed]
+dask[distributed]
+dask-ml
+dask-xgboost
+# S3 client needed for Dask
+s3fs

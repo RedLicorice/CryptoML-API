@@ -21,7 +21,7 @@ services:
       mysql-network:
         aliases:
           - mysql
-          - database
+          - mysqldb
 
   phpmyadmin:
     image: 'phpmyadmin/phpmyadmin:latest'

@@ -3,6 +3,12 @@ s3:
   endpoint: 'http://aws-s3:9000'
   access_key_id: minio
   secret_access_key: minio123
+  use_ssl: False
+  verify: False
 celery:
   broker: 'redis://redisdb:6379'
   backend: 'redis://redisdb:6379'
+dask:
+  scheduler: 'tcp://daskscheduler:8786'
+database:
+  url: !ENV 'mysql+pymysql://cryptoml-api:secret@mysqldb:3306/cryptoml?charset=utf8mb4'

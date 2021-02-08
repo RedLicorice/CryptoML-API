@@ -3,7 +3,7 @@ from io import StringIO
 import boto3
 from botocore.exceptions import ClientError
 import pickle, json
-from src.config import config
+from ..config import config
 
 class StorageService:
 

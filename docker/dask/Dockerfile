@@ -9,6 +9,7 @@ RUN pip install python-snappy
 RUN pip install dask[bag]
 RUN pip install dask[dataframe]
 RUN pip install jupyter-server-proxy
+RUN pip install bokeh>=0.13.0
 
 # Dashboard
 EXPOSE 8787
