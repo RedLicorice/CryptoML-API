@@ -1,8 +1,13 @@
 name: 'localhost-test'
 s3:
   endpoint: 'http://localhost:9000'
-  access_key_id: ${AWS_ACCESS_KEY_ID}
-  secret_access_key: ${AWS_ACCESS_SECRET}
+  access_key_id: !ENV ${AWS_ACCESS_KEY_ID}
+  secret_access_key: !ENV ${AWS_ACCESS_SECRET}
+  use_ssl: False
+  verify: False
 celery:
   broker: 'redis://localhost:6379'
   backend: 'redis://localhost:6379'
+database:
+  url: !ENV 'mysql+pymysql://${MYSQL_APP_USER}:${MYSQL_APP_PASSWORD}@localhost:3306/cryptoml?charset=utf8mb4'
+  # url: 'sqlite:///:memory:'

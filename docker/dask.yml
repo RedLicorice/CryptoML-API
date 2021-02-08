@@ -15,7 +15,7 @@ services:
     networks:
       dask-network:
 
-  dask-worker:
+  dask-worker1:
     build:
       context: ./docker/dask
       dockerfile: Dockerfile
@@ -24,6 +24,18 @@ services:
     depends_on:
       - dask-scheduler
     command: ["dask-worker", "tcp://dask-scheduler:8786"]
+    networks:
+      dask-network:
+
+  dask-worker2:
+    build:
+      context: ./docker/dask
+      dockerfile: Dockerfile
+    #    volumes:
+    #      - ./notebooks:/notebooks
+    depends_on:
+      - dask-scheduler
+    command: [ "dask-worker", "tcp://dask-scheduler:8786" ]
     networks:
       dask-network:
 

@@ -1,10 +1,9 @@
 from ..repositories import FeatureRepository
 
 class FeaturesService:
-
-    def __init__(self, repository: FeatureRepository):
-        self.repo = repository
+    def __init__(self):
+        self.repo: FeatureRepository = FeatureRepository()
         pass
 
     def hello(self):
-        return "hello, world!"
+        return "HELLO"

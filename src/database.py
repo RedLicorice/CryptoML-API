@@ -2,17 +2,33 @@ from sqlalchemy import create_engine
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import sessionmaker, scoped_session
 from sqlalchemy.orm.session import Session
-from flask import _app_ctx_stack
+from .config import config
 
-SQLALCHEMY_DATABASE_URL = "sqlite:///:memory:"
 
-engine = create_engine(
-    SQLALCHEMY_DATABASE_URL, connect_args={'check_same_thread': False}
-)
-SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
-
+engine = None
 Base = declarative_base()
+# Create missing tables
+db_session = None
 
-def get_session_factory():
-    return scoped_session(SessionLocal, scopefunc=_app_ctx_stack.__ident_func__)
+def init_engine(**kwargs):
+  global engine, db_session
+  uri = config['database']['url'].get(str)
+  if uri.startswith('sqlite://'):
+      kwargs.update({'connect_args': {'check_same_thread': False}})
+  engine = create_engine(uri, **kwargs)
+  db_session = scoped_session(sessionmaker(autocommit=False, autoflush=False, bind=engine))
+  return engine
+
+def init_db():
+    if not engine:
+        return
+    Base.metadata.create_all(bind=engine)
+
+def get_session() -> Session:
+    global db_session
+    if not db_session:
+        # raise Exception("Database engine not initialized!")
+        init_engine()
+        init_db()
+    return db_session()
 

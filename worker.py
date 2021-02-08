@@ -1,3 +1,2 @@
-from src.application import create_worker
-
-celery = create_worker()
+from src.application import make_celery
+celery = make_celery()

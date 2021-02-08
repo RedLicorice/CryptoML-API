@@ -3,6 +3,9 @@ from ..models import Feature, FeatureGroup, Target
 import pandas as pd
 
 class FeatureRepository(BaseRepository):
+    def __init__(self):
+        BaseRepository.__init__(self)
+
     # A "Feature" instance represents a single entry of a time series,
     # a pandas series is stored as a set of "Feature" instances
     # indexed by Day, Symbol, Name
@@ -50,12 +53,16 @@ class FeatureRepository(BaseRepository):
         return [d.feature for d in query.all()]
 
     # Get a dataframe with features belonging to the specified group
-    def get_features_df_from_group(self, group, symbol):
+    def get_features_df_from_group(self, group, symbol, **kwargs):
         columns = self.get_features_in_group(group)
         query = self.session.query(Feature).filter(
             Feature.symbol == symbol,
             Feature.name.in_(columns)
         )
+        if kwargs.get('begin') and kwargs.get('end'):
+            query = query.filter(
+                Feature.day.betweeen(kwargs.get('begin'), kwargs.get('end'))
+            )
         df = pd.read_sql(sql=query.statement, con=query.session.bind, parse_dates=['day'])
         df = df.pivot(index='day', columns='name', values='value')
         return df

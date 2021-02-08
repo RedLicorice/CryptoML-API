@@ -1,13 +1,17 @@
-flask
-flask-cli
-dependency-injector
-pymysql
-pandas
+# API Core
+fastapi
+python-multipart # For FastAPI File upload support
+werkzeug # Validation
+# App Configuration
+confuse
 pyyaml
-werkzeug # request validation
+# MySQL ORM and client
 sqlalchemy
-boto3 # aws s3 client
+sqlalchemy-utils
+pymysql
+# S3 Storage Client
+boto3
+# Task Queueing and broker (redis) client
 celery # Queue
 celery[redis] # Redis support for Celery
 redis # Queue backend client
-python-dotenv

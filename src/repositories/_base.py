@@ -1,9 +1,8 @@
-class BaseRepository:
-    def __init__(self, sessionFactory):
-        self.session = sessionFactory()
+from ..database import Session, get_session
 
-    def __del__(self):
-        self.session.close()
+class BaseRepository:
+    def __init__(self):
+        self.session: Session = get_session()
 
     def commit(self):
         self.session.commit()
