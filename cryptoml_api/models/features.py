@@ -1,4 +1,5 @@
 from sqlalchemy import Column, Integer, Float, String, DateTime
+from sqlalchemy_utils import JSONType
 from ..database import Base
 
 class Feature(Base):
@@ -13,7 +14,7 @@ class FeatureGroup(Base):
     __tablename__ = 'feature_groups'
     id = Column(Integer, primary_key=True)
     name = Column(String(64), nullable=False)  # Dataset (feature group) name
-    feature = Column(String(64), nullable=False)  # Included feature name
+    features = Column(JSONType, nullable=False)  # List of features
 
 class Target(Base):
     __tablename__ = 'targets'

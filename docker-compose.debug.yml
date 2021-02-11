@@ -16,10 +16,10 @@ services:
       - minio-network
       - redis-network
       - dask-network
+      - influxdb-network
 
 networks:
   cryptoml-network:
-
   minio-network:
     external: true
   mysql-network:
@@ -27,4 +27,6 @@ networks:
   redis-network:
     external: true
   dask-network:
+    external: true
+  influxdb-network:
     external: true

@@ -1,9 +1,15 @@
-from .src.models import grid_search, train_model, test_model, predict_model
-import dask.dataframe as dd
+from .lib.models import grid_search, train_model, test_model, predict_model
+import pandas as pd
 import importlib
 
 # Launch a Distributed grid search on the cluster
-def launch_grid_search(pipeline: str, bucket: str, features_path: str, target_path: str):
-    p = importlib.import_module('cryptoml.pipelines.' + pipeline)
-    features = dd.read_csv('s3://{}/{}.csv'.format(bucket, features_path))
-    target =  dd.read_csv('s3://{}/{}.csv'.format(bucket, features_path))
+def launch_grid_search(pipeline: str, features: pd.DataFrame, target: pd.Series, **kwargs):
+    _pipeline = importlib.import_module('cryptoml.pipelines.{}'.format(pipeline))
+    gscv = grid_search(
+        est=_pipeline.estimator,
+        parameters=kwargs.get('parameter_grid', _pipeline.PARAMETER_GRID),
+        X_train=features.values,
+        y_train=target.values,
+        **kwargs
+    )
+    return gscv.best_params_

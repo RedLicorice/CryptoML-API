@@ -10,6 +10,8 @@ python-dotenv
 sqlalchemy
 sqlalchemy-utils
 pymysql
+# InfluxDB Client
+influxdb
 # S3 Storage Client
 boto3
 # Task Queueing and broker (redis) client
@@ -22,11 +24,9 @@ pandas
 sklearn
 statsmodels
 imbalanced-learn
-xgboost
+xgboost>0.90
 git+https://github.com/RedLicorice/sklearn-genetic.git@master
 git+https://github.com/g8a9/pyti.git@master
 # Distributed ML Client
-dask
-dask[dataframe]
-dask[delayed]
-dask[distributed]
+dask[complete]
+dask-ml

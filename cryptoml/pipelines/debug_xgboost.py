@@ -1,5 +1,5 @@
-from cryptoml.selection_pipeline import Pipeline
-from dask_ml.xgboost import XGBClassifier
+from cryptoml.util.selection_pipeline import Pipeline
+import xgboost as xgb
 from dask_ml.preprocessing import StandardScaler
 from dask_ml.impute import SimpleImputer
 
@@ -25,5 +25,6 @@ PARAMETER_GRID = {
 estimator = Pipeline([
     ('i', SimpleImputer()),  # Replace nan's with the median value between previous and next observation
     ('s', StandardScaler()),  # Scale data in order to center it and increase robustness against noise and outliers
-    ('c', XGBClassifier()),
+    # ('c', xgb.XGBClassifier()),
+    ('c', xgb.dask.DaskXGBClassifier()),
 ])

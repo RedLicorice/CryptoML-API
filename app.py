@@ -1,5 +1,5 @@
 import uvicorn
-from src.application import create_app
+from cryptoml_api.application import create_app
 
 
 app = create_app()

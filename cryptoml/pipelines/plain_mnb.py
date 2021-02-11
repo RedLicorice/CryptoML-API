@@ -1,4 +1,4 @@
-from cryptoml.selection_pipeline import Pipeline
+from cryptoml.util.selection_pipeline import Pipeline
 from sklearn.naive_bayes import MultinomialNB
 from dask_ml.preprocessing import StandardScaler
 from dask_ml.impute import SimpleImputer

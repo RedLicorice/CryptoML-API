@@ -14,6 +14,8 @@ services:
       - mysql-network
       - minio-network
       - redis-network
+      - dask-network
+      - influxdb-network
 
   ml-worker1:
     image: redlicorice/cryptoml-api-worker
@@ -29,6 +31,8 @@ services:
       - mysql-network
       - minio-network
       - redis-network
+      - dask-network
+      - influxdb-network
 
 networks:
   cryptoml-network:
@@ -38,4 +42,8 @@ networks:
   mysql-network:
     external: true
   redis-network:
+    external: true
+  dask-network:
+    external: true
+  influxdb-network:
     external: true

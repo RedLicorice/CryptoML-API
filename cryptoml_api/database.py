@@ -2,6 +2,7 @@ from sqlalchemy import create_engine
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import sessionmaker, scoped_session
 from sqlalchemy.orm.session import Session
+from sqlalchemy.sql import null
 from .config import config
 
 
@@ -12,7 +13,7 @@ db_session = None
 
 def init_engine(**kwargs):
   global engine, db_session
-  uri = config['database']['url'].get(str)
+  uri = config['database']['sql']['url'].get(str)
   if uri.startswith('sqlite://'):
       kwargs.update({'connect_args': {'check_same_thread': False}})
   engine = create_engine(uri, **kwargs)

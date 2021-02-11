@@ -11,4 +11,13 @@ celery:
 dask:
   scheduler: 'tcp://daskscheduler:8786'
 database:
-  url: !ENV 'mysql+pymysql://cryptoml-api:secret@mysqldb:3306/cryptoml?charset=utf8mb4'
+  sql:
+    url: !ENV 'mysql+pymysql://${MYSQL_APP_USER}:${MYSQL_APP_PASSWORD}@localhost:3306/cryptoml?charset=utf8mb4'
+  influxdb:
+    host: 'influxdb'
+    port: 8086
+    username: !ENV ${INFLUXDB_USERNAME}
+    password: !ENV ${INFLUXDB_PASSWORD}
+    database: 'db0'
+kraken:
+  key: ''

@@ -1,4 +1,4 @@
-from cryptoml.selection_pipeline import Pipeline
+from cryptoml.util.selection_pipeline import Pipeline
 from sklearn.ensemble import BaggingClassifier
 from sklearn.svm import LinearSVC
 from dask_ml.preprocessing import StandardScaler

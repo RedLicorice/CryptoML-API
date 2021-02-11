@@ -18,8 +18,16 @@ class StorageService:
             verify=_config['verify'].get(bool)
         )
 
+    def create_bucket(self, bucket):
+        try:
+            self.s3.create_bucket(Bucket=bucket)
+        except self.s3.exceptions.BucketAlreadyOwnedByYou:
+            pass
+        except self.s3.exceptions.BucketAlreadyExists:
+            pass
+
     def upload_fileobj(self, file, bucket, name):
-        self.s3.create_bucket(Bucket=bucket)
+        self.create_bucket(bucket)
         self.s3.upload_fileobj(
             file,
             Bucket=bucket,
@@ -27,7 +35,7 @@ class StorageService:
         )
 
     def upload_pickle_obj(self, obj, bucket, name):
-        self.s3.create_bucket(Bucket=bucket)
+        self.create_bucket(bucket)
         obj = pickle.dumps(obj)
         self.s3.put_object(Body=obj, Bucket=bucket, Key=name, ContentType='application/python-pickle')
 
@@ -37,7 +45,7 @@ class StorageService:
         return obj
 
     def upload_json_obj(self, obj, bucket, name):
-        self.s3.create_bucket(Bucket=bucket)
+        self.create_bucket(bucket)
         obj = json.dumps(obj, indent=4, sort_keys=True)
         self.s3.put_object(Body=obj, Bucket=bucket, Key=name, ContentType='application/json')
 
@@ -49,7 +57,7 @@ class StorageService:
     def save_df(self, df, bucket, name):
         csv_buffer = StringIO()
         df.to_csv(csv_buffer)
-        self.s3.create_bucket(Bucket=bucket)
+        self.create_bucket(bucket)
         self.s3.put_object(Bucket=bucket, Key=name, Body=csv_buffer.getvalue())
 
     def load_df(self, bucket, name):
