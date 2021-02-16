@@ -1,8 +1,6 @@
 from cryptoml.util.selection_pipeline import Pipeline
 from sklearn.neural_network import MLPClassifier
-from dask_ml.preprocessing import StandardScaler
-from dask_ml.impute import SimpleImputer
-
+from cryptoml.util.import_proxy import SimpleImputer, StandardScaler
 
 PARAMETER_GRID = {
     'c__hidden_layer_sizes':[(2,4), (4,8)],

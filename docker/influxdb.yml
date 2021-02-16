@@ -27,6 +27,7 @@ services:
       - INFLUXDB_URL=http://influxdb:8086
       - INFLUXDB_USERNAME=${INFLUXDB_USERNAME}
       - INFLUXDB_PASSWORD=${INFLUXDB_PASSWORD}
+      - REPORTING_DISABLED=1
     networks:
       influxdb-network:
         aliases:

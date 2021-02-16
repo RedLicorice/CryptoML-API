@@ -1,8 +1,8 @@
 version: '3.7'
 
 services:
-  ml-worker1:
-    image: redlicorice/cryptoml-api-worker
+  celery-worker1:
+    image: redlicorice/cryptoml-celery-worker
     build:
       context: .
       dockerfile: Worker.dockerfile
@@ -10,6 +10,8 @@ services:
     volumes:
       - './.env:/.env'
       - './config-docker.yml:/config.yml'
+      - './cryptoml:/cryptoml'
+      - './cryptoml_api:/cryptoml_api'
     networks:
       - cryptoml-network
       - mysql-network

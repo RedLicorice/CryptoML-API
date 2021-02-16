@@ -1,5 +1,6 @@
 from sklearn.pipeline import Pipeline as SklearnPipeline
 
+
 # This class exposes coef_ and feature_importances_ from a pipeline in order to
 #  use it for feature selection in wrapper methods such as RFECV or SelectFromModel
 class Pipeline(SklearnPipeline):

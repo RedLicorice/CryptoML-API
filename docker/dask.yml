@@ -16,6 +16,7 @@ services:
       dask-network:
         aliases:
           - daskscheduler
+          - dask-scheduler
 
   dask-worker1:
     build:

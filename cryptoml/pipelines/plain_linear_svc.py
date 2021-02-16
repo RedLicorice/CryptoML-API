@@ -1,7 +1,6 @@
 from cryptoml.util.selection_pipeline import Pipeline
 from sklearn.svm import LinearSVC
-from dask_ml.preprocessing import StandardScaler
-from dask_ml.impute import SimpleImputer
+from cryptoml.util.import_proxy import SimpleImputer, StandardScaler
 
 
 PARAMETER_GRID = {

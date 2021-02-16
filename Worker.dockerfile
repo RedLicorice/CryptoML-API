@@ -1,6 +1,6 @@
 FROM ubuntu:20.04
 
-RUN apt-get update -y && apt-get install -y python3-pip python3-dev redis-tools git \
+RUN apt-get update -y && apt-get install -y python3-pip python3-dev redis-tools git
 
 
 # We copy just the requirements.txt first to leverage Docker cache
@@ -39,6 +39,4 @@ RUN chown worker:worker /.env
 
 USER worker
 
-ENTRYPOINT [ "python3" ]
-CMD [ "worker.py" ]
 ENTRYPOINT celery -A worker.celery worker --loglevel=info

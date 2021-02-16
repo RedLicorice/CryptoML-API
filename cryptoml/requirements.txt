@@ -1,0 +1,12 @@
+# ML
+numpy
+pandas
+sklearn
+statsmodels
+imbalanced-learn
+xgboost>0.90
+git+https://github.com/RedLicorice/sklearn-genetic.git@master
+git+https://github.com/g8a9/pyti.git@master
+# DASK
+dask[complete]
+dask-ml

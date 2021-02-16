@@ -1,5 +1,6 @@
 # API Core
 fastapi
+uvicorn # Runtime
 python-multipart # For FastAPI File upload support
 werkzeug # Validation
 # App Configuration
@@ -18,15 +19,7 @@ boto3
 celery # Queue
 celery[redis] # Redis support for Celery
 redis # Queue backend client
-# ML
-numpy
-pandas
-sklearn
-statsmodels
-imbalanced-learn
-xgboost>0.90
-git+https://github.com/RedLicorice/sklearn-genetic.git@master
-git+https://github.com/g8a9/pyti.git@master
 # Distributed ML Client
 dask[complete]
-dask-ml
+# Kraken API client
+krakenex

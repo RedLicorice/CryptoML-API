@@ -1,5 +1,6 @@
 import uvicorn
 from cryptoml_api.application import create_app
+import logging, sys
 
 
 app = create_app()

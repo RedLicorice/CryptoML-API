@@ -1,1 +1,0 @@
-Do NOT use dependency injection in tasks!
