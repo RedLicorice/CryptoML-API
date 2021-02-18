@@ -4,7 +4,6 @@ import pandas as pd
 import importlib, logging, inspect
 from cryptoml.builders import BUILDER_LIST
 from ..exceptions import MessageException
-from sklearn.model_selection import train_test_split
 
 class FeatureService:
     def __init__(self):
@@ -70,22 +69,3 @@ class FeatureService:
             else:
                 self.repo.put_features(features, builder, symbol)
         return features
-
-    def classification_exists(self, symbol, dataset, target):
-        return True
-
-    def get_classification(self, symbol, dataset, target, **kwargs):
-        X = self.repo.get_features(dataset, symbol, **kwargs)
-        y = self.repo.get_target(target, symbol, **kwargs)
-        if X.shape[0] > y.shape[0]:
-            X = X.loc[y.index, :]
-        else:
-            y = y.loc[X.index]
-        if kwargs.get('split'):
-            X_train, X_test, y_train, y_test = train_test_split(
-                X, y,
-                shuffle=False,
-                train_size=kwargs.get('split')
-            )
-            return X_train, X_test, y_train, y_test
-        return X, None, y, None

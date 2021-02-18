@@ -1,3 +1,6 @@
+import importlib
+import logging
+
 PIPELINE_LIST = [
     'adaboost_decisiontree',
     'bagging_decisiontree',
@@ -14,3 +17,18 @@ PIPELINE_LIST = [
     'plain_rbf_svc',
     'plain_xgboost'
 ]
+
+# Dinamically import and validate a pipeline from cryptoml.pipelines.*
+def get_pipeline(pipeline):
+    if not pipeline in PIPELINE_LIST:
+        raise Exception('Package cryptoml.pipelines has no {} module!'.format(pipeline))
+    try:
+        pipeline_module = importlib.import_module('cryptoml.pipelines.{}'.format(pipeline))
+        if not pipeline_module:
+            raise Exception('Failed to import cryptoml.pipelines.{} (importlib returned None)!'.format(pipeline))
+        if not hasattr(pipeline_module, 'estimator'):
+            raise Exception('Builder cryptoml.pipelines.{} has no "estimator" attribute!'.format(pipeline))
+    except Exception as e:
+        logging.exception(e)
+        raise Exception('Failed to import cryptoml.pipelines.{} !'.format(pipeline))
+    return pipeline_module

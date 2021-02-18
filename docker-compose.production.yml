@@ -11,10 +11,9 @@ services:
       - "8000:5000"
     networks:
       - cryptoml-network
-      - mysql-network
+      - mongodb-network
       - minio-network
       - redis-network
-      - dask-network
       - influxdb-network
 
   ml-worker1:
@@ -28,10 +27,9 @@ services:
       - './config-docker.yml:/config.yml'
     networks:
       - cryptoml-network
-      - mysql-network
+      - mongodb-network
       - minio-network
       - redis-network
-      - dask-network
       - influxdb-network
 
 networks:
@@ -39,11 +37,9 @@ networks:
 
   minio-network:
     external: true
-  mysql-network:
+  mongodb-network:
     external: true
   redis-network:
-    external: true
-  dask-network:
     external: true
   influxdb-network:
     external: true

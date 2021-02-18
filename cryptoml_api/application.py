@@ -1,9 +1,7 @@
 from fastapi import FastAPI
-from .queue import make_celery
 from . import endpoints
-from .config import config
-from .logging import setup_logger
-from .dask import make_dask_client
+from cryptoml_common.queue import make_celery
+from cryptoml_common.logging import setup_logger
 
 app = None
 celery = None

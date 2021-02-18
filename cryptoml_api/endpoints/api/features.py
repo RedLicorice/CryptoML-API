@@ -1,11 +1,13 @@
 from fastapi import APIRouter, Form, File, UploadFile, Depends, HTTPException, Body
-from fastapi.responses import RedirectResponse, PlainTextResponse
+from fastapi.responses import PlainTextResponse
 from werkzeug.utils import secure_filename
 from typing import Optional
 from celery import current_app, states
-from ...services import StorageService, FeatureService
+from ...services.storage_service import StorageService
+from ...services.feature_service import FeatureService
+from ...services.dataset_service import DatasetService
 from ...exceptions import MessageException
-from ...config import config
+from cryptoml_common.config import config
 from pydantic import BaseModel
 import pandas as pd
 import logging
@@ -25,7 +27,6 @@ class DisplayRequest(BaseModel):
     symbol: Optional[str]
     begin: Optional[str] = None
     end: Optional[str] = None
-    split: Optional[float] = None
 
 class BuildRequest(BaseModel):
     symbol: str
@@ -73,14 +74,13 @@ def _import(
 @router.get('/view', response_class=PlainTextResponse)
 def get_dataset(
         req: DisplayRequest = Body(...),
-        service: FeatureService = Depends(FeatureService)
+        service: DatasetService = Depends(DatasetService)
     ):
     # Import dataset to feature repository
     if not req.dataset and not req.target:
         raise HTTPException(status_code=400, detail='Must specify at least one of dataset or target')
     try:
-        X, _, y, _ = service.get_classification(req.symbol, req.dataset, req.target, split=req.split)
-        return pd.concat([X, y], axis='columns').to_csv(index_label='time')
+        return service.get_dataset(**req.dict()).to_csv(index_label='time')
     except Exception as e:
         logging.exception(e)
         raise HTTPException(status_code=404, detail='Data not found')

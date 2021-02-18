@@ -1,11 +1,10 @@
 import logging
 import sys
-# ToDo: Use https://github.com/paksu/pytelegraf to ingest logs into influxdb
-# https://geekflare.com/open-source-centralized-logging/
 
+# Setup logging to STDOUT so we can use a common log collector for centralizing logs in the future.
 def setup_logger():
     root = logging.getLogger()
-    root.setLevel(logging.DEBUG)
+    root.setLevel(logging.INFO)
 
     handler = logging.StreamHandler(sys.stdout)
     handler.setLevel(logging.DEBUG)

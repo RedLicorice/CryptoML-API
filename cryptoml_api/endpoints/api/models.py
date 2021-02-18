@@ -1,13 +1,14 @@
 from celery import current_app
 import celery.states as states
 from fastapi import APIRouter, Depends, Body, HTTPException
-from ...services.model_service import ModelService, TrainingParameters
+from ...services.model_service import ModelService
+from ...models.classification import SlidingWindowClassification
 
 router = APIRouter()
 
 
 @router.post('/train')
-def train_model(training: TrainingParameters = Body(...)):
+def train_model(training: SlidingWindowClassification = Body(...)):
     pass
 
 @router.post('/test')

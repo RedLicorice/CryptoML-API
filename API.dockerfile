@@ -15,6 +15,7 @@ WORKDIR /cryptoml
 RUN pip3 install -r requirements.txt
 
 # Copy API and LIB sources
+COPY ./cryptoml_common /cryptoml_common
 COPY ./cryptoml_api /cryptoml_api
 COPY ./cryptoml /cryptoml
 

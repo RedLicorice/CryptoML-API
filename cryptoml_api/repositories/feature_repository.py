@@ -1,6 +1,6 @@
 import pandas as pd
-from ..influxdb import get_dataframe_client
-from ..exceptions import MessageException
+from cryptoml_common.influxdb import get_dataframe_client
+
 
 class FeatureRepository:
     def __init__(self):

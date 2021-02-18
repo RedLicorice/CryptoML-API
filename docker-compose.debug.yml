@@ -12,23 +12,21 @@ services:
       - './config-docker.yml:/config.yml'
       - './cryptoml:/cryptoml'
       - './cryptoml_api:/cryptoml_api'
+      - './cryptoml_common:/cryptoml_common'
     networks:
       - cryptoml-network
-      - mysql-network
+      - mongodb-network
       - minio-network
       - redis-network
-      - dask-network
       - influxdb-network
 
 networks:
   cryptoml-network:
   minio-network:
     external: true
-  mysql-network:
+  mongodb-network:
     external: true
   redis-network:
-    external: true
-  dask-network:
     external: true
   influxdb-network:
     external: true

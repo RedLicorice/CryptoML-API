@@ -1,4 +1,5 @@
-from ..database import Session, get_session, null
+from cryptoml_common.mysql import Session, get_session
+
 
 class SQLRepository:
     def __init__(self):

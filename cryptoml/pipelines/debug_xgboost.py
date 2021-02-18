@@ -5,7 +5,6 @@ from cryptoml.util.import_proxy import SimpleImputer, StandardScaler, XGBClassif
 PARAMETER_GRID = {
     'i__strategy': ['mean'],  # 'median', 'most_frequent', 'constant'
     'c__n_estimators': [500],
-    'c__objective': ['binary:logistic'],
     #'c__eval_metric': ['aucpr'], # Evaluation metrics for validation data during tree building
     'c__subsample': [1], # Subsample ratio of the training instances. Setting it to 0.5 means that XGBoost would randomly sample half of the training data prior to growing trees.
     #'c__colsample_bytree': [1, 0.8, 0.5], # Subsample ratio of columns when constructing each tree. Subsampling occurs once for every tree constructed.
@@ -18,6 +17,8 @@ PARAMETER_GRID = {
     'c__reg_lambda': [1], # L2 regularization term on weights. Increasing this value will make model more conservative.
     'c__learning_rate': [0.001], # 0.3 Step size shrinkage used in update to prevents overfitting. Shrinks the feature weights to make the boosting process more conservative.
     #'c__scale_pos_weight': [1] # should be negative_samples_count / positive_samples_count
+    'c__objective': ['multi:softmax'],
+    #'c__eval_metric': ['mlogloss']
 }
 
 estimator = Pipeline([

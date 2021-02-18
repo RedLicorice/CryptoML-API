@@ -26,10 +26,10 @@ def trailing_window_test(
         test_start = i - 1
         test_end = i
         # print('[Window {}]\tTrain: B={} E={}\tTest: B={} E={}'.format(window, train_start, train_end, test_start, test_end))
-        _X_train = features.iloc[train_start:train_end]
-        _y_train = target.iloc[train_start:train_end]
-        _X_test = features.iloc[test_start:test_end]
-        _y_test = target.iloc[test_start:test_end]
+        _X_train = features[train_start:train_end]
+        _y_train = target[train_start:train_end]
+        _X_test = features[test_start:test_end]
+        _y_test = target[test_start:test_end]
 
         _est = train_model(est, parameters, X_train, y_train)
         pred = predict_model(_est, _X_test)

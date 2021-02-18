@@ -1,5 +1,5 @@
-from celery import Celery, current_app
-from .config import config
+from celery import Celery
+from cryptoml_common.config import config
 
 def make_celery():
     # Start Celery

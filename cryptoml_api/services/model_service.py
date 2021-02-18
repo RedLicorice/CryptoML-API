@@ -1,101 +1,130 @@
-import importlib
 import pandas as pd
+import logging
+# APP Dependencies
 from .storage_service import StorageService
-from ..exceptions import MessageException
-from ..repositories.model_repository import ModelRepository, TrainingParameters, PersistedModel
-from .feature_service import FeatureService
-from cryptoml.pipelines import PIPELINE_LIST
+from .dataset_service import DatasetService
+from ..models.classification import Hyperparameters, SlidingWindowClassification, SplitClassification, ModelBenchmark
+from ..repositories.classification_repositories import HyperparametersRepository, BenchmarkRepository
+# CryptoML Lib Dependencies
 from cryptoml.models.grid_search import grid_search
 from cryptoml.models.testing import trailing_window_test
 from cryptoml.models.training import train_model
-
-from sklearn.metrics import classification_report
-import logging
+from cryptoml.util.flattened_classification_report import flattened_classification_report
+from cryptoml.util.weighted_precision_score import get_weighted_precision_scorer
+from cryptoml.util.blocking_timeseries_split import BlockingTimeSeriesSplit
+from cryptoml.util.feature_importances import label_feature_importances
+from cryptoml.pipelines import get_pipeline
+# CryptoML Common Dependencies
+from cryptoml_common.util.timestamp import to_timestamp
 
 
 class ModelService:
     def __init__(self):
         self.storage = StorageService()
+        self.parameters_repo = HyperparametersRepository()
+        self.benchmark_repo = BenchmarkRepository()
 
-    def get_pipeline(self, pipeline):
-        if not pipeline in PIPELINE_LIST:
-            raise MessageException('Package cryptoml.pipelines has no {} module!'.format(pipeline))
-        try:
-            pipeline_module = importlib.import_module('cryptoml.pipelines.{}'.format(pipeline))
-            if not pipeline_module:
-                raise MessageException(
-                    'Failed to import cryptoml.pipelines.{} (importlib returned None)!'.format(pipeline))
-            if not hasattr(pipeline_module, 'estimator'):
-                raise MessageException('Builder cryptoml.pipelines.{} has no "estimator" attribute!'.format(pipeline))
-        except Exception as e:
-            logging.exception(e)
-            raise MessageException('Failed to import cryptoml.pipelines.{} !'.format(pipeline))
-        return pipeline_module
+    def __get_tag(self, clf: Hyperparameters):
+        return '{}-{}-{}-{}-#{}'.format(clf.pipeline, clf.symbol, clf.dataset, clf.target, clf.id)
 
-    def grid_search(self, pipeline: str, features: pd.DataFrame, target: pd.Series, **kwargs):
-        pipeline_module = self.get_pipeline(pipeline)
+    # Perform parameter search
+    def grid_search(self, clf: SplitClassification, **kwargs):
+        # Load dataset
+        ds = DatasetService()
+        X_train, X_test, y_train, y_test = ds.get_classification_split(clf)
+
+        # Load pipeline
+        pipeline_module = get_pipeline(clf.pipeline)
+
+        # Instantiate splitter and scorer
+        splitter = BlockingTimeSeriesSplit(n_splits=5)
+        scorer = get_weighted_precision_scorer(weights=kwargs.get('weights'))
+
+        # Perform search
         gscv = grid_search(
             est=pipeline_module.estimator,
             parameters=kwargs.get('parameter_grid', pipeline_module.PARAMETER_GRID),
-            X_train=features.values,
-            y_train=target.values,
-            **kwargs
+            X_train=X_train,
+            y_train=y_train,
+            cv=splitter,
+            scoring=scorer
         )
-        results_df = pd.DataFrame(gscv.cv_results_)
-        return results_df, gscv.best_params_
 
-    def test_model(self,
-                   pipeline: str,
-                   parameters: dict,
-                   X_train: pd.DataFrame,
-                   X_test: pd.DataFrame,
-                   y_train: pd.Series,
-                   y_test: pd.Series,
-                   **kwargs
-                ):
+        # Update "Classification" request with found hyperparameters,
+        #  then save it to MongoDB
+        clf.parameters = gscv.best_params_
+        _clf = self.parameters_repo.create(clf)
+
+        # Parse grid search results to dataframe
+        results_df = pd.DataFrame(gscv.cv_results_)
+
+        # Store grid search results on storage
+        self.storage.upload_json_obj(gscv.best_params_, 'grid-search-results', 'parameters-{}.json'\
+                                     .format(self.__get_tag(_clf)))
+        self.storage.save_df(results_df, 'grid-search-results', 'cv_results-{}.csv'\
+                             .format(self.__get_tag(_clf)))
+
+        # Test model parameters on the test set, using different windows
+        test_reports = {}
+        for _w in [30, 90, 150]:
+            test_reports[_w] = self.test_model(clf=clf, W=_w)
+
+        # Return result and Hyperparameters
+        return results_df, clf, test_reports
+
+    def test_model(self, clf: SplitClassification, **kwargs):
+        # Load dataset
+        ds = DatasetService()
+        X_train, X_test, y_train, y_test = ds.get_classification_split(clf)
+
+        # Load pipeline
+        pipeline_module = get_pipeline(clf.pipeline)
+
+        # Test the model with a sliding window approach, with the first training window starting
+        #  in the training set.
         try:
-            pipeline_module = self.get_pipeline(pipeline)
             labels, predictions = trailing_window_test(
                 est=pipeline_module.estimator,
-                parameters=parameters,
+                parameters=clf.parameters,
                 W=kwargs.get('W', 30),
                 X_train=X_train,
                 X_test=X_test,
                 y_train=y_train,
                 y_test=y_test
             )
-            clf_report = classification_report(labels=labels, predictions=predictions)
-            report = pd.DataFrame.from_dict(clf_report, orient='index')
-            return report
         except Exception as e:
             logging.exception(e)
             return None
 
-    def train_model_day(self, training: TrainingParameters, **kwargs) -> PersistedModel:
-        pipeline_module = self.get_pipeline(training.pipeline)
-        fs = FeatureService()
-        # Get training window datasets
-        X_train, _, y_train, _ = fs.get_classification(
-            symbol=training.symbol,
-            dataset=training.dataset,
-            target=training.target,
-            begin=training.train_begin(),
-            end=training.train_end()
+        # Assemble a Benchmark instance containing results for this run,
+        #  then save it into the repository
+        benchmark = ModelBenchmark(
+            hyperparameters=clf,
+            report=flattened_classification_report(y_true=labels, y_pred=predictions),
+            window=kwargs.get('W', 30),
+            train_begin=to_timestamp(X_train.index.min()),
+            train_end=to_timestamp(X_train.index.max()),
+            test_begin=to_timestamp(X_test.index.min()),
+            test_end=to_timestamp(X_test.index.max())
         )
-        # If kwargs specifies a subset of features, only use those for training
-        feature_subset = kwargs.get('train_features', [c for c in X_train.columns])
-        X_train = X_train.loc[:, feature_subset]
+        self.benchmark_repo.create(benchmark)
+
+        return benchmark
+
+    def train_model_day(self, clf: SlidingWindowClassification, **kwargs):
+        # Load Dataset
+        ds = DatasetService()
+        X_train, _, y_train, _ = ds.get_classification_window(clf)
+
         # Train a model using the specified parameters
+        pipeline_module = get_pipeline(clf.pipeline)
         _est = train_model(
             est=pipeline_module.estimator,
-            parameters=training.parameters,
+            parameters=clf.parameters,
             X_train=X_train,
             y_train=y_train
         )
-        # Create a persisted model instance
-        model = PersistedModel(
-            estimator=_est,
-            features=feature_subset,
-            training=training
-        )
-        return model
+
+        # ToDo: Wrap the model and save it for future use
+        return _est
+

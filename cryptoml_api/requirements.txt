@@ -11,15 +11,15 @@ python-dotenv
 sqlalchemy
 sqlalchemy-utils
 pymysql
+pymongo
+uuid
 # InfluxDB Client
 influxdb
 # S3 Storage Client
-boto3
+s3fs
 # Task Queueing and broker (redis) client
 celery # Queue
 celery[redis] # Redis support for Celery
 redis # Queue backend client
-# Distributed ML Client
-dask[complete]
 # Kraken API client
 krakenex
