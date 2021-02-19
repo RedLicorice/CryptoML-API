@@ -1,9 +1,8 @@
-from ..repositories.feature_repository import FeatureRepository
-from .storage_service import StorageService
-import pandas as pd
-import importlib, logging, inspect
+from cryptoml_core.repositories.feature_repository import FeatureRepository
+from cryptoml_core.services.storage_service import StorageService
+from cryptoml_core.exceptions import MessageException
 from cryptoml.builders import BUILDER_LIST
-from ..exceptions import MessageException
+import importlib, logging, inspect
 
 class FeatureService:
     def __init__(self):

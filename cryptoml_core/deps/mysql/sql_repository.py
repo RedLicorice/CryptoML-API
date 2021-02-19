@@ -1,4 +1,4 @@
-from cryptoml_common.mysql import Session, get_session
+from cryptoml_core.deps.mysql import Session, get_session
 
 
 class SQLRepository:

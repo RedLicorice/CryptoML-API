@@ -1,8 +1,8 @@
 from uuid import uuid4
 from pydantic import BaseModel
 from typing import List
-from cryptoml_common.mongodb import Collection, Database, database
-from cryptoml_common.util.timestamp import get_timestamp
+from cryptoml_core.deps.mongodb import Collection, Database, database
+from cryptoml_core.util.timestamp import get_timestamp
 
 def get_uuid() -> str:
     """Returns an unique UUID (UUID4)"""

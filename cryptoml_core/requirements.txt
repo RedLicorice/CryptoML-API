@@ -1,0 +1,15 @@
+# App Configuration
+confuse
+pyyaml
+python-dotenv
+# MySQL ORM and client
+sqlalchemy
+sqlalchemy-utils
+pymysql
+# MongoDB Client and utility
+pymongo
+uuid
+# InfluxDB Client
+influxdb
+# S3 Storage Client
+s3fs

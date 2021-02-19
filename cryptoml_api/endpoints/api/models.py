@@ -1,8 +1,5 @@
-from celery import current_app
-import celery.states as states
-from fastapi import APIRouter, Depends, Body, HTTPException
-from ...services.model_service import ModelService
-from ...models.classification import SlidingWindowClassification
+from fastapi import APIRouter, Body
+from cryptoml_core.models.classification import SlidingWindowClassification
 
 router = APIRouter()
 
@@ -12,7 +9,7 @@ def train_model(training: SlidingWindowClassification = Body(...)):
     pass
 
 @router.post('/test')
-def test_model(training: TrainingParameters = Body(...)):
+def test_model(training: SlidingWindowClassification = Body(...)):
     pass
 
 @router.post('/predict')

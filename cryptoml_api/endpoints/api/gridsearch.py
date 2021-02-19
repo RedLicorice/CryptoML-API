@@ -1,12 +1,9 @@
 from celery import current_app
 import celery.states as states
-from fastapi import APIRouter, Depends, Body, HTTPException
-from pydantic import BaseModel
-from ...services.dataset_service import DatasetService
-from ...services.model_service import ModelService
-from ...services.storage_service import StorageService
-from ...exceptions import MessageException
-from ...models.classification import SplitClassification
+from fastapi import APIRouter, Body, HTTPException
+from cryptoml_core.services.model_service import ModelService
+from cryptoml_core.exceptions import MessageException
+from cryptoml_core.models.classification import SplitClassification
 
 
 router = APIRouter()

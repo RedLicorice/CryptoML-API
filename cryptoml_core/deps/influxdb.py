@@ -1,5 +1,5 @@
 from influxdb import DataFrameClient
-from cryptoml_common.config import config
+from cryptoml_core.deps.config import config
 
 
 dataframe_client: DataFrameClient = None

@@ -5,20 +5,21 @@ services:
     image: redlicorice/cryptoml-celery-worker
     build:
       context: .
-      dockerfile: Worker.dockerfile
+      dockerfile: docker/Worker.dockerfile
     hostname: mlservice
     volumes:
-      - './.env:/.env'
-      - './config-docker.yml:/config.yml'
-      - './cryptoml:/cryptoml'
-      - './cryptoml_api:/cryptoml_api'
-      - './cryptoml_common:/cryptoml_common'
+      - './.env:/app/.env'
+      - './config-docker.yml:/app/config.yml'
+      - './cryptoml:/app/cryptoml'
+      - './cryptoml_api:/app/cryptoml_api'
+      - './cryptoml_core:/app/cryptoml_core'
     networks:
       - cryptoml-network
       - mongodb-network
       - minio-network
       - redis-network
       - influxdb-network
+      - dask-network
 
 networks:
   cryptoml-network:
@@ -29,4 +30,6 @@ networks:
   redis-network:
     external: true
   influxdb-network:
+    external: true
+  dask-network:
     external: true

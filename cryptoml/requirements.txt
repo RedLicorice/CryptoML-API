@@ -3,10 +3,18 @@ numpy==1.20.1
 pandas==1.2.2
 scikit-learn==0.24.1
 statsmodels==0.12.2
-xgboost==1.3.3
+xgboost>=1.3.3
 # Features
-git+https://github.com/RedLicorice/sklearn-genetic.git@master
+# git+https://github.com/RedLicorice/sklearn-genetic.git@master
 git+https://github.com/g8a9/pyti.git@master
-# Parameter tuning
-tune-sklearn
-ray[tune]
+# Distributed operations
+dask[complete] # Dask Dataframe, Bag and Array
+distributed
+bokeh>=0.13.0 # For Dask Dashboard
+jupyter-server-proxy # Route to workers diagnostics web server
+dask_ml # Drop-in replacements for SKLearn API
+fsspec
+fastavro
+# Compression algos for data transfers across clusters
+python-snappy
+lz4

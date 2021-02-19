@@ -1,6 +1,6 @@
 import s3fs
 import logging
-from cryptoml_common.config import config
+from cryptoml_core.deps.config import config
 
 
 fs: s3fs.S3FileSystem = None
@@ -10,7 +10,7 @@ logging.getLogger('s3fs').setLevel(getattr(logging, config['storage']['s3']['log
 def get_fs() -> s3fs.S3FileSystem:
     global fs
     if not fs:
-        client = s3fs.S3FileSystem(
+        fs = s3fs.S3FileSystem(
           anon=False,
           use_ssl=config['storage']['s3']['use_ssl'].get(bool),
           key=config['storage']['s3']['access_key_id'].get(str),

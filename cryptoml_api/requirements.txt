@@ -3,20 +3,7 @@ fastapi
 uvicorn # Runtime
 python-multipart # For FastAPI File upload support
 werkzeug # Validation
-# App Configuration
-confuse
-pyyaml
-python-dotenv
-# MySQL ORM and client
-sqlalchemy
-sqlalchemy-utils
-pymysql
-pymongo
-uuid
-# InfluxDB Client
-influxdb
-# S3 Storage Client
-s3fs
+
 # Task Queueing and broker (redis) client
 celery # Queue
 celery[redis] # Redis support for Celery

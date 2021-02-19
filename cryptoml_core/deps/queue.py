@@ -1,5 +1,5 @@
 from celery import Celery
-from cryptoml_common.config import config
+from cryptoml_core.deps.config import config
 
 def make_celery():
     # Start Celery

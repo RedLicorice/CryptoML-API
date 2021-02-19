@@ -3,7 +3,6 @@ import logging
 # APP Dependencies
 from .storage_service import StorageService
 from .dataset_service import DatasetService
-from ..models.classification import Hyperparameters, SlidingWindowClassification, SplitClassification, ModelBenchmark
 from ..repositories.classification_repositories import HyperparametersRepository, BenchmarkRepository
 # CryptoML Lib Dependencies
 from cryptoml.models.grid_search import grid_search
@@ -12,10 +11,11 @@ from cryptoml.models.training import train_model
 from cryptoml.util.flattened_classification_report import flattened_classification_report
 from cryptoml.util.weighted_precision_score import get_weighted_precision_scorer
 from cryptoml.util.blocking_timeseries_split import BlockingTimeSeriesSplit
-from cryptoml.util.feature_importances import label_feature_importances
 from cryptoml.pipelines import get_pipeline
 # CryptoML Common Dependencies
-from cryptoml_common.util.timestamp import to_timestamp
+from cryptoml_core.util.timestamp import to_timestamp
+from cryptoml_core.models.classification import Hyperparameters, SlidingWindowClassification, SplitClassification, \
+    ModelBenchmark
 
 
 class ModelService:

@@ -1,6 +1,6 @@
 from typing import Optional, List
 from datetime import datetime
-from cryptoml_common.mongodb.document_model import DocumentModel
+from cryptoml_core.deps.mongodb.document_model import DocumentModel
 
 
 # Encapsulates model training hyperparameters, including:

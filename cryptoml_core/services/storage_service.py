@@ -1,8 +1,6 @@
 import pandas as pd
-from io import StringIO
-from botocore.exceptions import ClientError
 import pickle, json
-from cryptoml_common.s3 import get_fs
+from cryptoml_core.deps.s3 import get_fs
 import logging
 from shutil import copyfileobj
 

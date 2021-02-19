@@ -1,5 +1,5 @@
-from ..models.classification import Hyperparameters, ModelBenchmark
-from cryptoml_common.mongodb.document_repository import DocumentRepository
+from cryptoml_core.models.classification import Hyperparameters, ModelBenchmark
+from cryptoml_core.deps.mongodb.document_repository import DocumentRepository
 
 
 class HyperparametersRepository(DocumentRepository):

@@ -1,21 +1,18 @@
 from fastapi import FastAPI
 from . import endpoints
-from cryptoml_common.queue import make_celery
-from cryptoml_common.logging import setup_logger
+from cryptoml_core.deps.queue import make_celery
+from cryptoml_core.logging import setup_logger
 
 app = None
 celery = None
 
 def create_worker():
-    global celery, dask
+    global celery
     # Setup Logging
     setup_logger()
 
     # Start Celery
     celery = make_celery()
-
-    # Start Dask Client
-    # dask = make_dask_client()
 
     return celery
 
@@ -38,4 +35,7 @@ def create_app() -> FastAPI:
 
     return app
 
-
+if __name__ == '__main__':
+    import uvicorn
+    app = create_app()
+    uvicorn.run(app, host="0.0.0.0", port=8000)

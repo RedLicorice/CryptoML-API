@@ -1,5 +1,5 @@
 import pandas as pd
-from cryptoml_common.influxdb import get_dataframe_client
+from cryptoml_core.deps.influxdb import get_dataframe_client
 
 
 class FeatureRepository:

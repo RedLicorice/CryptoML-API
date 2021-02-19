@@ -5,36 +5,46 @@ services:
     image: redlicorice/cryptoml-api
     build:
       context: .
-      dockerfile: API.dockerfile
+      dockerfile: docker/API.dockerfile
     hostname: mlservice
     ports:
-      - "8000:5000"
+      - "8000:8000"
+    volumes:
+      - './.env:/app/.env'
+      - './config-docker.yml:/app/config.yml'
+      - './cryptoml:/app/cryptoml'
+      - './cryptoml_api:/app/cryptoml_api'
+      - './cryptoml_core:/app/cryptoml_core'
     networks:
       - cryptoml-network
       - mongodb-network
       - minio-network
       - redis-network
       - influxdb-network
+      - dask-network
 
   ml-worker1:
     image: redlicorice/cryptoml-api-worker
     build:
       context: .
-      dockerfile: Worker.dockerfile
+      dockerfile: docker/Worker.dockerfile
     hostname: mlservice
     volumes:
-      - './.env:/.env'
-      - './config-docker.yml:/config.yml'
+      - './.env:/app/.env'
+      - './config-docker.yml:/app/config.yml'
+      - './cryptoml:/app/cryptoml'
+      - './cryptoml_api:/app/cryptoml_api'
+      - './cryptoml_core:/app/cryptoml_core'
     networks:
       - cryptoml-network
       - mongodb-network
       - minio-network
       - redis-network
       - influxdb-network
+      - dask-network
 
 networks:
   cryptoml-network:
-
   minio-network:
     external: true
   mongodb-network:
@@ -42,4 +52,6 @@ networks:
   redis-network:
     external: true
   influxdb-network:
+    external: true
+  dask-network:
     external: true

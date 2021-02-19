@@ -1,7 +1,7 @@
-from ..repositories.feature_repository import FeatureRepository
-from ..models.classification import SplitClassification, SlidingWindowClassification
+from cryptoml_core.repositories.feature_repository import FeatureRepository
+from cryptoml_core.models.classification import SplitClassification, SlidingWindowClassification
 from sklearn.model_selection import train_test_split
-from cryptoml_common.util.timestamp import add_interval, sub_interval
+from cryptoml_core.util.timestamp import add_interval, sub_interval
 import pandas as pd
 
 class DatasetService:
