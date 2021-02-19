@@ -1,12 +1,12 @@
 version: '3.7'
 
 services:
-  celery-worker1:
-    image: redlicorice/cryptoml-celery-worker
+  celery-worker-1:
+    image: redlicorice/cryptoml-worker
+    container_name: celery-worker-1
     build:
       context: .
       dockerfile: docker/Worker.dockerfile
-    hostname: mlservice
     volumes:
       - './.env:/app/.env'
       - './config-docker.yml:/app/config.yml'
@@ -23,6 +23,7 @@ services:
 
 networks:
   cryptoml-network:
+    external: true
   minio-network:
     external: true
   mongodb-network:
