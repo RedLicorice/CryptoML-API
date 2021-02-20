@@ -11,6 +11,7 @@ from cryptoml.models.training import train_model
 from cryptoml.util.flattened_classification_report import flattened_classification_report
 from cryptoml.util.weighted_precision_score import get_weighted_precision_scorer
 from cryptoml.util.blocking_timeseries_split import BlockingTimeSeriesSplit
+from cryptoml.util.feature_importances import label_feature_importances
 from cryptoml.pipelines import get_pipeline
 # CryptoML Common Dependencies
 from cryptoml_core.util.timestamp import to_timestamp
@@ -67,8 +68,10 @@ class ModelService:
         # Test model parameters on the test set, using different windows
         test_reports = {}
         for _w in [30, 90, 150]:
-            test_reports[_w] = self.test_model(clf=clf, W=_w)
+            benchmark = self.test_model(clf=clf, W=_w)
+            test_reports[_w] = benchmark.dict()
 
+        feature_importances = label_feature_importances(gscv.best_estimator_, X_train.columns)
         # Return result and Hyperparameters
         return results_df, clf, test_reports
 

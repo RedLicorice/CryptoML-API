@@ -17,6 +17,7 @@ class Hyperparameters(DocumentModel):
     parameters: Optional[dict] = None
     features: Optional[List[str]] = []
 
+
 # Extends hyperparameters adding information required to reproduce a test-split classification
 # begin and end are used when querying the feature repository, not for filtering results indices.
 class SplitClassification(Hyperparameters):
@@ -41,3 +42,8 @@ class ModelBenchmark(DocumentModel):
     test_begin: str
     test_end: str
     window: Optional[int]
+
+
+class GridSearchResults(DocumentModel):
+    hyperparameters: Hyperparameters
+    feature_importances: Optional[dict] = {}

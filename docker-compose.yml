@@ -3,6 +3,7 @@ version: '3.7'
 services:
   cryptoml-api:
     image: redlicorice/cryptoml-api
+    container_name: cryptoml-api
     build:
       context: .
       dockerfile: docker/API.dockerfile

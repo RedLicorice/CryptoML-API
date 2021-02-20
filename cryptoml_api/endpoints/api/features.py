@@ -2,7 +2,7 @@ from fastapi import APIRouter, Form, File, UploadFile, Depends, HTTPException, B
 from fastapi.responses import PlainTextResponse
 from werkzeug.utils import secure_filename
 from typing import Optional
-from celery import current_app, states
+from cryptoml_core.deps.celery import current_app, states
 from cryptoml_core.services.storage_service import StorageService
 from cryptoml_core.services.feature_service import FeatureService
 from cryptoml_core.services.dataset_service import DatasetService

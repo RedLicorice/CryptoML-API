@@ -1,6 +1,6 @@
 from fastapi import FastAPI
 from . import endpoints
-from cryptoml_core.deps.queue import make_celery
+from cryptoml_core.deps.celery import make_celery
 from cryptoml_core.logging import setup_logger
 
 app = None

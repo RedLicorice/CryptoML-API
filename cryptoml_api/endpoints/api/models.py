@@ -1,5 +1,6 @@
 from fastapi import APIRouter, Body
 from cryptoml_core.models.classification import SlidingWindowClassification
+from cryptoml_core.deps.celery import current_app, states
 
 router = APIRouter()
 

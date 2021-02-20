@@ -1,5 +1,4 @@
-from celery import current_app
-import celery.states as states
+from cryptoml_core.deps.celery import current_app, states
 from fastapi import APIRouter, Body, HTTPException
 from cryptoml_core.services.model_service import ModelService
 from cryptoml_core.exceptions import MessageException
@@ -38,9 +37,8 @@ def grid_search(req: dict):
     req = SplitClassification(**req)
     # We want to optimize precision score for both BUY and SELL
     model_service = ModelService()
-    gscv_df, params = model_service.grid_search(req)
-
-    return params
+    gscv_df, params, report = model_service.grid_search(req)
+    return {'parameters': params.dict(), 'report': report}
 
 @router.get('/gridsearch/{task_id}')
 def check(task_id: str):

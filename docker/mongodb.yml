@@ -23,6 +23,7 @@ services:
 
   mongo-express:
     image: mongo-express:latest
+    container_name: mongo-express
     restart: always
     environment:
       - ME_CONFIG_MONGODB_ADMINUSERNAME=${MONGODB_ROOT_USER}

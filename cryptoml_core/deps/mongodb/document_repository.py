@@ -1,7 +1,7 @@
 from uuid import uuid4
 from pydantic import BaseModel
 from typing import List
-from cryptoml_core.deps.mongodb import Collection, Database, database
+from cryptoml_core.deps.mongodb import Collection, get_collection
 from cryptoml_core.util.timestamp import get_timestamp
 
 def get_uuid() -> str:
@@ -21,7 +21,7 @@ class DocumentRepository:
     collection: Collection = None
 
     def __init__(self):
-        self.collection = database[self.__collection__]
+        self.collection = get_collection(self.__collection__)
 
     def get(self, id: str):
         document = self.collection.find_one({"_id": id})

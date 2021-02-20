@@ -3,10 +3,10 @@ version: '3.7'
 services:
   redis:
     image: 'redis:6-alpine'
+    container_name: redis
     build:
       context: ./docker/redis
       dockerfile: Dockerfile
-    container_name: redis
     volumes:
       - /etc/localtime:/etc/localtime:ro
       - /etc/timezone:/etc/timezone:ro

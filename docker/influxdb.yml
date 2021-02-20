@@ -2,6 +2,7 @@ version: '2'
 services:
   influxdb:
     image: influxdb:latest
+    container_name: influxdb
     ports:
       - '8086:8086'
     volumes:
@@ -17,6 +18,7 @@ services:
           - influxdb
   chronograf:
     image: chronograf:latest
+    container_name: chronograf
     ports:
       - '127.0.0.1:8888:8888'
     volumes:
@@ -34,6 +36,7 @@ services:
           - chronograph
   grafana:
     image: grafana/grafana:latest
+    container_name: grafana
     ports:
       - '3000:3000'
     volumes:

@@ -1,4 +1,4 @@
-from celery import Celery
+from celery import Celery, current_app, states
 from cryptoml_core.deps.config import config
 
 def make_celery():
