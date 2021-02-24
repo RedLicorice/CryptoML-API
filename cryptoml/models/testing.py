@@ -1,44 +1,43 @@
-import numpy as np
 import pandas as pd
 from .training import train_model, predict_model
+from joblib import Parallel, delayed, parallel_backend
+from cryptoml_core.deps.dask import get_client
 
 
-def trailing_window_test(
-        est, parameters, W, X_train: pd.DataFrame, y_train: pd.Series, X_test: pd.DataFrame, y_test: pd.Series, **kwargs
-    ):
-    if X_train.shape[0] <= W:
-        raise Exception("Too few training datapoints for window {}".format(W))
-    if y_train.shape[0] <= W:
-        raise Exception("Too few training labels for window {}".format(W))
-    features = np.concatenate((X_train[:-W], X_test))
-    target = np.concatenate((y_train[:-W], y_test))
+def _test_window(est, parameters, X, y, e):
+    # Get data for this window
+    train_X = X.iloc[:-1, :]
+    train_y = y.iloc[:-1]
+    # test_X = X.iloc[-1, :].values.reshape(1, -1) # Test contains a single sample so need to reshape
+    test_X = X.iloc[-1:, :] # This way it returns a pandas dataframe with a single row
+    test_y = y.iloc[-1]
+    est = train_model(
+        est=est,
+        parameters=parameters,
+        X_train=train_X,
+        y_train=train_y
+    )
+    pred = est.predict(test_X)
+    return {
+        'time': e,
+        'predicted': pred[0],
+        'label': test_y
+    }
 
-    predictions = []
-    labels = []
 
-    # Go in reverse
-    window = 1
-    for i in range(features.shape[0], 0, -1):
-        if i < (W + 1):
-            break
-        train_start = i - W - 1
-        train_end = i - 1
-        test_start = i - 1
-        test_end = i
-        # print('[Window {}]\tTrain: B={} E={}\tTest: B={} E={}'.format(window, train_start, train_end, test_start, test_end))
-        _X_train = features[train_start:train_end]
-        _y_train = target[train_start:train_end]
-        _X_test = features[test_start:test_end]
-        _y_test = target[test_start:test_end]
+def test_windows(est, parameters, X, y, ranges):
+    results = [_test_window(est, parameters, X.loc[b:e, :], y.loc[b:e], e) for b, e in ranges]
+    df = pd.DataFrame(results)
+    # df['time'] = pd.to_datetime(df.time)
+    df = df.set_index('time')
+    return df
 
-        _est = train_model(est, parameters, X_train, y_train)
-        pred = predict_model(_est, _X_test)
 
-        predictions.append(pred[0])
-        labels.append(_y_test[0])
-        window += 1
-        # print('\t Expect: {} Predict: {}'.format(_y_test[0], pred[0]))
-
-    labels_arr = np.flip(np.array(labels), axis=0)
-    predictions_arr = np.flip(np.array(predictions), axis=0)
-    return labels_arr, predictions_arr
+def test_windows_parallel(est, parameters, X, y, ranges):
+    dask = get_client()
+    with parallel_backend('dask'):
+        results = Parallel(n_jobs=-1)(delayed(_test_window)(est, parameters, X.loc[b:e, :], y.loc[b:e], e) for b, e in ranges)
+        df = pd.DataFrame(results)
+        # df['time'] = pd.to_datetime(df.time)
+        df = df.set_index('time')
+        return df

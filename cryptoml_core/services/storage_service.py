@@ -1,9 +1,14 @@
 import pandas as pd
+import dask.dataframe as dd
 import pickle, json
 from cryptoml_core.deps.s3 import get_fs, s3_config
 import logging
 from shutil import copyfileobj
 
+
+"""
+    Handles object storage to and from S3
+"""
 class StorageService:
 
     def __init__(self):
@@ -65,8 +70,11 @@ class StorageService:
         # df.to_csv(csv_buffer, **kwargs)
         # self.create_bucket(bucket)
         # self.s3.put_object(Bucket=bucket, Key=name, Body=csv_buffer.getvalue())
-        df.to_csv('s3://{}/{}'.format(bucket,name), index_label=kwargs.get('index_label', 'time'), \
-                  storage_options=s3_config)
+        df.to_csv(
+            's3://{}/{}'.format(bucket,name),
+            index_label=kwargs.get('index_label', 'time'),
+            storage_options=s3_config
+        )
 
     def load_df(self, bucket, name, **kwargs):
         # csv_obj = self.s3.get_object(Bucket=bucket, Key=name)
@@ -74,5 +82,17 @@ class StorageService:
         # csv_string = body.read().decode('utf-8')
         # df = pd.read_csv(StringIO(csv_string), **kwargs)
         # return df
-        pd.read_csv('s3://{}/{}'.format(bucket,name), index_col=kwargs.get('index_col', 'time'), parse_dates=True, \
-                    storage_options=s3_config)
+        return pd.read_csv(
+            's3://{}/{}'.format(bucket, name),
+            index_col=kwargs.get('index_col', 'time'),
+            parse_dates=True,
+            storage_options=s3_config
+        )
+
+    def load_dask_df(self, bucket, name, **kwargs):
+        return dd.read_csv(
+            's3://{}/{}'.format(bucket,name),
+            index_col=kwargs.get('index_col', 'time'),
+            parse_dates=True,
+            storage_options=s3_config
+        )

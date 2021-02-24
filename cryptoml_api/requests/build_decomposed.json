@@ -1,0 +1,186 @@
+[
+  {
+    "symbol": "ADAUSD",
+    "builder": "decomposed",
+    "args": {
+        "ohlcv": "ohlcv",
+        "coinmetrics": "coinmetrics"
+    }
+  },
+  {
+    "symbol": "BCHUSD",
+    "builder": "decomposed",
+    "args": {
+        "ohlcv": "ohlcv",
+        "coinmetrics": "coinmetrics"
+    }
+  },
+  {
+    "symbol": "BNBUSD",
+    "builder": "decomposed",
+    "args": {
+        "ohlcv": "ohlcv",
+        "coinmetrics": "coinmetrics"
+    }
+  },
+  {
+    "symbol": "BTCUSD",
+    "builder": "decomposed",
+    "args": {
+        "ohlcv": "ohlcv",
+        "coinmetrics": "coinmetrics"
+    }
+  },
+  {
+    "symbol": "BTGUSD",
+    "builder": "decomposed",
+    "args": {
+        "ohlcv": "ohlcv",
+        "coinmetrics": "coinmetrics"
+    }
+  },
+  {
+    "symbol": "DASHUSD",
+    "builder": "decomposed",
+    "args": {
+        "ohlcv": "ohlcv",
+        "coinmetrics": "coinmetrics"
+    }
+  },
+  {
+    "symbol": "DOGEUSD",
+    "builder": "decomposed",
+    "args": {
+        "ohlcv": "ohlcv",
+        "coinmetrics": "coinmetrics"
+    }
+  },
+  {
+    "symbol": "EOSUSD",
+    "builder": "decomposed",
+    "args": {
+        "ohlcv": "ohlcv",
+        "coinmetrics": "coinmetrics"
+    }
+  },
+  {
+    "symbol": "ETCUSD",
+    "builder": "decomposed",
+    "args": {
+        "ohlcv": "ohlcv",
+        "coinmetrics": "coinmetrics"
+    }
+  },
+  {
+    "symbol": "ETHUSD",
+    "builder": "decomposed",
+    "args": {
+        "ohlcv": "ohlcv",
+        "coinmetrics": "coinmetrics"
+    }
+  },
+  {
+    "symbol": "LINKUSD",
+    "builder": "decomposed",
+    "args": {
+        "ohlcv": "ohlcv",
+        "coinmetrics": "coinmetrics"
+    }
+  },
+  {
+    "symbol": "LTCUSD",
+    "builder": "decomposed",
+    "args": {
+        "ohlcv": "ohlcv",
+        "coinmetrics": "coinmetrics"
+    }
+  },
+  {
+    "symbol": "NEOUSD",
+    "builder": "decomposed",
+    "args": {
+        "ohlcv": "ohlcv",
+        "coinmetrics": "coinmetrics"
+    }
+  },
+  {
+    "symbol": "QTUMUSD",
+    "builder": "decomposed",
+    "args": {
+        "ohlcv": "ohlcv",
+        "coinmetrics": "coinmetrics"
+    }
+  },
+  {
+    "symbol": "TRXUSD",
+    "builder": "decomposed",
+    "args": {
+        "ohlcv": "ohlcv",
+        "coinmetrics": "coinmetrics"
+    }
+  },
+  {
+    "symbol": "USDTUSD",
+    "builder": "decomposed",
+    "args": {
+        "ohlcv": "ohlcv",
+        "coinmetrics": "coinmetrics"
+    }
+  },
+  {
+    "symbol": "VENUSD",
+    "builder": "decomposed",
+    "args": {
+        "ohlcv": "ohlcv",
+        "coinmetrics": "coinmetrics"
+    }
+  },
+  {
+    "symbol": "WAVESUSD",
+    "builder": "decomposed",
+    "args": {
+        "ohlcv": "ohlcv",
+        "coinmetrics": "coinmetrics"
+    }
+  },
+  {
+    "symbol": "XEMUSD",
+    "builder": "decomposed",
+    "args": {
+        "ohlcv": "ohlcv",
+        "coinmetrics": "coinmetrics"
+    }
+  },
+  {
+    "symbol": "XMRUSD",
+    "builder": "decomposed",
+    "args": {
+        "ohlcv": "ohlcv",
+        "coinmetrics": "coinmetrics"
+    }
+  },
+  {
+    "symbol": "XRPUSD",
+    "builder": "decomposed",
+    "args": {
+      "ohlcv": "ohlcv",
+        "coinmetrics": "coinmetrics"
+    }
+  },
+  {
+    "symbol": "ZECUSD",
+    "builder": "decomposed",
+    "args": {
+        "ohlcv": "ohlcv",
+        "coinmetrics": "coinmetrics"
+    }
+  },
+  {
+    "symbol": "ZRXUSD",
+    "builder": "decomposed",
+    "args": {
+        "ohlcv": "ohlcv",
+        "coinmetrics": "coinmetrics"
+    }
+  }
+]

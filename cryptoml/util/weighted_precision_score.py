@@ -16,7 +16,7 @@ def weighted_macro_precision_score(y_true, y_pred, **kwargs):
     result = 0.00
     total_weight = np.sum([v for k,v in weights.items()])
     for label in unique:
-        result += report[str(label)]['precision'] * weights[label]
+        result += report[str(label)]['precision'] * weights[str(label)]
     result /= max(total_weight, 1) # We expect to divide a weighted average by the sum of the weights
     return result
 

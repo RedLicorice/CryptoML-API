@@ -4,14 +4,14 @@ from cryptoml_core.exceptions import MessageException
 from cryptoml.builders import BUILDER_LIST
 import importlib, logging, inspect
 
-class FeatureService:
+
+"""
+    Builds base datasets (eg OHLCV, coinmetrics) into useable datasets.
+"""
+class DatasetBuildingService:
     def __init__(self):
         self.repo: FeatureRepository = FeatureRepository()
         self.storage: StorageService = StorageService()
-
-    def import_from_storage(self, bucket: str, name: str, dataset: str, symbol: str):
-        df = self.storage.load_df(bucket, name, parse_dates=True, index_col='Date')
-        self.repo.put_features(df, dataset, symbol)
 
     def get_builders(self):
         result = {}
@@ -61,10 +61,10 @@ class FeatureService:
         builder_module = self.get_builder(builder)
         args = self.resolve_builder_args(builder_module, args, symbol)
         features = builder_module.build(**args)
-        if kwargs.get('store', True):
-            if builder == 'target':
-                for c in features.columns:
-                    self.repo.put_target(features[c], c, symbol)
-            else:
-                self.repo.put_features(features, builder, symbol)
+        # if kwargs.get('store', True):
+        #     if builder == 'target':
+        #         for c in features.columns:
+        #             self.repo.put_target(features[c], c, symbol)
+        #     else:
+        #         self.repo.put_features(features, builder, symbol)
         return features

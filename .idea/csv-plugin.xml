@@ -17,6 +17,20 @@
             </Attribute>
           </value>
         </entry>
+        <entry key="\.venv-3.8\Lib\site-packages\celery\states.py">
+          <value>
+            <Attribute>
+              <option name="separator" value="," />
+            </Attribute>
+          </value>
+        </entry>
+        <entry key="\.venv-3.8\Lib\site-packages\xgboost\sklearn.py">
+          <value>
+            <Attribute>
+              <option name="separator" value="," />
+            </Attribute>
+          </value>
+        </entry>
         <entry key="\API.dockerfile">
           <value>
             <Attribute>
@@ -52,6 +66,27 @@
             </Attribute>
           </value>
         </entry>
+        <entry key="\cryptoml\models\testing.py">
+          <value>
+            <Attribute>
+              <option name="separator" value="," />
+            </Attribute>
+          </value>
+        </entry>
+        <entry key="\cryptoml\models\training.py">
+          <value>
+            <Attribute>
+              <option name="separator" value="," />
+            </Attribute>
+          </value>
+        </entry>
+        <entry key="\cryptoml\pipelines\debug_xgboost.py">
+          <value>
+            <Attribute>
+              <option name="separator" value="," />
+            </Attribute>
+          </value>
+        </entry>
         <entry key="\cryptoml\util\__init__.py">
           <value>
             <Attribute>
@@ -66,10 +101,31 @@
             </Attribute>
           </value>
         </entry>
+        <entry key="\cryptoml_api\endpoints\api\features.py">
+          <value>
+            <Attribute>
+              <option name="separator" value=":" />
+            </Attribute>
+          </value>
+        </entry>
         <entry key="\cryptoml_api\endpoints\api\gridsearch.py">
           <value>
             <Attribute>
               <option name="separator" value="," />
+            </Attribute>
+          </value>
+        </entry>
+        <entry key="\cryptoml_api\endpoints\api\tasks.py">
+          <value>
+            <Attribute>
+              <option name="separator" value=":" />
+            </Attribute>
+          </value>
+        </entry>
+        <entry key="\cryptoml_api\endpoints\api\tuning.py">
+          <value>
+            <Attribute>
+              <option name="separator" value=":" />
             </Attribute>
           </value>
         </entry>
@@ -105,6 +161,13 @@
           <value>
             <Attribute>
               <option name="separator" value=":" />
+            </Attribute>
+          </value>
+        </entry>
+        <entry key="\cryptoml_api\requests\import_ohlcv.json">
+          <value>
+            <Attribute>
+              <option name="separator" value="&#9;" />
             </Attribute>
           </value>
         </entry>
@@ -157,7 +220,35 @@
             </Attribute>
           </value>
         </entry>
+        <entry key="\cryptoml_core\deps\influxdb\__init__.py">
+          <value>
+            <Attribute>
+              <option name="separator" value="," />
+            </Attribute>
+          </value>
+        </entry>
+        <entry key="\cryptoml_core\deps\influxdb\queries.py">
+          <value>
+            <Attribute>
+              <option name="separator" value="," />
+            </Attribute>
+          </value>
+        </entry>
+        <entry key="\cryptoml_core\deps\influxdb\timeseries_repository.py">
+          <value>
+            <Attribute>
+              <option name="separator" value=":" />
+            </Attribute>
+          </value>
+        </entry>
         <entry key="\cryptoml_core\deps\mongodb\__init__.py">
+          <value>
+            <Attribute>
+              <option name="separator" value=":" />
+            </Attribute>
+          </value>
+        </entry>
+        <entry key="\cryptoml_core\deps\mongodb\document_repository.py">
           <value>
             <Attribute>
               <option name="separator" value=":" />
@@ -185,6 +276,55 @@
             </Attribute>
           </value>
         </entry>
+        <entry key="\cryptoml_core\models\tuning.py">
+          <value>
+            <Attribute>
+              <option name="separator" value=":" />
+            </Attribute>
+          </value>
+        </entry>
+        <entry key="\cryptoml_core\repositories\classification_repositories.py">
+          <value>
+            <Attribute>
+              <option name="separator" value=":" />
+            </Attribute>
+          </value>
+        </entry>
+        <entry key="\cryptoml_core\repositories\dataset_repository.py">
+          <value>
+            <Attribute>
+              <option name="separator" value=":" />
+            </Attribute>
+          </value>
+        </entry>
+        <entry key="\cryptoml_core\repositories\feature_repository.py">
+          <value>
+            <Attribute>
+              <option name="separator" value="," />
+            </Attribute>
+          </value>
+        </entry>
+        <entry key="\cryptoml_core\requirements.txt">
+          <value>
+            <Attribute>
+              <option name="separator" value="," />
+            </Attribute>
+          </value>
+        </entry>
+        <entry key="\cryptoml_core\services\dataset_service.py">
+          <value>
+            <Attribute>
+              <option name="separator" value="," />
+            </Attribute>
+          </value>
+        </entry>
+        <entry key="\cryptoml_core\services\feature_service.py">
+          <value>
+            <Attribute>
+              <option name="separator" value="," />
+            </Attribute>
+          </value>
+        </entry>
         <entry key="\cryptoml_core\services\model_service.py">
           <value>
             <Attribute>
@@ -192,10 +332,31 @@
             </Attribute>
           </value>
         </entry>
+        <entry key="\cryptoml_core\services\tuning_service.py">
+          <value>
+            <Attribute>
+              <option name="separator" value="," />
+            </Attribute>
+          </value>
+        </entry>
+        <entry key="\cryptoml_core\util\timestamp.py">
+          <value>
+            <Attribute>
+              <option name="separator" value=":" />
+            </Attribute>
+          </value>
+        </entry>
         <entry key="\dask-test.py">
           <value>
             <Attribute>
               <option name="separator" value="," />
+            </Attribute>
+          </value>
+        </entry>
+        <entry key="\docker-compose.celery.yml">
+          <value>
+            <Attribute>
+              <option name="separator" value=":" />
             </Attribute>
           </value>
         </entry>
@@ -235,6 +396,13 @@
           </value>
         </entry>
         <entry key="\ray-azure.yaml">
+          <value>
+            <Attribute>
+              <option name="separator" value="," />
+            </Attribute>
+          </value>
+        </entry>
+        <entry key="\test.py">
           <value>
             <Attribute>
               <option name="separator" value="," />

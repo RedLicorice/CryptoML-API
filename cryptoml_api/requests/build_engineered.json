@@ -1,0 +1,186 @@
+[
+  {
+    "symbol": "ADAUSD",
+    "builder": "engineered",
+    "args": {
+        "ohlcv": "ohlcv",
+        "coinmetrics": "coinmetrics"
+    }
+  },
+  {
+    "symbol": "BCHUSD",
+    "builder": "engineered",
+    "args": {
+        "ohlcv": "ohlcv",
+        "coinmetrics": "coinmetrics"
+    }
+  },
+  {
+    "symbol": "BNBUSD",
+    "builder": "engineered",
+    "args": {
+        "ohlcv": "ohlcv",
+        "coinmetrics": "coinmetrics"
+    }
+  },
+  {
+    "symbol": "BTCUSD",
+    "builder": "engineered",
+    "args": {
+        "ohlcv": "ohlcv",
+        "coinmetrics": "coinmetrics"
+    }
+  },
+  {
+    "symbol": "BTGUSD",
+    "builder": "engineered",
+    "args": {
+        "ohlcv": "ohlcv",
+        "coinmetrics": "coinmetrics"
+    }
+  },
+  {
+    "symbol": "DASHUSD",
+    "builder": "engineered",
+    "args": {
+        "ohlcv": "ohlcv",
+        "coinmetrics": "coinmetrics"
+    }
+  },
+  {
+    "symbol": "DOGEUSD",
+    "builder": "engineered",
+    "args": {
+        "ohlcv": "ohlcv",
+        "coinmetrics": "coinmetrics"
+    }
+  },
+  {
+    "symbol": "EOSUSD",
+    "builder": "engineered",
+    "args": {
+        "ohlcv": "ohlcv",
+        "coinmetrics": "coinmetrics"
+    }
+  },
+  {
+    "symbol": "ETCUSD",
+    "builder": "engineered",
+    "args": {
+        "ohlcv": "ohlcv",
+        "coinmetrics": "coinmetrics"
+    }
+  },
+  {
+    "symbol": "ETHUSD",
+    "builder": "engineered",
+    "args": {
+        "ohlcv": "ohlcv",
+        "coinmetrics": "coinmetrics"
+    }
+  },
+  {
+    "symbol": "LINKUSD",
+    "builder": "engineered",
+    "args": {
+        "ohlcv": "ohlcv",
+        "coinmetrics": "coinmetrics"
+    }
+  },
+  {
+    "symbol": "LTCUSD",
+    "builder": "engineered",
+    "args": {
+        "ohlcv": "ohlcv",
+        "coinmetrics": "coinmetrics"
+    }
+  },
+  {
+    "symbol": "NEOUSD",
+    "builder": "engineered",
+    "args": {
+        "ohlcv": "ohlcv",
+        "coinmetrics": "coinmetrics"
+    }
+  },
+  {
+    "symbol": "QTUMUSD",
+    "builder": "engineered",
+    "args": {
+        "ohlcv": "ohlcv",
+        "coinmetrics": "coinmetrics"
+    }
+  },
+  {
+    "symbol": "TRXUSD",
+    "builder": "engineered",
+    "args": {
+        "ohlcv": "ohlcv",
+        "coinmetrics": "coinmetrics"
+    }
+  },
+  {
+    "symbol": "USDTUSD",
+    "builder": "engineered",
+    "args": {
+        "ohlcv": "ohlcv",
+        "coinmetrics": "coinmetrics"
+    }
+  },
+  {
+    "symbol": "VENUSD",
+    "builder": "engineered",
+    "args": {
+        "ohlcv": "ohlcv",
+        "coinmetrics": "coinmetrics"
+    }
+  },
+  {
+    "symbol": "WAVESUSD",
+    "builder": "engineered",
+    "args": {
+        "ohlcv": "ohlcv",
+        "coinmetrics": "coinmetrics"
+    }
+  },
+  {
+    "symbol": "XEMUSD",
+    "builder": "engineered",
+    "args": {
+        "ohlcv": "ohlcv",
+        "coinmetrics": "coinmetrics"
+    }
+  },
+  {
+    "symbol": "XMRUSD",
+    "builder": "engineered",
+    "args": {
+        "ohlcv": "ohlcv",
+        "coinmetrics": "coinmetrics"
+    }
+  },
+  {
+    "symbol": "XRPUSD",
+    "builder": "engineered",
+    "args": {
+      "ohlcv": "ohlcv",
+        "coinmetrics": "coinmetrics"
+    }
+  },
+  {
+    "symbol": "ZECUSD",
+    "builder": "engineered",
+    "args": {
+        "ohlcv": "ohlcv",
+        "coinmetrics": "coinmetrics"
+    }
+  },
+  {
+    "symbol": "ZRXUSD",
+    "builder": "engineered",
+    "args": {
+        "ohlcv": "ohlcv",
+        "coinmetrics": "coinmetrics"
+    }
+  }
+]

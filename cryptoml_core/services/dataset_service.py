@@ -1,72 +1,92 @@
 from cryptoml_core.repositories.feature_repository import FeatureRepository
-from cryptoml_core.models.classification import SplitClassification, SlidingWindowClassification
-from sklearn.model_selection import train_test_split
-from cryptoml_core.util.timestamp import add_interval, sub_interval
-import pandas as pd
+from cryptoml_core.models.dataset import Dataset
+from cryptoml_core.repositories.dataset_repository import DatasetRepository
+from cryptoml_core.util.timestamp import to_timestamp
+from cryptoml_core.services.dataset_building_service import DatasetBuildingService
+from cryptoml_core.services.storage_service import StorageService
+
+
+def get_feature_indices(df):
+    feature_indices = {}
+    global_first = None
+    global_last = None
+    for c in df.columns:
+        _first = df[c].first_valid_index()
+        _last = df[c].last_valid_index()
+        feature_indices[c] = {'first': to_timestamp(_first), 'last': to_timestamp(_last)}
+        if not global_first or _first > global_first:
+            global_first = _first
+        if not global_last or _last < global_last:
+            global_last = _last
+    return to_timestamp(global_first), to_timestamp(global_last), feature_indices
 
 class DatasetService:
     def __init__(self):
-        self.repo: FeatureRepository = FeatureRepository()
+        self.repo: DatasetRepository = DatasetRepository()
+        self.feature_repo: FeatureRepository = FeatureRepository()
+        self.storage: StorageService = StorageService()
 
-    def get_dataset(self, symbol, dataset=None, target=None, **kwargs):
-        results = []
-        if dataset:
-            X = self.repo.get_features(dataset, symbol, **kwargs)
-            results.append(X)
-        if target:
-            y = self.repo.get_features(target, symbol, **kwargs)
-            results.append(y)
-        return pd.concat(results, axis='columns')
+    # Use "DatasetBuildingService" to build a dataset from existing bases
+    def build_dataset(self, symbol, builder, args):
+        service = DatasetBuildingService()
+        df = service.build_dataset(symbol, builder, args)
+        return self.create_dataset(df, builder, symbol)
 
-    # Typical train-test split, specifying training portion
-    # If begin/end kwargs are specified, the result of time filtering is split according
-    # to the split parameter.
-    def get_classification_split(self, clf: SplitClassification, **kwargs):
-        X = self.repo.get_features(clf.dataset, clf.symbol, begin=clf.begin, end=clf.end)
-        y = self.repo.get_target(clf.target, clf.symbol,  begin=clf.begin, end=clf.end)
-        # If request parameters only includes a subset of the features, select them now
-        if clf.features:
-            X = X.loc[:, clf.features]
-        # Ensure features and targets have the same indices!
-        # If |features| > |targets|, "join" over target indices
-        if X.shape[0] > y.shape[0]:
-            X = X.loc[y.index, :]
-        # If |features| < |targets|, "join" over features indices
-        elif X.shape[0] < y.shape[0]:
-            y = y.loc[X.index]
-        X_train, X_test, y_train, y_test = train_test_split(
-            X, y,
-            shuffle=False,
-            train_size=clf.split
+    # Import dataset from s3 storage
+    def import_from_storage(self, bucket: str, filename: str, name: str, symbol: str, **kwargs):
+        df = self.storage.load_df(bucket, filename, parse_dates=True, index_col=kwargs.get('index_col', 'Date'))
+        df = df.astype({c: 'float64' for c in df.columns})
+        return self.create_dataset(df, name, symbol)
+
+    # Create a Dataset instance
+    def create_dataset(self, df, name, symbol):
+        storage_path = '{}-{}.csv'.format(name, symbol)
+        _first, _last, _indices = get_feature_indices(df)
+        self.storage.save_df(df, 'datasets', storage_path)
+        self.feature_repo.put_features(df, name, symbol)
+        item = Dataset(
+            name=name,  # Name of the dataset
+            ticker=symbol,  # Ticker name, eg BTC or BTCUSD
+            count=df.shape[0],  # Number of entries
+            index_min=to_timestamp(df.index.min()),  # Timestamp of first record
+            index_max=to_timestamp(df.index.max()), # Timestamp of last record
+            # valid_index_min=to_timestamp(df.first_valid_index()),  # Timestamp of first record
+            # valid_index_max=to_timestamp(df.last_valid_index()),  # Timestamp of last record
+            valid_index_min=_first,  # Timestamp of first record
+            valid_index_max=_last,  # Timestamp of last record
+            interval={'days': 1},  # Timedelta args for sampling interval of the features
+            features_path=storage_path,  # S3 Storage bucket location
+            features=[c for c in df.columns],  # Name of included columns
+            feature_indices=_indices
         )
-        return X_train, X_test, y_train, y_test
+        return self.repo.create(item)
 
-    # Sliding window without splits. Does not take into account the number of data points, but
-    # the actual time. Default unit for window is 'days', can be changed to any of datetime.timedelta
-    # attributes.
-    def get_classification_window(self, clf: SlidingWindowClassification, **kwargs):
-        # Beginning of the time interval included in the window
-        # Following python's standard - [begin, end[ - we add one interval to get 'date' 's data in the
-        # test set.
-        begin = sub_interval(clf.index, amount=clf.train_window, interval=clf.window_interval)
-        end = add_interval(clf.index, amount=clf.test_window, interval=clf.window_interval)
-        # Get data from repository
-        X = self.repo.get_features(clf.dataset, clf.symbol, begin=begin, end=end, **kwargs)
-        y = self.repo.get_target(clf.target, clf.symbol, begin=begin, end=end)
-        # If request parameters only includes a subset of the features, select them now
-        if clf.features:
-            X = X.loc[:, clf.features]
-        # Ensure features and targets have the same indices!
-        # If |features| > |targets|, "join" over target indices
-        if X.shape[0] > y.shape[0]:
-            X = X.loc[y.index, :]
-        # If |features| < |targets|, "join" over features indices
-        elif X.shape[0] < y.shape[0]:
-            y = y.loc[X.index]
-        # Use train_test_split with integer count. This way we get a hassle-free split
-        X_train, X_test, y_train, y_test = train_test_split(
-            X, y,
-            shuffle=False,
-            test_size=clf.test_window
-        )
-        return X_train, X_test, y_train, y_test
+
+    def fix(self):
+        result = []
+        for d in self.repo.iterable():
+            if not d.feature_indices:
+                df = self.feature_repo.get_features(d.name, d.ticker, first=d.index_min, last=d.index_max)
+                d.valid_index_min, d.valid_index_max, d.feature_indices = get_feature_indices(df)
+                self.repo.update(d.id, d)
+                result.append(d)
+        return result
+
+    def get_dataset(self, name, symbol) -> Dataset:
+        return self.repo.find_by_dataset_and_symbol(name, symbol)
+
+    def find_by_symbol(self, symbol):
+        return self.repo.yield_by_symbol(symbol)
+
+    def all(self):
+        return self.repo.iterable()
+
+    def get_features(self, name, symbol, begin, end):
+        # storage_path = '{}-{}.csv'.format(name, symbol)
+        # self.storage.load_df('datasets', storage_path)
+        return self.feature_repo.get_features(name, symbol, first=begin, last=end)
+
+    def get_target(self, name, symbol, begin, end):
+        # storage_path = '{}-{}.csv'.format(name, symbol)
+        # self.storage.load_df('datasets', storage_path)
+        return self.feature_repo.get_target(name, symbol, first=begin, last=end)

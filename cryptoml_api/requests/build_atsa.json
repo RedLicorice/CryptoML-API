@@ -1,0 +1,163 @@
+[
+  {
+    "symbol": "ADAUSD",
+    "builder": "atsa",
+    "args": {
+        "ohlcv": "ohlcv"
+    }
+  },
+  {
+    "symbol": "BCHUSD",
+    "builder": "atsa",
+    "args": {
+        "ohlcv": "ohlcv"
+    }
+  },
+  {
+    "symbol": "BNBUSD",
+    "builder": "atsa",
+    "args": {
+        "ohlcv": "ohlcv"
+    }
+  },
+  {
+    "symbol": "BTCUSD",
+    "builder": "atsa",
+    "args": {
+        "ohlcv": "ohlcv"
+    }
+  },
+  {
+    "symbol": "BTGUSD",
+    "builder": "atsa",
+    "args": {
+        "ohlcv": "ohlcv"
+    }
+  },
+  {
+    "symbol": "DASHUSD",
+    "builder": "atsa",
+    "args": {
+        "ohlcv": "ohlcv"
+    }
+  },
+  {
+    "symbol": "DOGEUSD",
+    "builder": "atsa",
+    "args": {
+        "ohlcv": "ohlcv"
+    }
+  },
+  {
+    "symbol": "EOSUSD",
+    "builder": "atsa",
+    "args": {
+        "ohlcv": "ohlcv"
+    }
+  },
+  {
+    "symbol": "ETCUSD",
+    "builder": "atsa",
+    "args": {
+        "ohlcv": "ohlcv"
+    }
+  },
+  {
+    "symbol": "ETHUSD",
+    "builder": "atsa",
+    "args": {
+        "ohlcv": "ohlcv"
+    }
+  },
+  {
+    "symbol": "LINKUSD",
+    "builder": "atsa",
+    "args": {
+        "ohlcv": "ohlcv"
+    }
+  },
+  {
+    "symbol": "LTCUSD",
+    "builder": "atsa",
+    "args": {
+        "ohlcv": "ohlcv"
+    }
+  },
+  {
+    "symbol": "NEOUSD",
+    "builder": "atsa",
+    "args": {
+        "ohlcv": "ohlcv"
+    }
+  },
+  {
+    "symbol": "QTUMUSD",
+    "builder": "atsa",
+    "args": {
+        "ohlcv": "ohlcv"
+    }
+  },
+  {
+    "symbol": "TRXUSD",
+    "builder": "atsa",
+    "args": {
+        "ohlcv": "ohlcv"
+    }
+  },
+  {
+    "symbol": "USDTUSD",
+    "builder": "atsa",
+    "args": {
+        "ohlcv": "ohlcv"
+    }
+  },
+  {
+    "symbol": "VENUSD",
+    "builder": "atsa",
+    "args": {
+        "ohlcv": "ohlcv"
+    }
+  },
+  {
+    "symbol": "WAVESUSD",
+    "builder": "atsa",
+    "args": {
+        "ohlcv": "ohlcv"
+    }
+  },
+  {
+    "symbol": "XEMUSD",
+    "builder": "atsa",
+    "args": {
+        "ohlcv": "ohlcv"
+    }
+  },
+  {
+    "symbol": "XMRUSD",
+    "builder": "atsa",
+    "args": {
+        "ohlcv": "ohlcv"
+    }
+  },
+  {
+    "symbol": "XRPUSD",
+    "builder": "atsa",
+    "args": {
+      "ohlcv": "ohlcv"
+    }
+  },
+  {
+    "symbol": "ZECUSD",
+    "builder": "atsa",
+    "args": {
+        "ohlcv": "ohlcv"
+    }
+  },
+  {
+    "symbol": "ZRXUSD",
+    "builder": "atsa",
+    "args": {
+        "ohlcv": "ohlcv"
+    }
+  }
+]

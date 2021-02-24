@@ -1,0 +1,146 @@
+[
+	{
+		"bucket": "temp-uploads/ohlcv",
+		"name": "ada.csv",
+		"dataset": "ohlcv",
+		"symbol": "ADAUSD"
+	},
+	{
+		"bucket": "temp-uploads/ohlcv",
+		"name": "bch.csv",
+		"dataset": "ohlcv",
+		"symbol": "BCHUSD"
+	},
+	{
+		"bucket": "temp-uploads/ohlcv",
+		"name": "bnb.csv",
+		"dataset": "ohlcv",
+		"symbol": "BNBUSD"
+	},
+	{
+		"bucket": "temp-uploads/ohlcv",
+		"name": "btc.csv",
+		"dataset": "ohlcv",
+		"symbol": "BTCUSD"
+	},
+	{
+		"bucket": "temp-uploads/ohlcv",
+		"name": "btg.csv",
+		"dataset": "ohlcv",
+		"symbol": "BTGUSD"
+	},
+	{
+		"bucket": "temp-uploads/ohlcv",
+		"name": "dash.csv",
+		"dataset": "ohlcv",
+		"symbol": "DASHUSD"
+	},
+	{
+		"bucket": "temp-uploads/ohlcv",
+		"name": "doge.csv",
+		"dataset": "ohlcv",
+		"symbol": "DOGEUSD"
+	},
+	{
+		"bucket": "temp-uploads/ohlcv",
+		"name": "eos.csv",
+		"dataset": "ohlcv",
+		"symbol": "EOSUSD"
+	},
+	{
+		"bucket": "temp-uploads/ohlcv",
+		"name": "etc.csv",
+		"dataset": "ohlcv",
+		"symbol": "ETCUSD"
+	},
+	{
+		"bucket": "temp-uploads/ohlcv",
+		"name": "eth.csv",
+		"dataset": "ohlcv",
+		"symbol": "ETHUSD"
+	},
+	{
+		"bucket": "temp-uploads/ohlcv",
+		"name": "iot.csv",
+		"dataset": "ohlcv",
+		"symbol": "IOTAUSD"
+	},
+	{
+		"bucket": "temp-uploads/ohlcv",
+		"name": "link.csv",
+		"dataset": "ohlcv",
+		"symbol": "LINKUSD"
+	},
+	{
+		"bucket": "temp-uploads/ohlcv",
+		"name": "ltc.csv",
+		"dataset": "ohlcv",
+		"symbol": "LTCUSD"
+	},
+	{
+		"bucket": "temp-uploads/ohlcv",
+		"name": "neo.csv",
+		"dataset": "ohlcv",
+		"symbol": "NEOUSD"
+	},
+	{
+		"bucket": "temp-uploads/ohlcv",
+		"name": "qtum.csv",
+		"dataset": "ohlcv",
+		"symbol": "QTUMUSD"
+	},
+	{
+		"bucket": "temp-uploads/ohlcv",
+		"name": "trx.csv",
+		"dataset": "ohlcv",
+		"symbol": "TRXUSD"
+	},
+	{
+		"bucket": "temp-uploads/ohlcv",
+		"name": "usdt.csv",
+		"dataset": "ohlcv",
+		"symbol": "USDTUSD"
+	},
+	{
+		"bucket": "temp-uploads/ohlcv",
+		"name": "ven.csv",
+		"dataset": "ohlcv",
+		"symbol": "VENUSD"
+	},
+	{
+		"bucket": "temp-uploads/ohlcv",
+		"name": "waves.csv",
+		"dataset": "ohlcv",
+		"symbol": "WAVESUSD"
+	},
+	{
+		"bucket": "temp-uploads/ohlcv",
+		"name": "xem.csv",
+		"dataset": "ohlcv",
+		"symbol": "XEMUSD"
+	},
+	{
+		"bucket": "temp-uploads/ohlcv",
+		"name": "xmr.csv",
+		"dataset": "ohlcv",
+		"symbol": "XMRUSD"
+	},
+	{
+		"bucket": "temp-uploads/ohlcv",
+		"name": "xrp.csv",
+		"dataset": "ohlcv",
+		"symbol": "XRPUSD"
+	},
+	{
+		"bucket": "temp-uploads/ohlcv",
+		"name": "zec.csv",
+		"dataset": "ohlcv",
+		"symbol": "ZECUSD"
+	},
+	{
+		"bucket": "temp-uploads/ohlcv",
+		"name": "zrx.csv",
+		"dataset": "ohlcv",
+		"symbol": "ZRXUSD"
+	}
+]

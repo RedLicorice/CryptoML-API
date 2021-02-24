@@ -1,0 +1,163 @@
+[
+  {
+    "symbol": "ADAUSD",
+    "builder": "target",
+    "args": {
+        "ohlcv": "ohlcv"
+    }
+  },
+  {
+    "symbol": "BCHUSD",
+    "builder": "target",
+    "args": {
+        "ohlcv": "ohlcv"
+    }
+  },
+  {
+    "symbol": "BNBUSD",
+    "builder": "target",
+    "args": {
+        "ohlcv": "ohlcv"
+    }
+  },
+  {
+    "symbol": "BTCUSD",
+    "builder": "target",
+    "args": {
+        "ohlcv": "ohlcv"
+    }
+  },
+  {
+    "symbol": "BTGUSD",
+    "builder": "target",
+    "args": {
+        "ohlcv": "ohlcv"
+    }
+  },
+  {
+    "symbol": "DASHUSD",
+    "builder": "target",
+    "args": {
+        "ohlcv": "ohlcv"
+    }
+  },
+  {
+    "symbol": "DOGEUSD",
+    "builder": "target",
+    "args": {
+        "ohlcv": "ohlcv"
+    }
+  },
+  {
+    "symbol": "EOSUSD",
+    "builder": "target",
+    "args": {
+        "ohlcv": "ohlcv"
+    }
+  },
+  {
+    "symbol": "ETCUSD",
+    "builder": "target",
+    "args": {
+        "ohlcv": "ohlcv"
+    }
+  },
+  {
+    "symbol": "ETHUSD",
+    "builder": "target",
+    "args": {
+        "ohlcv": "ohlcv"
+    }
+  },
+  {
+    "symbol": "LINKUSD",
+    "builder": "target",
+    "args": {
+        "ohlcv": "ohlcv"
+    }
+  },
+  {
+    "symbol": "LTCUSD",
+    "builder": "target",
+    "args": {
+        "ohlcv": "ohlcv"
+    }
+  },
+  {
+    "symbol": "NEOUSD",
+    "builder": "target",
+    "args": {
+        "ohlcv": "ohlcv"
+    }
+  },
+  {
+    "symbol": "QTUMUSD",
+    "builder": "target",
+    "args": {
+        "ohlcv": "ohlcv"
+    }
+  },
+  {
+    "symbol": "TRXUSD",
+    "builder": "target",
+    "args": {
+        "ohlcv": "ohlcv"
+    }
+  },
+  {
+    "symbol": "USDTUSD",
+    "builder": "target",
+    "args": {
+        "ohlcv": "ohlcv"
+    }
+  },
+  {
+    "symbol": "VENUSD",
+    "builder": "target",
+    "args": {
+        "ohlcv": "ohlcv"
+    }
+  },
+  {
+    "symbol": "WAVESUSD",
+    "builder": "target",
+    "args": {
+        "ohlcv": "ohlcv"
+    }
+  },
+  {
+    "symbol": "XEMUSD",
+    "builder": "target",
+    "args": {
+        "ohlcv": "ohlcv"
+    }
+  },
+  {
+    "symbol": "XMRUSD",
+    "builder": "target",
+    "args": {
+        "ohlcv": "ohlcv"
+    }
+  },
+  {
+    "symbol": "XRPUSD",
+    "builder": "target",
+    "args": {
+      "ohlcv": "ohlcv"
+    }
+  },
+  {
+    "symbol": "ZECUSD",
+    "builder": "target",
+    "args": {
+        "ohlcv": "ohlcv"
+    }
+  },
+  {
+    "symbol": "ZRXUSD",
+    "builder": "target",
+    "args": {
+        "ohlcv": "ohlcv"
+    }
+  }
+]

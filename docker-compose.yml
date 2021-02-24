@@ -22,7 +22,6 @@ services:
       - minio-network
       - redis-network
       - influxdb-network
-      - dask-network
 
 networks:
   cryptoml-network:
@@ -33,6 +32,4 @@ networks:
   redis-network:
     external: true
   influxdb-network:
-    external: true
-  dask-network:
     external: true

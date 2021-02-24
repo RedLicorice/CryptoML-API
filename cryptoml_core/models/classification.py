@@ -18,12 +18,7 @@ class Hyperparameters(DocumentModel):
     features: Optional[List[str]] = []
 
 
-# Extends hyperparameters adding information required to reproduce a test-split classification
-# begin and end are used when querying the feature repository, not for filtering results indices.
-class SplitClassification(Hyperparameters):
-    begin: Optional[datetime]
-    end: Optional[datetime]
-    split: Optional[float] = 0.7
+
 
 # Extends hyperparameters adding information required for a sliding window classification
 # index is the first index of the training set
@@ -35,15 +30,10 @@ class SlidingWindowClassification(Hyperparameters):
 
 # Encapsulated a model test result
 class ModelBenchmark(DocumentModel):
-    hyperparameters: Hyperparameters
+    hyperparameters: Hyperparameters #
     report: dict
     train_begin: str
     train_end: str
     test_begin: str
     test_end: str
     window: Optional[int]
-
-
-class GridSearchResults(DocumentModel):
-    hyperparameters: Hyperparameters
-    feature_importances: Optional[dict] = {}

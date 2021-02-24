@@ -3,7 +3,7 @@ import pandas as pd
 
 def ohlcv_resample(ohlcv: pd.DataFrame, **kwargs):
     period = int(kwargs.get('period', 7))
-    interval = int(kwargs.get('interval', 'D'))
+    interval = kwargs.get('interval', 'D')
     process_fun = kwargs.get('process_fun', lambda x: x)
     rename_fun = kwargs.get('rename_fun', None)
     result = []

@@ -3,7 +3,7 @@ storage:
   s3:
     endpoint: 'http://localhost:9000'
     access_key_id: !ENV ${AWS_ACCESS_KEY_ID}
-    secret_access_key: !ENV ${AWS_ACCESS_SECRET}
+    secret_access_key: !ENV ${AWS_SECRET_ACCESS_KEY}
     use_ssl: False
     verify: False
     uploads_bucket: 'temp-uploads'
@@ -12,7 +12,7 @@ celery:
   broker: 'redis://localhost:6379'
   backend: 'redis://localhost:6379'
 dask:
-  scheduler: 'tcp://dask-scheduler:8786'
+  scheduler: 'tcp://localhost:8786'
 database:
   sql:
     url: !ENV 'mysql+pymysql://${MYSQL_APP_USER}:${MYSQL_APP_PASSWORD}@localhost:3306/cryptoml?charset=utf8mb4'
@@ -22,6 +22,8 @@ database:
     username: !ENV ${INFLUXDB_USERNAME}
     password: !ENV ${INFLUXDB_PASSWORD}
     database: 'db0'
+    udp: false
+    udp_port: 4444
   mongo:
     uri: !ENV 'mongodb://${MONGODB_ROOT_USER}:${MONGODB_ROOT_PASSWORD}@localhost:27017'
     database: 'cryptoml'

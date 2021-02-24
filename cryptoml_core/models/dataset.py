@@ -1,13 +1,18 @@
-from typing import Optional, List
-from datetime import datetime
-from cryptoml_core.deps.mongodb.document_model import DocumentModel, BaseModel
+from typing import Optional, List, Set
+from cryptoml_core.deps.mongodb.document_model import DocumentModel
 
-class DatasetSymbol(BaseModel):
-    count: int
-    index_min: int
-    index_max: int
-
+# Store a list of features included in each dataset,
+# and for each currency included min/max index
 class Dataset(DocumentModel):
-    name: str
-    features: List[str]
-    symbols: List[DatasetSymbol]
+    name: str  # Name of the dataset
+    ticker: str  # Ticker name, eg BTC or BTCUSD
+    count: int  # Number of entries
+    index_min: str  # Timestamp of first record
+    index_max: str  # Timestamp of last record
+    valid_index_min: str # Timestamp of first valid record (Not including nans)
+    valid_index_max: str # Timestamp of last valid record (Not including nans)
+    interval: dict  # Timedelta args for sampling interval of the features
+    features_path: Optional[str]  # S3 Storage bucket location for features
+    features: List[str]  # Name of included columns
+    feature_indices: Optional[dict] = None # First and Last valid index for each feature
+    feature_importances: Optional[dict] = None

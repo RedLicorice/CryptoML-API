@@ -9,17 +9,21 @@ services:
       dockerfile: docker/Worker.dockerfile
     hostname: dask-scheduler
     entrypoint: ["dask-scheduler"]
-#    volumes:
-#      - './cryptoml:/python-dependencies/cryptoml'
-#      - './cryptoml_common:/python-dependencies/cryptoml_common'
+    volumes:
+      - './.env:/app/.env'
+      - './config-docker.yml:/app/config.yml'
+      - './cryptoml:/app/cryptoml'
+      - './cryptoml_api:/app/cryptoml_api'
+      - './cryptoml_core:/app/cryptoml_core'
     ports:
       - "8786:8786"
       - "8787:8787"
     networks:
-      dask-network:
-        aliases:
-          - daskscheduler
-          - dask-scheduler
+      - cryptoml-network
+      - mongodb-network
+      - minio-network
+      - redis-network
+      - influxdb-network
 
   dask-worker-1:
     image: redlicorice/cryptoml-worker
@@ -27,14 +31,21 @@ services:
     build:
       context: .
       dockerfile: docker/Worker.dockerfile
-#    volumes:
-#      - './cryptoml:/python-dependencies/cryptoml'
-#      - './cryptoml_common:/python-dependencies/cryptoml_common'
+    volumes:
+      - './.env:/app/.env'
+      - './config-docker.yml:/app/config.yml'
+      - './cryptoml:/app/cryptoml'
+      - './cryptoml_api:/app/cryptoml_api'
+      - './cryptoml_core:/app/cryptoml_core'
     depends_on:
       - dask-scheduler
     entrypoint: ["dask-worker", "tcp://dask-scheduler:8786"]
     networks:
-      dask-network:
+      - cryptoml-network
+      - mongodb-network
+      - minio-network
+      - redis-network
+      - influxdb-network
 
   dask-worker-2:
     image: redlicorice/cryptoml-worker
@@ -42,14 +53,30 @@ services:
     build:
       context: .
       dockerfile: docker/Worker.dockerfile
-#    volumes:
-#      - './cryptoml:/python-dependencies/cryptoml'
-#      - './cryptoml_common:/python-dependencies/cryptoml_common'
+    volumes:
+      - './.env:/app/.env'
+      - './config-docker.yml:/app/config.yml'
+      - './cryptoml:/app/cryptoml'
+      - './cryptoml_api:/app/cryptoml_api'
+      - './cryptoml_core:/app/cryptoml_core'
     depends_on:
       - dask-scheduler
     entrypoint: [ "dask-worker", "tcp://dask-scheduler:8786" ]
     networks:
-      dask-network:
+      - cryptoml-network
+      - mongodb-network
+      - minio-network
+      - redis-network
+      - influxdb-network
 
 networks:
-  dask-network:
+  cryptoml-network:
+    external: true
+  minio-network:
+    external: true
+  mongodb-network:
+    external: true
+  redis-network:
+    external: true
+  influxdb-network:
+    external: true

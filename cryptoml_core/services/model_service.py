@@ -1,133 +1,39 @@
 import pandas as pd
-import logging
-# APP Dependencies
-from .storage_service import StorageService
-from .dataset_service import DatasetService
-from ..repositories.classification_repositories import HyperparametersRepository, BenchmarkRepository
-# CryptoML Lib Dependencies
-from cryptoml.models.grid_search import grid_search
-from cryptoml.models.testing import trailing_window_test
-from cryptoml.models.training import train_model
+from cryptoml.models.testing import test_windows_parallel, test_windows
 from cryptoml.util.flattened_classification_report import flattened_classification_report
-from cryptoml.util.weighted_precision_score import get_weighted_precision_scorer
-from cryptoml.util.blocking_timeseries_split import BlockingTimeSeriesSplit
-from cryptoml.util.feature_importances import label_feature_importances
 from cryptoml.pipelines import get_pipeline
-# CryptoML Common Dependencies
-from cryptoml_core.util.timestamp import to_timestamp
-from cryptoml_core.models.classification import Hyperparameters, SlidingWindowClassification, SplitClassification, \
-    ModelBenchmark
+from cryptoml_core.util.timestamp import sub_interval, add_interval, from_timestamp, timestamp_windows
+from cryptoml_core.models.tuning import ModelTest
+from cryptoml_core.repositories.classification_repositories import ModelTestRepository
+from cryptoml_core.services.dataset_service import DatasetService
+from cryptoml_core.exceptions import MessageException
 
 
 class ModelService:
     def __init__(self):
-        self.storage = StorageService()
-        self.parameters_repo = HyperparametersRepository()
-        self.benchmark_repo = BenchmarkRepository()
+        self.mt_repo: ModelTestRepository = ModelTestRepository()
 
-    def __get_tag(self, clf: Hyperparameters):
-        return '{}-{}-{}-{}-#{}'.format(clf.pipeline, clf.symbol, clf.dataset, clf.target, clf.id)
-
-    # Perform parameter search
-    def grid_search(self, clf: SplitClassification, **kwargs):
+    def test_model(self, mt: ModelTest, **kwargs):
+        if not mt.id:
+            mt = self.mt_repo.create(mt)
         # Load dataset
         ds = DatasetService()
-        X_train, X_test, y_train, y_test = ds.get_classification_split(clf)
+        d = ds.get_dataset(mt.dataset, mt.symbol)
+        # Get training data including the first training window
+        begin = sub_interval(timestamp=mt.test_begin, interval=mt.window)
+        end = add_interval(timestamp=mt.test_end, interval=mt.step)
+        if from_timestamp(d.valid_index_min).timestamp() > from_timestamp(begin).timestamp():
+            raise MessageException("Not enough data for training! [Pipeline: {} Dataset: {} Symbol: {} Window: {}]".format(mt.pipeline, mt.dataset, mt.symbol, mt.window))
+        X = ds.get_features(mt.dataset, mt.symbol, begin=begin, end=end)
+        y = ds.get_target(mt.target, mt.symbol, begin=begin, end=end)
 
         # Load pipeline
-        pipeline_module = get_pipeline(clf.pipeline)
+        pipeline_module = get_pipeline(mt.pipeline)
 
-        # Instantiate splitter and scorer
-        splitter = BlockingTimeSeriesSplit(n_splits=5)
-        scorer = get_weighted_precision_scorer(weights=kwargs.get('weights'))
+        ranges = timestamp_windows(begin, mt.test_end, mt.window, mt.step)
+        df = test_windows_parallel(pipeline_module.estimator, mt.parameters, X, y, ranges)
+        mt.classification_results = df.to_dict()
+        mt.classification_report = flattened_classification_report(df.label, df.predicted)
 
-        # Perform search
-        gscv = grid_search(
-            est=pipeline_module.estimator,
-            parameters=kwargs.get('parameter_grid', pipeline_module.PARAMETER_GRID),
-            X_train=X_train,
-            y_train=y_train,
-            cv=splitter,
-            scoring=scorer
-        )
-
-        # Update "Classification" request with found hyperparameters,
-        #  then save it to MongoDB
-        clf.parameters = gscv.best_params_
-        _clf = self.parameters_repo.create(clf)
-
-        # Parse grid search results to dataframe
-        results_df = pd.DataFrame(gscv.cv_results_)
-
-        # Store grid search results on storage
-        self.storage.upload_json_obj(gscv.best_params_, 'grid-search-results', 'parameters-{}.json'\
-                                     .format(self.__get_tag(_clf)))
-        self.storage.save_df(results_df, 'grid-search-results', 'cv_results-{}.csv'\
-                             .format(self.__get_tag(_clf)))
-
-        # Test model parameters on the test set, using different windows
-        test_reports = {}
-        for _w in [30, 90, 150]:
-            benchmark = self.test_model(clf=clf, W=_w)
-            test_reports[_w] = benchmark.dict()
-
-        feature_importances = label_feature_importances(gscv.best_estimator_, X_train.columns)
-        # Return result and Hyperparameters
-        return results_df, clf, test_reports
-
-    def test_model(self, clf: SplitClassification, **kwargs):
-        # Load dataset
-        ds = DatasetService()
-        X_train, X_test, y_train, y_test = ds.get_classification_split(clf)
-
-        # Load pipeline
-        pipeline_module = get_pipeline(clf.pipeline)
-
-        # Test the model with a sliding window approach, with the first training window starting
-        #  in the training set.
-        try:
-            labels, predictions = trailing_window_test(
-                est=pipeline_module.estimator,
-                parameters=clf.parameters,
-                W=kwargs.get('W', 30),
-                X_train=X_train,
-                X_test=X_test,
-                y_train=y_train,
-                y_test=y_test
-            )
-        except Exception as e:
-            logging.exception(e)
-            return None
-
-        # Assemble a Benchmark instance containing results for this run,
-        #  then save it into the repository
-        benchmark = ModelBenchmark(
-            hyperparameters=clf,
-            report=flattened_classification_report(y_true=labels, y_pred=predictions),
-            window=kwargs.get('W', 30),
-            train_begin=to_timestamp(X_train.index.min()),
-            train_end=to_timestamp(X_train.index.max()),
-            test_begin=to_timestamp(X_test.index.min()),
-            test_end=to_timestamp(X_test.index.max())
-        )
-        self.benchmark_repo.create(benchmark)
-
-        return benchmark
-
-    def train_model_day(self, clf: SlidingWindowClassification, **kwargs):
-        # Load Dataset
-        ds = DatasetService()
-        X_train, _, y_train, _ = ds.get_classification_window(clf)
-
-        # Train a model using the specified parameters
-        pipeline_module = get_pipeline(clf.pipeline)
-        _est = train_model(
-            est=pipeline_module.estimator,
-            parameters=clf.parameters,
-            X_train=X_train,
-            y_train=y_train
-        )
-
-        # ToDo: Wrap the model and save it for future use
-        return _est
-
+        self.mt_repo.update(mt.id, mt)
+        return mt

@@ -1,0 +1,140 @@
+[
+	{
+		"bucket": "temp-uploads/coinmetrics",
+		"name": "ada.csv",
+		"dataset": "coinmetrics",
+		"symbol": "ADAUSD"
+	},
+	{
+		"bucket": "temp-uploads/coinmetrics",
+		"name": "bch.csv",
+		"dataset": "coinmetrics",
+		"symbol": "BCHUSD"
+	},
+	{
+		"bucket": "temp-uploads/coinmetrics",
+		"name": "bnb.csv",
+		"dataset": "coinmetrics",
+		"symbol": "BNBUSD"
+	},
+	{
+		"bucket": "temp-uploads/coinmetrics",
+		"name": "btc.csv",
+		"dataset": "coinmetrics",
+		"symbol": "BTCUSD"
+	},
+	{
+		"bucket": "temp-uploads/coinmetrics",
+		"name": "btg.csv",
+		"dataset": "coinmetrics",
+		"symbol": "BTGUSD"
+	},
+	{
+		"bucket": "temp-uploads/coinmetrics",
+		"name": "dash.csv",
+		"dataset": "coinmetrics",
+		"symbol": "DASHUSD"
+	},
+	{
+		"bucket": "temp-uploads/coinmetrics",
+		"name": "doge.csv",
+		"dataset": "coinmetrics",
+		"symbol": "DOGEUSD"
+	},
+	{
+		"bucket": "temp-uploads/coinmetrics",
+		"name": "eos.csv",
+		"dataset": "coinmetrics",
+		"symbol": "EOSUSD"
+	},
+	{
+		"bucket": "temp-uploads/coinmetrics",
+		"name": "etc.csv",
+		"dataset": "coinmetrics",
+		"symbol": "ETCUSD"
+	},
+	{
+		"bucket": "temp-uploads/coinmetrics",
+		"name": "eth.csv",
+		"dataset": "coinmetrics",
+		"symbol": "ETHUSD"
+	},
+	{
+		"bucket": "temp-uploads/coinmetrics",
+		"name": "link.csv",
+		"dataset": "coinmetrics",
+		"symbol": "LINKUSD"
+	},
+	{
+		"bucket": "temp-uploads/coinmetrics",
+		"name": "ltc.csv",
+		"dataset": "coinmetrics",
+		"symbol": "LTCUSD"
+	},
+	{
+		"bucket": "temp-uploads/coinmetrics",
+		"name": "neo.csv",
+		"dataset": "coinmetrics",
+		"symbol": "NEOUSD"
+	},
+	{
+		"bucket": "temp-uploads/coinmetrics",
+		"name": "qtum.csv",
+		"dataset": "coinmetrics",
+		"symbol": "QTUMUSD"
+	},
+	{
+		"bucket": "temp-uploads/coinmetrics",
+		"name": "trx.csv",
+		"dataset": "coinmetrics",
+		"symbol": "TRXUSD"
+	},
+	{
+		"bucket": "temp-uploads/coinmetrics",
+		"name": "usdt.csv",
+		"dataset": "coinmetrics",
+		"symbol": "USDTUSD"
+	},
+	{
+		"bucket": "temp-uploads/coinmetrics",
+		"name": "ven.csv",
+		"dataset": "coinmetrics",
+		"symbol": "VENUSD"
+	},
+	{
+		"bucket": "temp-uploads/coinmetrics",
+		"name": "waves.csv",
+		"dataset": "coinmetrics",
+		"symbol": "WAVESUSD"
+	},
+	{
+		"bucket": "temp-uploads/coinmetrics",
+		"name": "xem.csv",
+		"dataset": "coinmetrics",
+		"symbol": "XEMUSD"
+	},
+	{
+		"bucket": "temp-uploads/coinmetrics",
+		"name": "xmr.csv",
+		"dataset": "coinmetrics",
+		"symbol": "XMRUSD"
+	},
+	{
+		"bucket": "temp-uploads/coinmetrics",
+		"name": "xrp.csv",
+		"dataset": "coinmetrics",
+		"symbol": "XRPUSD"
+	},
+	{
+		"bucket": "temp-uploads/coinmetrics",
+		"name": "zec.csv",
+		"dataset": "coinmetrics",
+		"symbol": "ZECUSD"
+	},
+	{
+		"bucket": "temp-uploads/coinmetrics",
+		"name": "zrx.csv",
+		"dataset": "coinmetrics",
+		"symbol": "ZRXUSD"
+	}
+]

@@ -21,6 +21,7 @@ services:
       MINIO_SECRET_KEY: ${AWS_SECRET_ACCESS_KEY}
 #    command: server http://minio{1...4}/data{1...2}
     command: server http://minio{1...2}/data{1...2}
+    restart: on-failure
     healthcheck:
       test: ["CMD", "curl", "-f", "http://localhost:9000/minio/health/live"]
       interval: 30s
@@ -44,6 +45,7 @@ services:
       MINIO_SECRET_KEY: ${AWS_SECRET_ACCESS_KEY}
 #    command: server http://minio{1...4}/data{1...2}
     command: server http://minio{1...2}/data{1...2}
+    restart: on-failure
     healthcheck:
       test: ["CMD", "curl", "-f", "http://localhost:9000/minio/health/live"]
       interval: 30s
@@ -95,6 +97,7 @@ services:
   nginx:
     image: nginx:1.19.2-alpine
     container_name: minio-front
+    restart: on-failure
     volumes:
       - ./docker/minio/nginx.conf:/etc/nginx/nginx.conf:ro
     ports:

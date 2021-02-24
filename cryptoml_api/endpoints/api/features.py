@@ -1,18 +1,19 @@
 from fastapi import APIRouter, Form, File, UploadFile, Depends, HTTPException, Body
-from fastapi.responses import PlainTextResponse
 from werkzeug.utils import secure_filename
-from typing import Optional
-from cryptoml_core.deps.celery import current_app, states
+from cryptoml_core.deps.celery import current_app
 from cryptoml_core.services.storage_service import StorageService
-from cryptoml_core.services.feature_service import FeatureService
+from cryptoml_core.services.dataset_building_service import DatasetBuildingService
 from cryptoml_core.services.dataset_service import DatasetService
+from cryptoml_core.services.task_service import TaskService
 from cryptoml_core.deps.config import config
 from cryptoml_core.exceptions import MessageException
 from pydantic import BaseModel
 import logging
+from typing import List
 
 
 router = APIRouter()
+
 
 class ImportRequest(BaseModel):
     bucket: str
@@ -20,17 +21,12 @@ class ImportRequest(BaseModel):
     dataset: str
     symbol: str
 
-class DisplayRequest(BaseModel):
-    dataset: Optional[str] = None
-    target: Optional[str] = None
-    symbol: Optional[str]
-    begin: Optional[str] = None
-    end: Optional[str] = None
 
 class BuildRequest(BaseModel):
     symbol: str
     builder: str
     args: dict
+
 
 @router.post('/upload')
 def upload(
@@ -48,45 +44,51 @@ def upload(
     bucket = config['storage']['s3']['uploads_bucket'].get(str)
     try:
         storage.upload_file(file.file, bucket, storage_name)
+        return ImportRequest(bucket=bucket, name=storage_name, dataset=name, symbol=symbol)
     except Exception as e:
         raise HTTPException(status_code=500, detail='Failed to save file on storage')
-        # return {'message': 'Failed to save data on s3 storage', 'traceback': '\n'.join(tb.format_exception(None, e, e.__traceback__))}
-    # Return dataset spec
-    return ImportRequest(bucket=bucket, name=storage_name, dataset="", symbol=symbol)
+
 
 @router.post('/import')
 def _import(
         ticket: ImportRequest = Body(...),
-        features: FeatureService = Depends(FeatureService)
-    ) -> DisplayRequest:
+        service: DatasetService = Depends(DatasetService)
+    ):
     filename = secure_filename(ticket.name)
     if not ticket.dataset:
         raise HTTPException(status_code=400, detail='You must complete the dataset field!')
     # Import dataset to feature repository
     try:
-        features.import_from_storage(ticket.bucket, filename, ticket.dataset, ticket.symbol)
-    except Exception as e:
-        #return {'message': 'Failed to import CSV in feature repository', 'traceback': '\n'.join(tb.format_exception(None, e, e.__traceback__))}
-        raise HTTPException(status_code=500, detail='Failed to import data in repository')
-    return DisplayRequest(dataset=ticket.dataset, symbol=ticket.symbol)
-
-@router.get('/view', response_class=PlainTextResponse)
-def get_dataset(
-        req: DisplayRequest = Body(...),
-        service: DatasetService = Depends(DatasetService)
-    ):
-    # Import dataset to feature repository
-    if not req.dataset and not req.target:
-        raise HTTPException(status_code=400, detail='Must specify at least one of dataset or target')
-    try:
-        return service.get_dataset(**req.dict()).to_csv(index_label='time')
+        ds = service.import_from_storage(ticket.bucket, filename, ticket.dataset, ticket.symbol)
+        return ds.dict()
     except Exception as e:
         logging.exception(e)
-        raise HTTPException(status_code=404, detail='Data not found')
+        raise HTTPException(status_code=500, detail='Failed to import data in repository')
+
+@router.post('/import-many')
+def _import_many(
+        tickets: List[ImportRequest] = Body(...),
+        service: DatasetService = Depends(DatasetService)
+    ):
+    results = []
+    for ticket in tickets:
+        filename = secure_filename(ticket.name)
+        if not ticket.dataset:
+            logging.error("Skipping {}: missing dataset!".format(ticket.symbol))
+            continue
+        # Import dataset to feature repository
+        try:
+            logging.info("Importing: {}".format(ticket.dict()))
+            ds = service.import_from_storage(ticket.bucket, filename, ticket.dataset, ticket.symbol)
+            results.append(ds.dict())
+        except Exception as e:
+            logging.exception(e)
+            continue
+    return results
 
 @router.get('/build')
 def get_builders(
-        service: FeatureService = Depends(FeatureService)
+        service: DatasetBuildingService = Depends(DatasetBuildingService)
     ):
     # Import dataset to feature repository
     try:
@@ -97,33 +99,39 @@ def get_builders(
 @router.post('/build')
 def build_dataset(
         req: BuildRequest = Body(...),
-        service: FeatureService = Depends(FeatureService)
+        service: DatasetBuildingService = Depends(DatasetBuildingService),
+        tasks: TaskService = Depends(TaskService)
     ):
     try:
         service.check_builder_args(req.builder, req.args)
-        task = current_app.send_task('build_dataset', args=[req.dict()])
-        if task.status != 'SUCCESS':
-            return {'task':task.id}
-        return task.result
+        tasks.send('build_dataset', req.dict())
+        # task = current_app.send_task('build_dataset', args=[req.dict()])
+        # if task.status != 'SUCCESS':
+        #     return {'task':task.id}
+        # return task.result
     except MessageException as e:
         raise HTTPException(status_code=400, detail=e.message)
+
+@router.post('/build-many')
+def build_many_dataset(
+        requests: List[BuildRequest] = Body(...),
+        service: DatasetBuildingService = Depends(DatasetBuildingService),
+        tasks: TaskService = Depends(TaskService)
+    ):
+    # Check all args are correct
+    for req in requests:
+        try:
+            service.check_builder_args(req.builder, req.args)
+        except MessageException as e:
+            raise HTTPException(status_code=400, detail=e.message)
+    # Launch tasks
+    _tasks = [t for  t in tasks.send_many('build_dataset', [r.dict() for r in requests])]
+    return _tasks
+
 
 @current_app.task(name='build_dataset')
 def task_build_dataset(req: dict):
     req = BuildRequest(**req)
-    try:
-        service: FeatureService = FeatureService()
-        features = service.build_dataset(req.symbol, req.builder, req.args, store=True)
-    except MessageException as e:
-        raise HTTPException(status_code=400, detail=e.message)
-    return DisplayRequest(dataset=req.builder, symbol=req.symbol).dict()
-
-@router.get('/build/{task_id}')
-def get_build_status(
-        task_id: str,
-    ):
-    try:
-        res = current_app.AsyncResult(task_id)
-        return res.state if res.state == states.PENDING else str(res.result)
-    except Exception as e:
-        raise HTTPException(status_code=404, detail=['Data not found', e])
+    service: DatasetService = DatasetService()
+    ds = service.build_dataset(req.symbol, req.builder, req.args)
+    return ds.dict()

@@ -2,6 +2,7 @@ from fastapi import FastAPI
 from . import endpoints
 from cryptoml_core.deps.celery import make_celery
 from cryptoml_core.logging import setup_logger
+from .middleware import request_handler
 
 app = None
 celery = None
@@ -30,6 +31,7 @@ def create_app() -> FastAPI:
 
     # Start FastAPI
     app = FastAPI()
+    app.middleware("http")(request_handler)
     app.include_router(endpoints.router)
     app.celery = celery
 

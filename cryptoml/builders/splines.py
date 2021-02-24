@@ -207,10 +207,10 @@ def build(ohlcv: pd.DataFrame, coinmetrics: pd.DataFrame, **kwargs):
 
     for d in [3, 7, 30]:
         ohlcv_d = ohlcv_resample(ohlcv=ohlcv, period=d, interval='D')
-        ohlcv_stats['close_open_pct_d{}'.format(d)] = (ohlcv_d[d].close - ohlcv_d[d].open).pct_change()
-        ohlcv_stats['high_close_dist_pct_d{}'.format(d)] = (ohlcv_d[d].high - ohlcv_d[d].close).pct_change()
-        ohlcv_stats['low_close_dist_pct_d{}'.format(d)] = (ohlcv_d[d].close - ohlcv_d[d].low).pct_change()
-        ohlcv_stats['high_low_dist_pct_d{}'.format(d)] = (ohlcv_d[d].high - ohlcv_d[d].low).pct_change()
+        ohlcv_stats['close_open_pct_d{}'.format(d)] = (ohlcv_d.close - ohlcv_d.open).pct_change()
+        ohlcv_stats['high_close_dist_pct_d{}'.format(d)] = (ohlcv_d.high - ohlcv_d.close).pct_change()
+        ohlcv_stats['low_close_dist_pct_d{}'.format(d)] = (ohlcv_d.close - ohlcv_d.low).pct_change()
+        ohlcv_stats['high_low_dist_pct_d{}'.format(d)] = (ohlcv_d.high - ohlcv_d.low).pct_change()
 
     return pd.concat(
         [ohlc_splines, ohlcv_stats, lagged_ohlcv_pct, cm_picks, ta_picks],
