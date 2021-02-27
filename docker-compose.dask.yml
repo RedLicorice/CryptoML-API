@@ -2,11 +2,11 @@ version: '3.7'
 
 services:
   dask-scheduler:
-    image: redlicorice/cryptoml-worker
+    image: redlicorice/cryptoml-api
     container_name: dask-scheduler
-    build:
-      context: .
-      dockerfile: docker/Worker.dockerfile
+#    build:
+#      context: .
+#      dockerfile: Dockerfile
     hostname: dask-scheduler
     entrypoint: ["dask-scheduler"]
     volumes:
@@ -26,11 +26,11 @@ services:
       - influxdb-network
 
   dask-worker-1:
-    image: redlicorice/cryptoml-worker
+    image: redlicorice/cryptoml-api
     container_name: dask-worker-1
-    build:
-      context: .
-      dockerfile: docker/Worker.dockerfile
+#    build:
+#      context: .
+#      dockerfile: Dockerfile
     volumes:
       - './.env:/app/.env'
       - './config-docker.yml:/app/config.yml'
@@ -48,11 +48,11 @@ services:
       - influxdb-network
 
   dask-worker-2:
-    image: redlicorice/cryptoml-worker
-    container_name: dask-worker-2
-    build:
-      context: .
-      dockerfile: docker/Worker.dockerfile
+    image: redlicorice/cryptoml-api
+    container_name: dask-worker-1
+#    build:
+#      context: .
+#      dockerfile: Dockerfile
     volumes:
       - './.env:/app/.env'
       - './config-docker.yml:/app/config.yml'

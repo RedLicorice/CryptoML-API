@@ -1,12 +1,25 @@
 version: '3.7'
 
 services:
+  celery-flower:
+    image: gregsi/latest-celery-flower-docker:latest
+    environment:
+      - BROKER_URL=redis://localhost:6379
+      - FLOWER_BASIC_AUTH=admin:admin
+    ports:
+      - "5555:5555"
+    depends_on:
+      - redis
+    networks:
+      - cryptoml-network
+
   celery-worker-1:
     image: redlicorice/cryptoml-worker
     container_name: celery-worker-1
     build:
       context: .
       dockerfile: docker/Worker.dockerfile
+    entrypoint: celery -A worker.celery worker --loglevel=info
     volumes:
       - './.env:/app/.env'
       - './config-docker.yml:/app/config.yml'

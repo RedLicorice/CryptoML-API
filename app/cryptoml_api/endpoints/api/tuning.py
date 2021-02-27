@@ -57,8 +57,8 @@ def grid_search(req: dict):
     res = GridSearchResponse(result=gs)
     if req.tests:
         tasks = TaskService()
-        tests = [t.dict() for t in service.tests_from_blueprint(gs, req.tests)] # Returns list of ModelTest, to dict
-        res.tests = [t for t in tasks.send_many('testmodel', args_list=tests)] # Returns list of Tasks
-        #res.tests = {str(t.window): current_app.send_task('testmodel', args=[t.dict()]).id for t in }
+        tests = [t.dict() for t in service.tests_from_blueprint(gs, req.tests)]  # Returns list of ModelTest, to dict
+        res.tests = [t for t in tasks.send_many('testmodel', args_list=tests)]  # Returns list of Tasks
+        # res.tests = {str(t.window): current_app.send_task('testmodel', args=[t.dict()]).id for t in }
     return res.dict()
 

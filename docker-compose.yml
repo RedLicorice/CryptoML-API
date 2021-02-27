@@ -6,7 +6,7 @@ services:
     container_name: cryptoml-api
     build:
       context: .
-      dockerfile: docker/API.dockerfile
+      dockerfile: Dockerfile
     hostname: cryptoml-api
     ports:
       - "8000:8000"

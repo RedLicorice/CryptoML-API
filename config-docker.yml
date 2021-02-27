@@ -25,6 +25,7 @@ database:
     udp: false
     udp_port: 4444
   mongo:
+    # If using docker ssl=true&retrywrites=false&ssl_cert_reqs=CERT_NONE
     uri: !ENV 'mongodb://${MONGODB_ROOT_USER}:${MONGODB_ROOT_PASSWORD}@mongodb:27017'
     database: 'cryptoml'
 
