@@ -49,7 +49,7 @@ services:
 
   dask-worker-2:
     image: redlicorice/cryptoml-api
-    container_name: dask-worker-1
+    container_name: dask-worker-2
 #    build:
 #      context: .
 #      dockerfile: Dockerfile
