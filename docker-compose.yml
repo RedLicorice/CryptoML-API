@@ -13,9 +13,7 @@ services:
     volumes:
       - './.env:/app/.env'
       - './config-docker.yml:/app/config.yml'
-      - './cryptoml:/app/cryptoml'
-      - './cryptoml_api:/app/cryptoml_api'
-      - './cryptoml_core:/app/cryptoml_core'
+      - './app:/app'
     networks:
       - cryptoml-network
       - mongodb-network

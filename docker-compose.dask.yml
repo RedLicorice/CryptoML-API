@@ -12,9 +12,7 @@ services:
     volumes:
       - './.env:/app/.env'
       - './config-docker.yml:/app/config.yml'
-      - './cryptoml:/app/cryptoml'
-      - './cryptoml_api:/app/cryptoml_api'
-      - './cryptoml_core:/app/cryptoml_core'
+      - './app:/app'
     ports:
       - "8786:8786"
       - "8787:8787"
@@ -34,9 +32,7 @@ services:
     volumes:
       - './.env:/app/.env'
       - './config-docker.yml:/app/config.yml'
-      - './cryptoml:/app/cryptoml'
-      - './cryptoml_api:/app/cryptoml_api'
-      - './cryptoml_core:/app/cryptoml_core'
+      - './app:/app'
     depends_on:
       - dask-scheduler
     entrypoint: ["dask-worker", "tcp://dask-scheduler:8786"]
@@ -56,9 +52,7 @@ services:
     volumes:
       - './.env:/app/.env'
       - './config-docker.yml:/app/config.yml'
-      - './cryptoml:/app/cryptoml'
-      - './cryptoml_api:/app/cryptoml_api'
-      - './cryptoml_core:/app/cryptoml_core'
+      - './app:/app'
     depends_on:
       - dask-scheduler
     entrypoint: [ "dask-worker", "tcp://dask-scheduler:8786" ]
