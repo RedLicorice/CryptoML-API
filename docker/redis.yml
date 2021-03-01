@@ -52,3 +52,4 @@ volumes:
 
 networks:
   redis-network:
+    external: true

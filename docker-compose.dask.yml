@@ -2,11 +2,8 @@ version: '3.7'
 
 services:
   dask-scheduler:
-    image: redlicorice/cryptoml-api
+    image: mrlicorice/cryptoml-api:latest
     container_name: dask-scheduler
-#    build:
-#      context: .
-#      dockerfile: Dockerfile
     hostname: dask-scheduler
     entrypoint: ["dask-scheduler"]
     volumes:
@@ -18,17 +15,10 @@ services:
       - "8787:8787"
     networks:
       - cryptoml-network
-      - mongodb-network
-      - minio-network
-      - redis-network
-      - influxdb-network
 
   dask-worker-1:
-    image: redlicorice/cryptoml-api
+    image: mrlicorice/cryptoml-api:latest
     container_name: dask-worker-1
-#    build:
-#      context: .
-#      dockerfile: Dockerfile
     volumes:
       - './.env:/app/.env'
       - './config-docker.yml:/app/config.yml'
@@ -38,17 +28,10 @@ services:
     entrypoint: ["dask-worker", "tcp://dask-scheduler:8786"]
     networks:
       - cryptoml-network
-      - mongodb-network
-      - minio-network
-      - redis-network
-      - influxdb-network
 
   dask-worker-2:
-    image: redlicorice/cryptoml-api
+    image: mrlicorice/cryptoml-api:latest
     container_name: dask-worker-2
-#    build:
-#      context: .
-#      dockerfile: Dockerfile
     volumes:
       - './.env:/app/.env'
       - './config-docker.yml:/app/config.yml'
@@ -58,19 +41,7 @@ services:
     entrypoint: [ "dask-worker", "tcp://dask-scheduler:8786" ]
     networks:
       - cryptoml-network
-      - mongodb-network
-      - minio-network
-      - redis-network
-      - influxdb-network
 
 networks:
   cryptoml-network:
-    external: true
-  minio-network:
-    external: true
-  mongodb-network:
-    external: true
-  redis-network:
-    external: true
-  influxdb-network:
     external: true

@@ -1,0 +1,9 @@
+.venv/
+.venv-3.8/
+datasets/
+docker/
+infrastructure/
+kubernetes/
+docker-compose.*.yml
+Jenkinsfile
+build-and-push.sh

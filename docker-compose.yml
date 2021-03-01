@@ -23,11 +23,8 @@ services:
 
 networks:
   cryptoml-network:
+
   minio-network:
-    external: true
   mongodb-network:
-    external: true
   redis-network:
-    external: true
   influxdb-network:
-    external: true

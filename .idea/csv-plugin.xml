@@ -45,6 +45,13 @@
             </Attribute>
           </value>
         </entry>
+        <entry key="\Jenkinsfile">
+          <value>
+            <Attribute>
+              <option name="separator" value="," />
+            </Attribute>
+          </value>
+        </entry>
         <entry key="\Worker.dockerfile">
           <value>
             <Attribute>
@@ -374,7 +381,21 @@
             </Attribute>
           </value>
         </entry>
+        <entry key="\docker-compose.yml">
+          <value>
+            <Attribute>
+              <option name="separator" value=":" />
+            </Attribute>
+          </value>
+        </entry>
         <entry key="\docker\mongodb\mongod.conf">
+          <value>
+            <Attribute>
+              <option name="separator" value=":" />
+            </Attribute>
+          </value>
+        </entry>
+        <entry key="\docker\redis.yml">
           <value>
             <Attribute>
               <option name="separator" value=":" />

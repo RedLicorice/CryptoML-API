@@ -74,3 +74,4 @@ volumes:
   grafana-storage:
 networks:
   influxdb-network:
+    external: true

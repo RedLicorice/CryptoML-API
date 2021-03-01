@@ -1,7 +1,7 @@
-name: 'localhost-test'
+name: 'external-services-test'
 storage:
   s3:
-    endpoint: 'http://minio:9000'
+    endpoint: 'http://cupcaketest.duckdns.org:9001'
     access_key_id: !ENV ${AWS_ACCESS_KEY_ID}
     secret_access_key: !ENV ${AWS_SECRET_ACCESS_KEY}
     use_ssl: False
@@ -9,15 +9,15 @@ storage:
     uploads_bucket: 'temp-uploads'
     loglevel: 'INFO'
 celery:
-  broker: 'redis://redisdb:6379'
-  backend: 'redis://redisdb:6379'
+  broker: 'redis://cupcaketest.duckdns.org:6379'
+  backend: 'redis://cupcaketest.duckdns.org:6379'
 dask:
-  scheduler: 'tcp://dask-scheduler:8786'
+  scheduler: 'tcp://localhost:8786'
 database:
   sql:
-    url: !ENV 'mysql+pymysql://${MYSQL_APP_USER}:${MYSQL_APP_PASSWORD}@mysql:3306/cryptoml?charset=utf8mb4'
+    url: !ENV 'mysql+pymysql://${MYSQL_APP_USER}:${MYSQL_APP_PASSWORD}@localhost:3306/cryptoml?charset=utf8mb4'
   influxdb:
-    host: 'influxdb'
+    host: 'cupcaketest.duckdns.org'
     port: 8086
     username: !ENV ${INFLUXDB_USERNAME}
     password: !ENV ${INFLUXDB_PASSWORD}
@@ -26,7 +26,7 @@ database:
     udp_port: 4444
   mongo:
     # If using docker ssl=true&retrywrites=false&ssl_cert_reqs=CERT_NONE
-    uri: !ENV 'mongodb://${MONGODB_ROOT_USER}:${MONGODB_ROOT_PASSWORD}@mongodb:27017'
+    uri: !ENV 'mongodb://${MONGODB_ROOT_USER}:${MONGODB_ROOT_PASSWORD}@cupcaketest.duckdns.org:27017'
     database: 'cryptoml'
 
 kraken:
