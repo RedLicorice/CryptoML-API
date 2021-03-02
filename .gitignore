@@ -2,4 +2,5 @@
 experiment/
 dask-worker-space/
 datasets/
-infrastructure/.terraform*
+infrastructure/
+

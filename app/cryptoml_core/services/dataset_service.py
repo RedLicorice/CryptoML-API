@@ -11,8 +11,8 @@ def get_feature_indices(df):
     global_first = None
     global_last = None
     for c in df.columns:
-        _first = df[c].first_valid_index()
-        _last = df[c].last_valid_index()
+        _first = df[c].first_valid_index().to_pydatetime()
+        _last = df[c].last_valid_index().to_pydatetime()
         feature_indices[c] = {'first': to_timestamp(_first), 'last': to_timestamp(_last)}
         if not global_first or _first > global_first:
             global_first = _first

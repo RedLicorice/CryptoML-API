@@ -1,3 +1,4 @@
+.env
 .venv/
 .venv-3.8/
 datasets/

@@ -196,6 +196,11 @@ def build(ohlcv: pd.DataFrame, coinmetrics: pd.DataFrame, **kwargs):
     ohlc_splines['low_spl_d2'] = get_spline(ohlcv.low, 2)
     ohlc_splines['close_spl_d2'] = get_spline(ohlcv.close, 2)
 
+    _patterns = builder.get_talib_patterns(ohlcv)
+    ohlc_patterns = pd.DataFrame(index=ohlcv.index)
+    ohlc_patterns['talib_patterns_mean'] = _patterns.mean(axis=1)
+    ohlc_patterns['talib_patterns_sum'] = _patterns.sum(axis=1)
+
     # OHLC Stats
     ohlcv_stats = pd.DataFrame(index=ohlcv.index)
     ohlcv_stats['close_open_pct'] = (ohlcv.close - ohlcv.open).pct_change()  # Change in body of the candle (> 0 if candle is green)
@@ -213,7 +218,7 @@ def build(ohlcv: pd.DataFrame, coinmetrics: pd.DataFrame, **kwargs):
         ohlcv_stats['high_low_dist_pct_d{}'.format(d)] = (ohlcv_d.high - ohlcv_d.low).pct_change()
 
     return pd.concat(
-        [ohlc_splines, ohlcv_stats, lagged_ohlcv_pct, cm_picks, ta_picks],
+        [ohlc_patterns, ohlc_splines, ohlcv_stats, lagged_ohlcv_pct, cm_picks, ta_picks],
         axis='columns',
         verify_integrity=True,
         sort=True,

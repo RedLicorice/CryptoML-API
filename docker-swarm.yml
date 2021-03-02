@@ -3,71 +3,86 @@ version: '3.7'
 services:
   cryptoml-api:
     image: mrlicorice/cryptoml-api:latest
-    container_name: cryptoml-api
     build:
       context: .
       dockerfile: Dockerfile
     hostname: cryptoml-api
     ports:
       - "8000:8000"
+    configs:
+      - source: cryptoml_config
+        target: /app/config.yml
+    secrets:
+      - source: cryptoml_env
+        target: /app/.env
     volumes:
-      - './.env:/app/.env'
-      - './config-docker.yml:/app/config.yml'
-      - './app:/app'
+      - /etc/localtime:/etc/localtime:ro
+      - /etc/timezone:/etc/timezone:ro
     networks:
-      - cryptoml-network
+      - internal
     deploy:
       mode: replicated
       replicas: 1
 
   dask-scheduler:
     image: mrlicorice/cryptoml-api:latest
-    container_name: dask-scheduler
     hostname: dask-scheduler
-    entrypoint: [ "dask-scheduler" ]
+    entrypoint: dask-scheduler
+    configs:
+      - source: cryptoml_config
+        target: /app/config.yml
+    secrets:
+      - source: cryptoml_env
+        target: /app/.env
     volumes:
-      - './.env:/app/.env'
-      - './config-docker.yml:/app/config.yml'
-      - './app:/app'
+      - /etc/localtime:/etc/localtime:ro
+      - /etc/timezone:/etc/timezone:ro
     ports:
       - "8786:8786"
       - "8787:8787"
     networks:
-      - cryptoml-network
+      - internal
     deploy:
       mode: replicated
       replicas: 1
 
   celery-worker:
     image: mrlicorice/cryptoml-api:latest
-    container_name: celery-worker
     entrypoint: celery -A worker.celery worker --loglevel=info
+    configs:
+      - source: cryptoml_config
+        target: /app/config.yml
+    secrets:
+      - source: cryptoml_env
+        target: /app/.env
     volumes:
-      - './.env:/app/.env'
-      - './config-docker.yml:/app/config.yml'
-      - './app:/app'
+      - /etc/localtime:/etc/localtime:ro
+      - /etc/timezone:/etc/timezone:ro
     networks:
-      - cryptoml-network
+      - internal
     deploy:
       mode: replicated
       replicas: 1
 
   dask-worker:
     image: mrlicorice/cryptoml-api:latest
-    container_name: dask-worker
-    volumes:
-      - './.env:/app/.env'
-      - './config-docker.yml:/app/config.yml'
-      - './app:/app'
+    configs:
+      - source: cryptoml_config
+        target: /app/config.yml
+    secrets:
+      - source: cryptoml_env
+        target: /app/.env
     depends_on:
       - dask-scheduler
     entrypoint: dask-worker tcp://dask-scheduler:8786
+    volumes:
+      - /etc/localtime:/etc/localtime:ro
+      - /etc/timezone:/etc/timezone:ro
     networks:
-      - cryptoml-network
+      - internal
     deploy:
       mode: replicated
       replicas: 6
-      endpoint_mode: vip
       resources:
         limits:
           cpus: '0.50'
@@ -78,24 +93,34 @@ services:
 
   redis:
     image: 'redis:6-alpine'
-    container_name: redis
     build:
       context: ./docker/redis
       dockerfile: Dockerfile
+    configs:
+      - source: redis_config
+        target: /redis.conf
     volumes:
       - /etc/localtime:/etc/localtime:ro
       - /etc/timezone:/etc/timezone:ro
-      - ./docker/redis/redis.conf:/redis.conf
       - 'redis-data-1:/data'
-#    expose:
-#      - '6379'
-#    ports:
-#      - '6379:6379'
     networks:
-      - cryptoml-network
+      - internal
 
 networks:
-  cryptoml-network:
+  internal:
+    driver: overlay
+    attachable: true
 
 volumes:
   redis-data-1:
+
+configs:
+  cryptoml_config:
+    file: ./config-docker.yml
+  redis_config:
+    file: ./docker/redis/redis.conf
+
+secrets:
+  cryptoml_env:
+    file: ./.env
+    
