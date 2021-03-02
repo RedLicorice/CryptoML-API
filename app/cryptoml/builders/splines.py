@@ -5,6 +5,7 @@ from cryptoml.features.lagging import make_lagged
 from cryptoml.features.spline import get_spline
 from cryptoml.features.ohlcv_resample import ohlcv_resample
 from cryptoml.util.convergence import convergence_between_series
+from cryptoml.features.talib import get_talib_patterns
 
 TA_CONFIG = {
     'rsma': [(5, 20), (8, 15), (20, 50)],
@@ -196,7 +197,7 @@ def build(ohlcv: pd.DataFrame, coinmetrics: pd.DataFrame, **kwargs):
     ohlc_splines['low_spl_d2'] = get_spline(ohlcv.low, 2)
     ohlc_splines['close_spl_d2'] = get_spline(ohlcv.close, 2)
 
-    _patterns = builder.get_talib_patterns(ohlcv)
+    _patterns = get_talib_patterns(ohlcv)
     ohlc_patterns = pd.DataFrame(index=ohlcv.index)
     ohlc_patterns['talib_patterns_mean'] = _patterns.mean(axis=1)
     ohlc_patterns['talib_patterns_sum'] = _patterns.sum(axis=1)

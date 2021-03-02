@@ -48,8 +48,8 @@ class DatasetService:
             name=name,  # Name of the dataset
             ticker=symbol,  # Ticker name, eg BTC or BTCUSD
             count=df.shape[0],  # Number of entries
-            index_min=to_timestamp(df.index.min()),  # Timestamp of first record
-            index_max=to_timestamp(df.index.max()), # Timestamp of last record
+            index_min=to_timestamp(df.index.min().to_pydatetime()),  # Timestamp of first record
+            index_max=to_timestamp(df.index.max().to_pydatetime()), # Timestamp of last record
             # valid_index_min=to_timestamp(df.first_valid_index()),  # Timestamp of first record
             # valid_index_max=to_timestamp(df.last_valid_index()),  # Timestamp of last record
             valid_index_min=_first,  # Timestamp of first record
