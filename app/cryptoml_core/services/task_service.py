@@ -46,3 +46,6 @@ class TaskService:
             res = current_app.AsyncResult(task_id)
             return res.result
         return task
+
+    def revoke(self, task: Task):
+        pass

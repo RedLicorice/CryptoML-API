@@ -4,6 +4,7 @@ from cryptoml_core.repositories.dataset_repository import DatasetRepository
 from cryptoml_core.util.timestamp import to_timestamp
 from cryptoml_core.services.dataset_building_service import DatasetBuildingService
 from cryptoml_core.services.storage_service import StorageService
+import logging
 
 
 def get_feature_indices(df):
@@ -11,8 +12,15 @@ def get_feature_indices(df):
     global_first = None
     global_last = None
     for c in df.columns:
-        _first = df[c].first_valid_index().to_pydatetime()
-        _last = df[c].last_valid_index().to_pydatetime()
+        # If all elements are non-NA/null, first_valid_index and last_valid_index return None.
+        # They also return None for empty Series/DataFrame.
+        if df[c].empty:
+            logging.exception("Feature {} is empty!".format(c))
+            continue
+        fvi = df[c].first_valid_index() or df[c].index.min()
+        lvi = df[c].last_valid_index() or df[c].index.max()
+        _first = fvi.to_pydatetime()
+        _last = lvi.to_pydatetime()
         feature_indices[c] = {'first': to_timestamp(_first), 'last': to_timestamp(_last)}
         if not global_first or _first > global_first:
             global_first = _first

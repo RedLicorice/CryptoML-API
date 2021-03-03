@@ -27,3 +27,7 @@ def task_check_many(request: Union[Task, List[Task]] = Body(...), service: TaskS
         return [service.get_status(t.task_id).dict() for t in request]
     else:
         return service.get_status(request.task_id)
+
+@router.post('/revoke')
+def task_revoke(task: Task = Body(...), service: TaskService = Depends(TaskService)):
+    return service.revoke(task)

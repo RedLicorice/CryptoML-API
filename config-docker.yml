@@ -14,7 +14,7 @@ celery:
   broker: 'redis://redis:6379'
   backend: 'redis://redis:6379'
 dask:
-  scheduler: 'tcp://localhost:8786'
+  scheduler: 'tcp://dask-scheduler:8786'
 database:
   sql:
     url: !ENV 'mysql+pymysql://${MYSQL_APP_USER}:${MYSQL_APP_PASSWORD}@localhost:3306/cryptoml?charset=utf8mb4'

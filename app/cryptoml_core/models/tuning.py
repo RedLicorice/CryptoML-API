@@ -20,6 +20,7 @@ class DayResult(BaseModel):
     predicted: int
     label: int
 
+
 class ModelTestBlueprint(BaseModel):
     windows: Optional[List[dict]] = [{'days': 30}]
     step: Optional[dict] = {'days':1}

@@ -71,13 +71,13 @@ services:
     deploy:
       mode: replicated
       replicas: 4
-      resources:
-        limits:
-          cpus: '0.50'
-          memory: 2Gi
-        reservations:
-          cpus: '0.25'
-          memory: 500M
+      #resources:
+      #  limits:
+      #    cpus: '0.50'
+      #    memory: 2Gi
+      #  reservations:
+      #    cpus: '0.25'
+      #    memory: 500M
 
   redis:
     image: 'redis:6-alpine'

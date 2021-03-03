@@ -15,8 +15,6 @@ class DatasetRepository(DocumentRepository):
     def yield_by_symbol(self, symbol: str):
         query = {"ticker": symbol}
         cursor = self.collection.find(query)
-        if not cursor.count_documents():
-            raise DocumentNotFoundException(collection=self.__collection__, identifier=str(query))
         for document in cursor:
             yield self.__model__.parse_obj(document)
 
