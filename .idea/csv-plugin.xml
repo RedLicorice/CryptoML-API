@@ -87,6 +87,13 @@
             </Attribute>
           </value>
         </entry>
+        <entry key="\config-docker.yml">
+          <value>
+            <Attribute>
+              <option name="separator" value=":" />
+            </Attribute>
+          </value>
+        </entry>
         <entry key="\cryptoml\models\grid_search.py">
           <value>
             <Attribute>
@@ -381,6 +388,13 @@
             </Attribute>
           </value>
         </entry>
+        <entry key="\dind-swarm-node.sh">
+          <value>
+            <Attribute>
+              <option name="separator" value=":" />
+            </Attribute>
+          </value>
+        </entry>
         <entry key="\docker-compose.celery.yml">
           <value>
             <Attribute>
@@ -431,6 +445,13 @@
           </value>
         </entry>
         <entry key="\experiment\ray-test.py">
+          <value>
+            <Attribute>
+              <option name="separator" value="," />
+            </Attribute>
+          </value>
+        </entry>
+        <entry key="\infrastructure\cryptoml-api.tf">
           <value>
             <Attribute>
               <option name="separator" value="," />

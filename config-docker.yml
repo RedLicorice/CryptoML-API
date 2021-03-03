@@ -1,5 +1,6 @@
 name: 'external-services-test'
 storage:
+  # S3 Minio storage
   s3:
     endpoint: 'http://cupcaketest.duckdns.org:9001'
     access_key_id: !ENV ${AWS_ACCESS_KEY_ID}
@@ -9,8 +10,9 @@ storage:
     uploads_bucket: 'temp-uploads'
     loglevel: 'INFO'
 celery:
-  broker: 'redis://cupcaketest.duckdns.org:6379'
-  backend: 'redis://cupcaketest.duckdns.org:6379'
+  # Use local redis as broker if in swarm mode!
+  broker: 'redis://redis:6379'
+  backend: 'redis://redis:6379'
 dask:
   scheduler: 'tcp://localhost:8786'
 database:

@@ -8,7 +8,7 @@
       <excludeFolder url="file://$MODULE_DIR$/.venv" />
       <excludeFolder url="file://$MODULE_DIR$/.venv-3.8" />
     </content>
-    <orderEntry type="jdk" jdkName="Remote Python 3.8.5 Docker (redlicorice/cryptoml-api:latest)" jdkType="Python SDK" />
+    <orderEntry type="jdk" jdkName="Python 3.8 (CryptoML-API)" jdkType="Python SDK" />
     <orderEntry type="sourceFolder" forTests="false" />
   </component>
   <component name="TemplatesService">
