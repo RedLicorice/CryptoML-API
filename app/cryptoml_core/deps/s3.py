@@ -7,11 +7,11 @@ fs: s3fs.S3FileSystem = None
 ident: str = None
 logging.getLogger('s3fs').setLevel(getattr(logging, config['storage']['s3']['loglevel'].get(str)))
 s3_config = {
-    'anon':False,
-    'use_ssl':config['storage']['s3']['use_ssl'].get(bool),
-    'key':config['storage']['s3']['access_key_id'].get(str),
-    'secret':config['storage']['s3']['secret_access_key'].get(str),
-    'client_kwargs':{
+    'anon': False,
+    'use_ssl': config['storage']['s3']['use_ssl'].get(bool),
+    'key': config['storage']['s3']['access_key_id'].get(str),
+    'secret': config['storage']['s3']['secret_access_key'].get(str),
+    'client_kwargs': {
      'endpoint_url': config['storage']['s3']['endpoint'].get(str),
     }
 }

@@ -5,8 +5,12 @@ def make_celery():
     # Start Celery
     celery = Celery(
         'cryptoml',
-        broker= config['celery']['broker'].get(str),
-        backend=config['celery']['backend'].get(str)
+        broker=config['database']['redis']['uri'].get(str),
+        backend=config['database']['redis']['uri'].get(str)
+    )
+    celery.conf.update(
+        # task_serializer='pickle', # need to setup SSL
+        task_track_started=True
     )
 
     # Set this as the default celery instance for all threads

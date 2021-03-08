@@ -1,6 +1,6 @@
 IDIR =../include
 CC=gcc
-CFLAGS=-I$(IDIR)
+REQUIREMENTS= app/cryptoml/requirements.txt app/cryptoml_api/requirements.txt app/cryptoml_core/requirements.txt
 
 portainer-up:
 	docker stack deploy -c portainer-agent-stack.yml --orchestrator swarm portainer
@@ -23,5 +23,12 @@ image:
 
 push: image
 	docker push mrlicorice/cryptoml-api:latest
+
+requirements: $(REQUIREMENTS)
+	cat $(REQUIREMENTS) > requirements.txt
+
+install: requirements
+	pip install -r requirements.txt
+
 
 

@@ -86,13 +86,10 @@ class DatasetService:
     def find_by_symbol(self, symbol):
         return self.repo.yield_by_symbol(symbol)
 
-    def all(self):
-        return self.repo.iterable()
-
-    def get_features(self, name, symbol, begin, end):
+    def get_features(self, name, symbol, begin, end, **kwargs):
         # storage_path = '{}-{}.csv'.format(name, symbol)
         # self.storage.load_df('datasets', storage_path)
-        return self.feature_repo.get_features(name, symbol, first=begin, last=end)
+        return self.feature_repo.get_features(name, symbol, first=begin, last=end, **kwargs)
 
     def get_target(self, name, symbol, begin, end):
         # storage_path = '{}-{}.csv'.format(name, symbol)

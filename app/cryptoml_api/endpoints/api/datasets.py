@@ -16,11 +16,6 @@ def get_dataset(
     else:
         return [d for d in service.all()]
 
-@router.get('/fix')
-def get_dataset(
-        service: DatasetService = Depends(DatasetService),
-    ):
-    return [d for d in service.fix()]
 
 @router.get('/data', response_class=PlainTextResponse)
 def get_dataset(

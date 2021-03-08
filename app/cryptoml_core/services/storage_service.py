@@ -82,6 +82,7 @@ class StorageService:
         # csv_string = body.read().decode('utf-8')
         # df = pd.read_csv(StringIO(csv_string), **kwargs)
         # return df
+        ## Maybe use skipinitialspace=False, / skiprows=None (int) to skip a number of rows, since we already have column names
         return pd.read_csv(
             's3://{}/{}'.format(bucket, name),
             index_col=kwargs.get('index_col', 'time'),

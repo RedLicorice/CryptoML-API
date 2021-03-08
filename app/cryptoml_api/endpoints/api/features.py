@@ -9,8 +9,7 @@ from cryptoml_core.deps.config import config
 from cryptoml_core.exceptions import MessageException
 from pydantic import BaseModel
 import logging
-from typing import List
-
+from typing import List, Optional
 
 router = APIRouter()
 
@@ -34,13 +33,13 @@ def upload(
         symbol: str = Form(...),
         file: UploadFile = File(...),
         storage: StorageService = Depends(StorageService),
-    ) -> ImportRequest:
+) -> ImportRequest:
     # CSV mime-type is "text/csv"
     if file.content_type != 'text/csv':
         raise HTTPException(status_code=400, detail='You can only upload CSV files!')
     # Store uploaded dataset on S3
     filename = secure_filename(name)
-    storage_name = "{}.{}.csv".format(symbol,filename)
+    storage_name = "{}.{}.csv".format(symbol, filename)
     bucket = config['storage']['s3']['uploads_bucket'].get(str)
     try:
         storage.upload_file(file.file, bucket, storage_name)
@@ -53,7 +52,7 @@ def upload(
 def _import(
         ticket: ImportRequest = Body(...),
         service: DatasetService = Depends(DatasetService)
-    ):
+):
     filename = secure_filename(ticket.name)
     if not ticket.dataset:
         raise HTTPException(status_code=400, detail='You must complete the dataset field!')
@@ -65,11 +64,12 @@ def _import(
         logging.exception(e)
         raise HTTPException(status_code=500, detail='Failed to import data in repository')
 
+
 @router.post('/import-many')
 def _import_many(
         tickets: List[ImportRequest] = Body(...),
         service: DatasetService = Depends(DatasetService)
-    ):
+):
     results = []
     for ticket in tickets:
         filename = secure_filename(ticket.name)
@@ -86,38 +86,41 @@ def _import_many(
             continue
     return results
 
+
 @router.get('/build')
 def get_builders(
         service: DatasetBuildingService = Depends(DatasetBuildingService)
-    ):
+):
     # Import dataset to feature repository
     try:
         return service.get_builders()
     except Exception as e:
         raise HTTPException(status_code=404, detail=['Data not found', e])
 
+
 @router.post('/build')
 def build_dataset(
         req: BuildRequest = Body(...),
         service: DatasetBuildingService = Depends(DatasetBuildingService),
         tasks: TaskService = Depends(TaskService)
-    ):
+):
     try:
         service.check_builder_args(req.builder, req.args)
-        tasks.send('build_dataset', req.dict())
-        # task = current_app.send_task('build_dataset', args=[req.dict()])
-        # if task.status != 'SUCCESS':
-        #     return {'task':task.id}
-        # return task.result
+        return tasks.send(task_name='build_dataset',
+                          task_args=req.dict(),
+                          name='build_dataset-{}-{}'.format(req.symbol, req.builder)
+                          )
     except MessageException as e:
         raise HTTPException(status_code=400, detail=e.message)
+
 
 @router.post('/build-many')
 def build_many_dataset(
         requests: List[BuildRequest] = Body(...),
+        batch: Optional[str] = None,
         service: DatasetBuildingService = Depends(DatasetBuildingService),
         tasks: TaskService = Depends(TaskService)
-    ):
+):
     # Check all args are correct
     for req in requests:
         try:
@@ -125,7 +128,13 @@ def build_many_dataset(
         except MessageException as e:
             raise HTTPException(status_code=400, detail=e.message)
     # Launch tasks
-    _tasks = [t for  t in tasks.send_many('build_dataset', [r.dict() for r in requests])]
+    _tasks = [
+        tasks.send(task_name='build_dataset',
+                   task_args=r.dict(),
+                   name='build_dataset-{}-{}'.format(req.symbol, req.builder),
+                   batch=batch)
+        for r in requests
+    ]
     return _tasks
 
 

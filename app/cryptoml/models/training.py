@@ -1,6 +1,5 @@
 import numpy as np
 import pandas as pd
-from cryptoml_core.deps.dask import get_client
 from sklearn.utils import parallel_backend
 
 def train_model(est, parameters, X_train: pd.DataFrame, y_train: pd.Series):

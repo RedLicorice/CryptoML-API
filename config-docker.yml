@@ -9,10 +9,6 @@ storage:
     verify: False
     uploads_bucket: 'temp-uploads'
     loglevel: 'INFO'
-celery:
-  # Use local redis as broker if in swarm mode!
-  broker: 'redis://redis:6379'
-  backend: 'redis://redis:6379'
 dask:
   scheduler: 'tcp://dask-scheduler:8786'
 database:
@@ -30,6 +26,7 @@ database:
     # If using docker ssl=true&retrywrites=false&ssl_cert_reqs=CERT_NONE
     uri: !ENV 'mongodb://${MONGODB_ROOT_USER}:${MONGODB_ROOT_PASSWORD}@cupcaketest.duckdns.org:27017'
     database: 'cryptoml'
-
+  redis:
+    uri: 'redis://redis:6379'
 kraken:
   key: ''

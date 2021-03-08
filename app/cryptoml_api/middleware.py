@@ -1,5 +1,5 @@
-from fastapi import Request
-from cryptoml_core.exceptions import MessageException
+from fastapi import Request, HTTPException
+from cryptoml_core.exceptions import MessageException, NotFoundException
 import logging
 
 __all__ = ("request_handler",)
@@ -11,6 +11,9 @@ async def request_handler(request: Request, call_next):
     """
     try:
         return await call_next(request)
+
+    except NotFoundException as ex:
+        raise HTTPException(status_code=404, detail=ex.message)
 
     except Exception as ex:
         logging.exception(ex)

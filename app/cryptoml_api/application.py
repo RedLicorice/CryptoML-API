@@ -19,15 +19,12 @@ def create_worker():
 
 
 def create_app() -> FastAPI:
-    global app, celery, dask
+    global app, celery
     # Setup Logging
     setup_logger()
 
     # Start Celery
     celery = make_celery()
-
-    # Start Dask Client
-    # dask = make_dask_client()
 
     # Start FastAPI
     app = FastAPI()

@@ -5,6 +5,7 @@ from cryptoml_core.deps.mongodb.document_model import DocumentModel
 # and for each currency included min/max index
 class Dataset(DocumentModel):
     name: str  # Name of the dataset
+    type: Optional[str] = 'FEATURES'  # Type of the dataset (either FEATURES, TARGET or SOURCE)
     ticker: str  # Ticker name, eg BTC or BTCUSD
     count: int  # Number of entries
     index_min: str  # Timestamp of first record
