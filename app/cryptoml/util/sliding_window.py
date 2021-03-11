@@ -20,24 +20,12 @@ def _test_window(est, parameters, X, y, e):
     }
 
 
-def _test_windows(est, parameters, X, y, ranges):
-    results = [_test_window(est, parameters, X.loc[b:e, :], y.loc[b:e], e) for b, e in ranges]
+def test_windows(est, parameters, X, y, ranges, parallel=True):
+    if parallel:
+        results = Parallel(n_jobs=-1)(delayed(_test_window)(est, parameters, X.loc[b:e, :], y.loc[b:e], e) for b, e in ranges)
+    else:
+        results = [_test_window(est, parameters, X.loc[b:e, :], y.loc[b:e], e) for b, e in ranges]
     df = pd.DataFrame(results)
     # df['time'] = pd.to_datetime(df.time)
     df = df.set_index('time')
     return df
-
-
-def test_windows_parallel(est, parameters, X, y, ranges):
-    with parallel_backend('dask'):
-        results = Parallel(n_jobs=-1)(delayed(_test_window)(est, parameters, X.loc[b:e, :], y.loc[b:e], e) for b, e in ranges)
-        df = pd.DataFrame(results)
-        # df['time'] = pd.to_datetime(df.time)
-        df = df.set_index('time')
-        return df
-
-
-def test_windows(est, parameters, X, y, ranges, parallel=True):
-    if parallel:
-        return test_windows_parallel(est, parameters, X, y, ranges)
-    return _test_windows(est, parameters, X, y, ranges)
