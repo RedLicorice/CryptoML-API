@@ -30,5 +30,10 @@ requirements: $(REQUIREMENTS)
 install: requirements
 	pip install -r requirements.txt
 
+net-up:
+	docker network create -d overlay --attachable cryptoml_internal
+
+net-down:
+	docker network rm cryptoml_internal
 
 

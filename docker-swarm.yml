@@ -39,8 +39,11 @@ services:
     deploy:
       mode: replicated
       replicas: 1
+    environment:
+      - DASK_DISTRIBUTED__SCHEDULER__WORK_STEALING=True
+      - DASK_DISTRIBUTED__SCHEDULER__ALLOWED_FAILURES=5
 
-  celery-worker:
+  celery-worker-default:
     image: mrlicorice/cryptoml-api:latest
     entrypoint: celery -A worker.celery worker --loglevel=info
     configs:
@@ -52,6 +55,23 @@ services:
     networks:
       - internal
     deploy:
+      endpoint_mode: dnsrr # Use DNSRR because each service container must have its own IP address and not a Virtual IP!
+      mode: replicated
+      replicas: 1
+
+  celery-worker-system:
+    image: mrlicorice/cryptoml-api:latest
+    entrypoint: celery -A worker.celery worker --loglevel=info -Q system
+    configs:
+      - source: cryptoml_config
+        target: /app/config.yml
+    secrets:
+      - source: cryptoml_env
+        target: /app/.env
+    networks:
+      - internal
+    deploy:
+      endpoint_mode: dnsrr # Use DNSRR because each service container must have its own IP address and not a Virtual IP!
       mode: replicated
       replicas: 1
 
@@ -65,19 +85,13 @@ services:
         target: /app/.env
     depends_on:
       - dask-scheduler
-    entrypoint: dask-worker tcp://dask-scheduler:8786
+    entrypoint: dask-worker --no-dashboard --no-nanny tcp://dask-scheduler:8786
     networks:
       - internal
     deploy:
+      endpoint_mode: dnsrr # Use DNSRR because each service container must have its own IP address and not a Virtual IP!
       mode: replicated
       replicas: 4
-      #resources:
-      #  limits:
-      #    cpus: '0.50'
-      #    memory: 2Gi
-      #  reservations:
-      #    cpus: '0.25'
-      #    memory: 500M
 
   redis:
     image: 'redis:6-alpine'

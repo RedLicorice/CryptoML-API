@@ -1,13 +1,13 @@
 from cryptoml.util.selection_pipeline import Pipeline
 from sklearn.ensemble import RandomForestClassifier
-from cryptoml.util.import_proxy import SimpleImputer, StandardScaler
+from cryptoml.util.import_proxy import SimpleImputer, StandardScaler, MinMaxScaler
 
 
 PARAMETER_GRID = {
     'c__n_estimators': [100, 200, 500],
     'i__strategy': ['mean'],  # 'median', 'most_frequent', 'constant'
     'c__criterion': ['gini'],  # , 'entropy'],
-    'c__max_depth': [4, 8],
+    'c__max_depth': [2, 4, 8],
     'c__min_samples_split': [2],
     'c__min_samples_leaf': [1, 0.1, 0.2],
     'c__max_features': ['auto', 'log2', 0.1, 0.2, 0.6],  # 'sqrt',

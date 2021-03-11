@@ -1,5 +1,6 @@
 from cryptoml_core.deps.influxdb.client import DictClient, DataFrameClient
 import pandas as pd
+import logging
 
 __all__ = ("query_meta", "query_first_timestamp", "query_last_timestamp", "query_dataframe", "append_tags")
 
@@ -82,8 +83,9 @@ def query_dataframe(measure, first=None, last=None, columns=None, **kwargs)-> pd
         first = query_first_timestamp(measure=measure, tags=tags)
     if not last:
         last = query_last_timestamp(measure=measure, tags=tags)
-    meta = query_meta(measure=measure, columns=columns)
+
     if not columns:
+        meta = query_meta(measure=measure, columns=columns)
         columns = ','.join([c for c in meta.columns])
     elif isinstance(columns, list):
         columns = ','.join(columns)
@@ -92,6 +94,7 @@ def query_dataframe(measure, first=None, last=None, columns=None, **kwargs)-> pd
     query += " WHERE time >= '{}' AND time < '{}'".format(first, last)
     query = append_tags(query, tags)
     query += " ORDER BY time"
+    logging.info("InfluxDB Query: {}".format(query))
     # if tags:
     #     for tag, value in tags.items():
     #         if not value:

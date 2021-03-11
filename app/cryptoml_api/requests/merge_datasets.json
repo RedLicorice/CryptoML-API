@@ -1,0 +1,20 @@
+{
+    "type": "FEATURES",
+    "dataset": {
+        "$nin": [
+            "target"
+        ]
+    },
+    "symbol": {
+        "$in": [
+            "ADAUSD", "BCHUSD", "BNBUSD",
+            "BTCUSD", "BTGUSD", "DASHUSD",
+            "DOGEUSD", "EOSUSD", "ETCUSD",
+            "ETHUSD", "LINKUSD", "LTCUSD",
+            "NEOUSD", "QTUMUSD", "TRXUSD",
+            "USDTUSD", "VENUSD", "WAVESUSD",
+            "XEMUSD", "XMRUSD", "XRPUSD",
+            "ZECUSD", "ZRXUSD"
+        ]
+    }
+}

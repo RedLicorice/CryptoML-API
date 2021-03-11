@@ -1,6 +1,6 @@
 from cryptoml.util.selection_pipeline import Pipeline
 from sklearn.naive_bayes import MultinomialNB
-from cryptoml.util.import_proxy import SimpleImputer, StandardScaler
+from cryptoml.util.import_proxy import SimpleImputer, MinMaxScaler, StandardScaler
 
 
 PARAMETER_GRID = {
@@ -10,5 +10,6 @@ PARAMETER_GRID = {
 estimator = Pipeline([
     ('i', SimpleImputer()),  # Replace nan's with the median value between previous and next observation
     ('s', StandardScaler()),
+    ('n', MinMaxScaler()),
     ('c', MultinomialNB()),
 ])

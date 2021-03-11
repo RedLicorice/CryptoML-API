@@ -14,11 +14,23 @@ def weighted_macro_precision_score(y_true, y_pred, **kwargs):
     if not weights:
         weights={label: 1.0 for label in unique}
     result = 0.00
-    total_weight = np.sum([v for k,v in weights.items()])
+    total_weight = np.sum([v for k, v in weights.items()])
     for label in unique:
         result += report[str(label)]['precision'] * weights[str(label)]
-    result /= max(total_weight, 1) # We expect to divide a weighted average by the sum of the weights
+    result /= max(total_weight, 1)  # We expect to divide a weighted average by the sum of the weights
     return result
 
-def get_weighted_precision_scorer(weights={0:1.0, 1:1.0, 2:1.0}, **kwargs):
+
+def get_weighted_precision_scorer(weights, **kwargs):
     return make_scorer(weighted_macro_precision_score, weights=weights, **kwargs)
+
+
+def notnull_precision_score(y_true, y_pred, **kwargs):
+    res = precision_score(y_true, y_pred, **kwargs)
+    if np.isnan(res):
+        return 0
+    return res
+
+
+def get_precision_scorer(average='micro'):
+    return make_scorer(notnull_precision_score, zero_division=0, average=average)

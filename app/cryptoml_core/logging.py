@@ -1,6 +1,7 @@
 import logging
 import sys
 
+
 # Setup logging to STDOUT so we can use a common log collector for centralizing logs in the future.
 def setup_logger():
     root = logging.getLogger()

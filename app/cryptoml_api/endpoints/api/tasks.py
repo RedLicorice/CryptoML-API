@@ -31,6 +31,9 @@ def task_check_many(request: Union[Task, List[Task]] = Body(...), service: TaskS
     else:
         return service.get_task(request.id)
 
+@router.get('/resume')
+def task_resume(service: TaskService = Depends(TaskService)):
+    return service.resume_tasks()
 
 @router.post('/revoke')
 def task_revoke(task: Task = Body(...), service: TaskService = Depends(TaskService)):

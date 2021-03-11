@@ -54,10 +54,19 @@ class FeatureRepository:
         df = query_dask_dataframe(measure, tags={'symbol': symbol}, delta={'days': 10000})
         return df['label']
 
+
 if __name__ == '__main__':
     print("Open Dataframe on disk")
-    df = pd.read_csv('B:\\Tesi-POLITO\\LSTM_forecaster\\data\\datasets\\timedspline\\csv\\BTC.csv', parse_dates=True, index_col='Date')
-    dft = pd.read_csv('B:\\Tesi-POLITO\\LSTM_forecaster\\data\\datasets\\timedspline\\csv\\BTC_target.csv', parse_dates=True, index_col='Date')
+    df = pd.read_csv(
+        'B:\\Tesi-POLITO\\LSTM_forecaster\\data\\datasets\\timedspline\\csv\\BTC.csv',
+        parse_dates=True,
+        index_col='Date'
+    )
+    dft = pd.read_csv(
+        'B:\\Tesi-POLITO\\LSTM_forecaster\\data\\datasets\\timedspline\\csv\\BTC_target.csv',
+        parse_dates=True,
+        index_col='Date'
+    )
     print("Instantiate Repository")
     repo = FeatureRepository()
     print("Import features to repo")

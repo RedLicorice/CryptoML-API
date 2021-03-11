@@ -8,6 +8,8 @@ xgboost>=1.3.3
 git+https://github.com/RedLicorice/sklearn-genetic.git@master
 git+https://github.com/g8a9/pyti.git@master
 git+https://github.com/mrjbq7/ta-lib.git@master
+# Relief-based feature selection https://github.com/EpistasisLab/scikit-rebate
+skrebate==0.62
 # Distributed operations
 dask[complete] # Dask Dataframe, Bag and Array
 distributed

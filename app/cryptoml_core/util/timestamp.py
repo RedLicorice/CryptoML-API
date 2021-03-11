@@ -20,6 +20,11 @@ def to_timestamp(date: datetime) -> str:
     return date.isoformat('T')
 
 
+def mul_interval(interval: dict, factor: int):
+    seconds = timedelta(**interval).total_seconds()
+    return {'seconds': seconds*factor}
+
+
 def add_interval(timestamp: str, interval: dict):
     date = from_timestamp(timestamp)
     return to_timestamp(date + timedelta(**interval))

@@ -10,3 +10,11 @@ def label_feature_importances(fit_estimator, labels):
         labeled = {str(k): float(v) for k, v in sorted(importances.items(), key=lambda item: -item[1])}
         return labeled
     return None
+
+
+def label_rank(rank, labels):
+    pass
+
+
+def label_support(support, labels):
+    return [c for i, c in enumerate(labels) if support[i]]

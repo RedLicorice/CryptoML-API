@@ -7,4 +7,6 @@ infrastructure/
 kubernetes/
 docker-compose.*.yml
 Jenkinsfile
-build-and-push.sh
+app/config.yml
+app/.env
+app/.env

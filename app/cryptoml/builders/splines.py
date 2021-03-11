@@ -3,7 +3,7 @@ import numpy as np
 from cryptoml.features.technical_indicators import get_ta_features, exponential_moving_average, simple_moving_average
 from cryptoml.features.lagging import make_lagged
 from cryptoml.features.spline import get_spline
-from cryptoml.features.ohlcv_resample import ohlcv_resample
+from cryptoml.features.ohlcv import ohlcv_resample
 from cryptoml.util.convergence import convergence_between_series
 from cryptoml.features.talib import get_talib_patterns
 
@@ -208,8 +208,15 @@ def build(ohlcv: pd.DataFrame, coinmetrics: pd.DataFrame, **kwargs):
     ohlcv_stats['high_close_dist_pct'] = (ohlcv.high - ohlcv.close).pct_change()  # Change in wick size of the candle, shorter wick should be bullish
     ohlcv_stats['low_close_dist_pct'] = (ohlcv.close - ohlcv.low).pct_change()  # Change in shadow size of the candle, this increasing would indicate support (maybe a bounce)
     ohlcv_stats['high_low_dist_pct'] = (ohlcv.high - ohlcv.low).pct_change()  # Change in total candle size, smaller candles stands for low volatility
+    ohlcv_stats['close_volatility_3d'] = ohlcv.close.pct_change().rolling(3).std(ddof=0)
     ohlcv_stats['close_volatility_7d'] = ohlcv.close.pct_change().rolling(7).std(ddof=0)
     ohlcv_stats['close_volatility_30d'] = ohlcv.close.pct_change().rolling(30).std(ddof=0)
+    if ohlcv.close.shape[0] > 90:
+        ohlcv_stats['close_volatility_90d'] = ohlcv.close.pct_change().rolling(90).std(ddof=0)
+    if ohlcv.close.shape[0] > 180:
+        ohlcv_stats['close_volatility_180d'] = ohlcv.close.pct_change().rolling(180).std(ddof=0)
+    if ohlcv.close.shape[0] > 360:
+        ohlcv_stats['close_volatility_360d'] = ohlcv.close.pct_change().rolling(360).std(ddof=0)
 
     for d in [3, 7, 30]:
         ohlcv_d = ohlcv_resample(ohlcv=ohlcv, period=d, interval='D')

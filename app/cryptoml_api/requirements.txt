@@ -10,3 +10,4 @@ celery[redis] # Redis support for Celery
 redis # Queue backend client
 # Kraken API client
 krakenex
+typer

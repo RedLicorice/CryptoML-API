@@ -1,6 +1,14 @@
 import pandas as pd
 
 
+def ohlcv_from_ticks(price: pd.Series, volume: pd.Series, interval, **kwargs):
+    ohlc = price.resample(interval).ohlc()
+    volume = volume.resample(interval).sum()
+    volume.name = 'volume'
+    ohlcv = pd.concat([ohlc, volume], axis='columns')
+    return ohlcv
+
+
 def ohlcv_resample(ohlcv: pd.DataFrame, **kwargs):
     period = int(kwargs.get('period', 7))
     interval = kwargs.get('interval', 'D')

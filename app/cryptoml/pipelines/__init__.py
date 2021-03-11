@@ -19,8 +19,8 @@ PIPELINE_LIST = [
 ]
 
 # Dinamically import and validate a pipeline from cryptoml.pipelines.*
-def get_pipeline(pipeline):
-    if not pipeline in PIPELINE_LIST:
+def get_pipeline(pipeline, unlisted=False):
+    if not pipeline in PIPELINE_LIST and not unlisted:
         raise Exception('Package cryptoml.pipelines has no {} module!'.format(pipeline))
     try:
         pipeline_module = importlib.import_module('cryptoml.pipelines.{}'.format(pipeline))

@@ -1,7 +1,7 @@
 from cryptoml.util.selection_pipeline import Pipeline
 from sklearn.ensemble import BaggingClassifier
 from sklearn.svm import SVC
-from cryptoml.util.import_proxy import SimpleImputer, StandardScaler
+from cryptoml.util.import_proxy import SimpleImputer, MinMaxScaler, StandardScaler
 
 
 PARAMETER_GRID = {
@@ -17,6 +17,7 @@ PARAMETER_GRID = {
 pipeline = Pipeline([
     ('i', SimpleImputer()),  # Replace nan's with the median value between previous and next observation
     ('s', StandardScaler()),
+    ('n', MinMaxScaler()),
     ('c', SVC()),
 ])
 

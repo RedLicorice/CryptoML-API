@@ -38,11 +38,14 @@ class TaskService:
             status='CREATED'
         )
         task = self.repo.create(task)
-        celery_task = current_app.send_task(task_name,
-                                            args=[task_args],
+        return self.start_task(task)
+
+    def start_task(self, task: Task, **kwargs):
+        celery_task = current_app.send_task(task.task_name,
+                                            args=[task.args],
                                             task_id=task.id,
-                                            link=on_task_success.s(task.dict()),
-                                            link_error=on_task_failure.s(),
+                                            link=on_task_success.s(task.dict()).set(queue='system'),
+                                            link_error=on_task_failure.s().set(queue='system'),
                                             countdown=kwargs.get('countdown')
                                             )
         celery_task.forget()  # Results are saved on task success!
@@ -85,3 +88,10 @@ class TaskService:
 
     def revoke(self, task: Task):
         pass
+
+    def resume_tasks(self):
+        i = 1
+        for task in self.repo.yield_unfinished():
+            logging.info("({}) Resuming task: {} from state {}".format(i, task.id, task.status))
+            self.start_task(task, countdown=i*5)
+            i += 1

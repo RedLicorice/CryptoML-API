@@ -4,10 +4,13 @@ from typing import List
 from cryptoml_core.deps.mongodb import Collection, get_collection
 from cryptoml_core.util.timestamp import get_timestamp
 from cryptoml_core.exceptions import NotFoundException
+from typing import Optional
+
 
 def get_uuid() -> str:
     """Returns an unique UUID (UUID4)"""
     return str(uuid4())
+
 
 class DocumentNotFoundException(NotFoundException):
     def __init__(self, collection, identifier):
@@ -15,6 +18,7 @@ class DocumentNotFoundException(NotFoundException):
         self.identifier = identifier
         self.message = "Document not found in collection \"{}\" by \"{}\"".format(collection, identifier)
         super(Exception, self).__init__()
+
 
 class DocumentRepository:
     __collection__: str = None
@@ -29,6 +33,10 @@ class DocumentRepository:
         if not document:
             raise DocumentNotFoundException(collection=self.__collection__, identifier=id)
         return self.__model__.parse_obj(document)
+
+    def query(self, query: dict, projection: Optional[dict] = None) -> List[BaseModel]:
+        cursor = self.collection.find(filter=query, projection=projection)
+        return [self.__model__.parse_obj(document) for document in cursor]
 
     def list(self) -> List[BaseModel]:
         cursor = self.collection.find()
@@ -54,6 +62,11 @@ class DocumentRepository:
         document["updated"] = get_timestamp()
 
         result = self.collection.update_one({"_id": id}, {"$set": document})
+        if not result.modified_count:
+            raise DocumentNotFoundException(collection=self.__collection__, identifier=id)
+
+    def touch(self, id):
+        result = self.collection.update_one({"_id": id}, {"$set": {"updated": get_timestamp()}})
         if not result.modified_count:
             raise DocumentNotFoundException(collection=self.__collection__, identifier=id)
 
