@@ -1,5 +1,4 @@
 import pandas as pd
-from .training import train_model, predict_model
 from joblib import Parallel, delayed, parallel_backend
 
 
@@ -10,12 +9,9 @@ def _test_window(est, parameters, X, y, e):
     # test_X = X.iloc[-1, :].values.reshape(1, -1) # Test contains a single sample so need to reshape
     test_X = X.iloc[-1:, :] # This way it returns a pandas dataframe with a single row
     test_y = y.iloc[-1]
-    est = train_model(
-        est=est,
-        parameters=parameters,
-        X_train=train_X,
-        y_train=train_y
-    )
+
+    est.set_params(**parameters)
+    est = est.fit(train_X, train_y)
     pred = est.predict(test_X)
     return {
         'time': e,

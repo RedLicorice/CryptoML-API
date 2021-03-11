@@ -1,5 +1,4 @@
-import pandas as pd
-from cryptoml.models.testing import test_windows
+from cryptoml.util.sliding_window import test_windows
 from cryptoml.util.flattened_classification_report import flattened_classification_report
 from cryptoml.pipelines import get_pipeline, PIPELINE_LIST
 from cryptoml_core.util.timestamp import sub_interval, add_interval, from_timestamp, timestamp_windows
