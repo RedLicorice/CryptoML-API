@@ -1,11 +1,10 @@
 FROM ubuntu:20.04
 
-#RUN apt-get update -y && apt-get install -y python3-pip python3-dev git
 ENV PYTHONUNBUFFERED=1
 
 RUN echo "**** install Python ****" && \
     apt-get update -y && \
-    apt-get install -y python3-pip python3-dev wget git && \
+    apt-get install -y python3-pip python3-dev wget git iproute2 && \
     if [ ! -e /usr/bin/python ]; then ln -sf python3 /usr/bin/python ; fi && \
     echo "**** install pip ****" && \
     pip3 install --no-cache --upgrade pip setuptools wheel && \

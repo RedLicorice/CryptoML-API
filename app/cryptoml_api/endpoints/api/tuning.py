@@ -20,6 +20,7 @@ def grid_search(
         model_id: str,
         split: Optional[float] = 0.7,
         batch: Optional[str] = None,
+        task_key: Optional[str] = None,
         sync: Optional[bool] = False,
         model_service: ModelService = Depends(ModelService),
         tuning_service: TuningService = Depends(TuningService),
@@ -27,7 +28,7 @@ def grid_search(
 ):
     try:
         model = model_service.get_model(model_id)
-        parameters = tuning_service.create_parameters_search(model, split)
+        parameters = tuning_service.create_parameters_search(model, split, task_key=task_key)
         if sync:
             return tuning_service.grid_search(model, parameters, sync=True)
         return tasks.send(task_name='gridsearch',
@@ -42,6 +43,7 @@ def grid_search(
 @router.post('/gridsearch-batch/')
 def grid_search_batch(
         batch: Optional[str] = None,
+        task_key: Optional[str] = None,
         split: Optional[float] = 0.7,
         query: dict = Body(...),
         model_service: ModelService = Depends(ModelService),
@@ -50,7 +52,7 @@ def grid_search_batch(
 ):
     try:
         models = model_service.query_models(query)
-        tests = [(model, tuning_service.create_parameters_search(model, split)) for model in models]
+        tests = [(model, tuning_service.create_parameters_search(model, split, task_key=task_key)) for model in models]
         return [tasks.send(task_name='gridsearch',
                            task_args={'model': model.dict(), 'search_parameters': search_parameters.dict()},
                            name='grid_search-{}-{}-{}-{}'.format(model.symbol, model.pipeline,
@@ -79,6 +81,7 @@ def feature_selection(
         method: str,
         split: Optional[float] = 0.7,
         batch: Optional[str] = None,
+        task_key: Optional[str] = None,
         sync: Optional[bool] = False,
         model_service: ModelService = Depends(ModelService),
         tuning_service: TuningService = Depends(TuningService),
@@ -86,7 +89,7 @@ def feature_selection(
 ):
     try:
         model = model_service.get_model(model_id)
-        mf = tuning_service.create_features_search(model, split, method)
+        mf = tuning_service.create_features_search(model, split, method, task_key=task_key)
         if sync:
             return tuning_service.feature_selection(model, mf, sync=True)
         return tasks.send(task_name='featureselection',
@@ -102,6 +105,7 @@ def feature_selection(
 def feature_selection_batch(
         method: str,
         batch: Optional[str] = None,
+        task_key: Optional[str] = None,
         split: Optional[float] = 0.7,
         query: dict = Body(...),
         model_service: ModelService = Depends(ModelService),
@@ -118,7 +122,9 @@ def feature_selection_batch(
             return 'feature_selection-{}-{}-{}-{}'.format(
                 _model.symbol, _model.pipeline, _model.dataset, _model.target)
 
-        tests = [(model, tuning_service.create_features_search(model, split, method)) for model in models]
+        tests = [
+            (model, tuning_service.create_features_search(model, split, method, task_key=task_key)) for model in models
+        ]
         return [tasks.send(task_name='featureselection',
                            task_args={'model': model.dict(), 'search_parameters': search_parameters.dict()},
                            name=get_name_from_model(model),

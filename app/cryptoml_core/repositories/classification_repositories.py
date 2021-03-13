@@ -109,10 +109,28 @@ class ModelRepository(DocumentRepository):
         cursor = self.collection.find({'parameters': {'$size': 0}})
         return [self.__model__.parse_obj(document) for document in cursor]
 
-    def clear(self, query):
+    def clear_features(self, query):
         result = self.collection.update_many(
             query,
-            {"$set": {"updated": get_timestamp(), "features": [], "parameters": [], "tasks": []}}
+            {"$set": {"updated": get_timestamp(), "features": []}}
+        )
+        if not result.modified_count:
+            raise DocumentNotFoundException(collection=self.__collection__, identifier=id)
+        return result.modified_count
+
+    def clear_parameters(self, query):
+        result = self.collection.update_many(
+            query,
+            {"$set": {"updated": get_timestamp(), "parameters": []}}
+        )
+        if not result.modified_count:
+            raise DocumentNotFoundException(collection=self.__collection__, identifier=id)
+        return result.modified_count
+
+    def clear_tests(self, query):
+        result = self.collection.update_many(
+            query,
+            {"$set": {"updated": get_timestamp(), "tests": []}}
         )
         if not result.modified_count:
             raise DocumentNotFoundException(collection=self.__collection__, identifier=id)

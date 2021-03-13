@@ -20,8 +20,21 @@ def model_index(query: Optional[dict] = Body(...), service: ModelService = Depen
 
 
 @router.post('/clear')
-def model_index(query: Optional[dict] = Body(...), service: ModelService = Depends(ModelService)):
-    return service.clear_classification_models(query or {})
+def model_index(
+        features: Optional[bool] = True,
+        parameters: Optional[bool] = True,
+        tests: Optional[bool] = True,
+        query: Optional[dict] = Body(...),
+        service: ModelService = Depends(ModelService)
+):
+    result = {}
+    if features:
+        result['features'] = service.clear_features(query)
+    if parameters:
+        result['parameters'] = service.clear_parameters(query)
+    if tests:
+        result['tests'] = service.clear_tests(query)
+    return result
 
 
 @router.post('/test/{model_id}')

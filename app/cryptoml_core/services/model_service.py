@@ -48,8 +48,14 @@ class ModelService:
                     pass
         return models
 
-    def clear_classification_models(self, query = {}):
-        return self.model_repo.clear(query)
+    def clear_features(self, query = {}):
+        return self.model_repo.clear_features(query)
+
+    def clear_parameters(self, query = {}):
+        return self.model_repo.clear_parameters(query)
+
+    def clear_tests(self, query = {}):
+        return self.model_repo.clear_tests(query)
 
     def all(self):
         return [m for m in self.model_repo.iterable()]

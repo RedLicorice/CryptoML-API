@@ -75,13 +75,13 @@ class TuningService:
         self.model_repo = ModelRepository()
         self.dataset_service = DatasetService()
 
-    def create_parameters_search(self, model: Model, split: float) -> ModelParameters:
+    def create_parameters_search(self, model: Model, split: float, task_key: str = None) -> ModelParameters:
         ds = self.dataset_service.get_dataset(model.dataset, model.symbol)
         splits = self.dataset_service.get_train_test_split_indices(ds, split)
         result = ModelParameters(
             cv_interval=splits['train'],
             cv_splits=5,
-            task_key=str(uuid4())
+            task_key=task_key or str(uuid4())
         )
         return result
 
@@ -104,7 +104,9 @@ class TuningService:
             estimator=pipeline_module.estimator,
             param_grid=kwargs.get('parameter_grid', pipeline_module.PARAMETER_GRID),
             cv=BlockingTimeSeriesSplit(n_splits=mp.cv_splits),
-            scoring=get_precision_scorer()
+            scoring=get_precision_scorer(),
+            verbose=kwargs.get("verbose", 0),
+            n_jobs=kwargs.get("n_jobs", None)
         )
 
         mp.start_at = get_timestamp()  # Log starting timestamp
@@ -135,13 +137,13 @@ class TuningService:
         self.model_repo.append_parameters(model.id, mp)
         return mp
 
-    def create_features_search(self, model: Model, split: float, method: str) -> ModelFeatures:
+    def create_features_search(self, model: Model, split: float, method: str, task_key: str = None) -> ModelFeatures:
         ds = self.dataset_service.get_dataset(model.dataset, model.symbol)
         splits = self.dataset_service.get_train_test_split_indices(ds, split)
         result = ModelFeatures(
             search_interval=splits['train'],
             feature_selection_method=method,
-            task_key=str(uuid4())
+            task_key=task_key or str(uuid4())
         )
         return result
 

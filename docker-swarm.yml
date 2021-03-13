@@ -45,7 +45,7 @@ services:
 
   celery-worker-default:
     image: mrlicorice/cryptoml-api:latest
-    entrypoint: celery -A worker.celery worker --loglevel=info
+    entrypoint: celery -A worker.celery worker --loglevel=info --concurrency 4
     configs:
       - source: cryptoml_config
         target: /app/config.yml
@@ -61,7 +61,7 @@ services:
 
   celery-worker-system:
     image: mrlicorice/cryptoml-api:latest
-    entrypoint: celery -A worker.celery worker --loglevel=info -Q system
+    entrypoint: celery -A worker.celery worker --loglevel=info -Q system --concurrency 2
     configs:
       - source: cryptoml_config
         target: /app/config.yml
@@ -85,7 +85,7 @@ services:
         target: /app/.env
     depends_on:
       - dask-scheduler
-    entrypoint: dask-worker --no-dashboard --no-nanny tcp://dask-scheduler:8786
+    entrypoint: dask-worker --no-dashboard --no-nanny --interface eth0 --nprocs 1 --nthreads 4 --lifetime 900s tcp://dask-scheduler:8786
     networks:
       - internal
     deploy:
