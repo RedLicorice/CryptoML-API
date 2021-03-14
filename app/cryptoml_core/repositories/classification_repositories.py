@@ -135,3 +135,4 @@ class ModelRepository(DocumentRepository):
         if not result.modified_count:
             raise DocumentNotFoundException(collection=self.__collection__, identifier=id)
         return result.modified_count
+

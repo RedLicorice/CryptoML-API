@@ -22,7 +22,9 @@ from cryptoml_core.exceptions import NotFoundException
 from dask.distributed import CancelledError
 from uuid import uuid4
 import logging
-
+from skrebate import ReliefF, MultiSURF
+import math
+import numpy as np
 
 def select_rfecv(X, y, sync=False):
     # Load pipeline
@@ -68,6 +70,34 @@ def select_percentile(X, y, percentile=10):
     selector.fit(X, y)
     return selector
 
+
+# NOTE: ReliefF (and MultiSURF) expect n_neighbors (k) is <= to the number of instances
+# that have the least frequent class label (binary and multiclass endpoint data)
+def select_relieff(X, y, percentile=10):
+    unique, counts = np.unique(y, return_counts=True)
+    num = math.ceil(X.shape[0] * percentile / 100)
+    k = np.min(counts)
+    if k > 100:
+        k = 100
+    selector = ReliefF(
+        n_features_to_select=num,
+        n_neighbors=k,
+        discrete_threshold=3,
+        n_jobs=-1
+    )
+    selector.fit(X, y)
+    return selector
+
+
+def select_multisurf(X, y, percentile=10):
+    num = math.ceil(X.shape[0] * percentile / 100)
+    selector = MultiSURF(
+        n_features_to_select=num,
+        discrete_threshold=3,
+        n_jobs=-1
+    )
+    selector.fit(X, y)
+    return selector
 
 class TuningService:
     def __init__(self):
@@ -148,7 +178,7 @@ class TuningService:
         return result
 
     def feature_selection(self, model: Model, mf: ModelFeatures, **kwargs) -> ModelFeatures:
-        INDEPENDENT_SEARCH_METHODS = ['importances', 'rfecv', 'fscore']
+        INDEPENDENT_SEARCH_METHODS = ['importances', 'rfecv', 'fscore', 'relieff', 'multisurf']
         if not model.id:  # Make sure the model exists
             model = self.model_repo.create(model)
         if self.model_repo.exist_features(model.id, mf.task_key):
@@ -168,6 +198,10 @@ class TuningService:
             selector = select_rfecv(X, y, sync=kwargs.get('sync', False))
         elif mf.feature_selection_method == 'fscore':
             selector = select_percentile(X, y, percentile=10)
+        elif mf.feature_selection_method == 'relieff':
+            selector = select_relieff(X, y, percentile=10)
+        elif mf.feature_selection_method == 'multisurf':
+            selector = select_multisurf(X, y, percentile=10)
         else:
             raise NotFoundException("Cannot find feature selection method by {}".format(mf.feature_selection_method))
         mf.end_at = get_timestamp()  # Log ending timestamp

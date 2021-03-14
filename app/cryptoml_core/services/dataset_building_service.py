@@ -61,6 +61,8 @@ class DatasetBuildingService:
         builder_module = self.get_builder(builder)
         args = self.resolve_builder_args(builder_module, args, symbol)
         features = builder_module.build(**args)
+        # Drop columns which contain more than 50% nan values
+        features = features.loc[:, features.isnull().mean() <= .5]
         # if kwargs.get('store', True):
         #     if builder == 'target':
         #         for c in features.columns:

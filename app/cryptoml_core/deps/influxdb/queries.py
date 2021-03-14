@@ -1,7 +1,7 @@
 from cryptoml_core.deps.influxdb.client import DictClient, DataFrameClient
 import pandas as pd
 import logging
-
+from cryptoml_core.exceptions import NotFoundException
 __all__ = ("query_meta", "query_first_timestamp", "query_last_timestamp", "query_dataframe", "append_tags")
 
 
@@ -102,6 +102,10 @@ def query_dataframe(measure, first=None, last=None, columns=None, **kwargs)-> pd
     #         query += " AND {}='{}'".format(tag, value)
     with DataFrameClient() as client:
         res = client.query(query)
+        if not measure in res:
+            message = "DataFrame {} not found by {}".format(measure, query)
+            print(message)
+            raise NotFoundException(message)
         data = res[measure]
         return data
 

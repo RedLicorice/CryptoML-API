@@ -10,6 +10,8 @@ from cryptoml_core.deps.dask import get_client
 import logging
 import itertools
 from typing import Optional
+from uuid import uuid4
+from cryptoml_core.util.timestamp import get_timestamp
 
 class ModelService:
     def __init__(self):
@@ -66,6 +68,26 @@ class ModelService:
     def query_models(self, query, projection: Optional[dict] = None):
         return self.model_repo.query(query, projection)
 
+    def create_model_test(self, *, model: Model, split=0.7, step=None, task_key=None, window=None, **kwargs):
+        service = DatasetService()
+        ds = service.get_dataset(model.dataset, model.symbol)
+        splits = service.get_train_test_split_indices(ds, split)
+        parameters = kwargs.get('parameters')
+        features = kwargs.get('features')
+        if isinstance(parameters, str) and parameters == 'latest':
+            parameters = model.parameters[-1].parameters
+        if isinstance(features, str) and features == 'latest':
+            features = model.features[-1].features
+        result = ModelTest(
+            window=window or {'days': 30},
+            step=step or ds.interval,
+            parameters=parameters or {},
+            features=features or [],
+            test_interval=splits['test'],
+            task_key=task_key or str(uuid4())
+        )
+        return result
+
     def test_model(self, model: Model, mt: ModelTest, **kwargs):
         if not model.id:
             model = self.model_repo.create(model)
@@ -87,11 +109,15 @@ class ModelService:
         # Load pipeline
         pipeline_module = get_pipeline(model.pipeline)
         # Slice testing interval in windows
+
         ranges = timestamp_windows(begin, end, mt.window, mt.step)
 
         # Connect to Dask
-        dask = get_client()
+        if not kwargs.get('sync'):
+            dask = get_client()
+        mt.start_at = get_timestamp()
         df = test_windows(pipeline_module.estimator, mt.parameters, X, y, ranges)
+        mt.end_at = get_timestamp()
 
         mt.classification_results = df.to_dict()
         mt.classification_report = flattened_classification_report(df.label, df.predicted)

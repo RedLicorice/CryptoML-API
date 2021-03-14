@@ -62,7 +62,7 @@ class DayResult(BaseModel):
 # Hold model testing results for a Model document
 class ModelTest(BaseModel):
     # Test input
-    window: dict = None  # Sliding window width (ie 10 days)
+    window: dict  # Sliding window width (ie 10 days)
     step: Optional[dict] = {'days': 1}  # Sliding interval, how many days to advance at each step
     parameters: dict  # Parameters to use for building the test model
     features: Optional[List[str]] = None # Names of the features to use for building the test model (Use all if none)

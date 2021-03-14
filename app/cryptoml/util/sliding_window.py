@@ -1,5 +1,5 @@
 import pandas as pd
-from joblib import Parallel, delayed, parallel_backend
+from joblib import Parallel, delayed
 
 
 def _test_window(est, parameters, X, y, e):
