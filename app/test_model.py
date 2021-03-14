@@ -7,6 +7,8 @@ from cryptoml_core.exceptions import MessageException
 def main(dataset, target, pipeline):
     models = ModelService()
     query = {"dataset": dataset, "target": target, "pipeline": pipeline}
+    if pipeline == '*':
+        del query['pipeline']
     models.clear_tests(query)
     test_models = models.query_models(query)
     print("[i] {} models to test".format(len(test_models)))
