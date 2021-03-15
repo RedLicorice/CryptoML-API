@@ -12,6 +12,7 @@ import itertools
 from typing import Optional
 from uuid import uuid4
 from cryptoml_core.util.timestamp import get_timestamp
+import numpy as np
 
 class ModelService:
     def __init__(self):
@@ -92,7 +93,7 @@ class ModelService:
         if not model.id:
             model = self.model_repo.create(model)
         if self.model_repo.exist_test(model.id, mt.task_key):
-            logging.info("Model {} Feature selection {} already executed!".format(model.id, mt.task_key))
+            logging.info("Model {} test {} already executed!".format(model.id, mt.task_key))
             return mt
         # Load dataset
         ds = DatasetService()
@@ -105,6 +106,10 @@ class ModelService:
                                    .format(model.pipeline, model.dataset, model.symbol, mt.window))
         X = ds.get_features(model.dataset, model.symbol, begin=begin, end=end)
         y = ds.get_target(model.target, model.symbol, begin=begin, end=end)
+
+        unique, counts = np.unique(y, return_counts=True)
+        if len(unique) < 2:
+            raise MessageException("Training data contains less than 2 classes: {}".format(unique))
 
         # Load pipeline
         pipeline_module = get_pipeline(model.pipeline)

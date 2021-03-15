@@ -2,16 +2,20 @@ import typer
 from cryptoml_core.services.model_service import ModelService
 from cryptoml_core.util.timestamp import get_timestamp
 from cryptoml_core.exceptions import MessageException
+import json
 
 
 def main(dataset, target, pipeline):
     models = ModelService()
     query = {"dataset": dataset, "target": target, "pipeline": pipeline}
-    if pipeline == '*':
+    if pipeline == 'all':
         del query['pipeline']
+    if target == 'all':
+        del query['target']
     models.clear_tests(query)
     test_models = models.query_models(query)
     print("[i] {} models to test".format(len(test_models)))
+    failed = []
     for i, m in enumerate(test_models):
         print("==[{}/{}]== MODEL: {} {} {} {} =====".format(i + 1, len(test_models), m.symbol, m.dataset, m.target,
                                                             m.pipeline))
@@ -30,9 +34,16 @@ def main(dataset, target, pipeline):
             models.test_model(m, t3, sync=True)
         except MessageException as e:
             print("[!] " + e.message)
+            failed.append((m, t1, t2, t3))
+            pass
+        except Exception as e:
+            print("[!] " + str(e))
+            failed.append((m, t1, t2, t3))
             pass
 
         print("[{}] Done".format(m.symbol))
+    with open('test-failed.json', 'w') as f:
+        json.dump(failed, f)
 
 
 if __name__ == '__main__':

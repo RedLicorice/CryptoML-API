@@ -25,5 +25,5 @@ estimator = Pipeline([
     ('i', SimpleImputer()),  # Replace nan's with the median value between previous and next observation
     ('s', StandardScaler()),  # Scale data in order to center it and increase robustness against noise and outliers
     # ('c', xgb.XGBClassifier()),
-    ('c', XGBClassifier(use_label_encoder=False)),
+    ('c', XGBClassifier(use_label_encoder=False, n_jobs=16)),
 ])
