@@ -94,7 +94,7 @@ def query_dataframe(measure, first=None, last=None, columns=None, **kwargs)-> pd
     query += " WHERE time >= '{}' AND time < '{}'".format(first, last)
     query = append_tags(query, tags)
     query += " ORDER BY time"
-    logging.info("InfluxDB Query: {}".format(query))
+    logging.debug("InfluxDB Query: {}".format(query))
     # if tags:
     #     for tag, value in tags.items():
     #         if not value:
