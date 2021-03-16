@@ -1,6 +1,10 @@
 from cryptoml.util.selection_pipeline import Pipeline
-from sklearn.neighbors import KNeighborsClassifier
 from cryptoml.util.import_proxy import SimpleImputer, MinMaxScaler, StandardScaler
+from sklearn.neighbors import KNeighborsClassifier
+from imblearn.over_sampling import SMOTE
+
+
+TARGET='binary_bin'
 
 PARAMETER_GRID = {
     'c__weights': ['distance', 'uniform'],  # Number of neighbors to use by default for kneighbors queries.
@@ -9,8 +13,8 @@ PARAMETER_GRID = {
 }
 
 estimator = Pipeline([
-    ('i', SimpleImputer()),  # Replace nan's with the median value between previous and next observation
+    ('i', SimpleImputer(strategy='mean')),
     ('s', StandardScaler()),
-    # ('n', MinMaxScaler()),
+    ('o', SMOTE()),
     ('c', KNeighborsClassifier()),
 ])

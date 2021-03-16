@@ -6,15 +6,15 @@ from cryptoml.util.import_proxy import SimpleImputer, StandardScaler
 
 PARAMETER_GRID = {
     'n_estimators': [10], # Number of estimators to use in ensemble
-    'max_samples': [0.5, 0.8, 1.0], # Number of samples per estimator in the ensemble
-    'max_features': [0.2, 0.8, 1.0], # Number of features per estimator in the ensemble
-    'base_estimator__c__criterion': ['gini'],#, 'entropy'],
-    'base_estimator__c__splitter': ['random', 'best'], # 'best',
-    'base_estimator__c__max_depth': [1, 2, 4],#None,
+    'max_samples': [0.5, 0.8],  # Number of samples per estimator in the ensemble
+    'max_features': [0.2, 0.8, 1.0],  # Number of features per estimator in the ensemble
+    'base_estimator__c__criterion': ['gini'],  #, 'entropy'],
+    'base_estimator__c__splitter': ['random', 'best'],  # 'best',
+    'base_estimator__c__max_depth': [2, 3],  #None,
     'base_estimator__c__min_samples_split': [2],
-    'base_estimator__c__min_samples_leaf': [1, 0.05, 0.1, 0.2],
-    'base_estimator__c__min_weight_fraction_leaf': [0.0],# 0.01, 0.1],
-    'base_estimator__c__max_features': ['auto',  'log2'], #'sqrt',
+    'base_estimator__c__min_samples_leaf': [1, 0.05, 0.2],
+    'base_estimator__c__min_weight_fraction_leaf': [0.0],  # 0.01, 0.1],
+    'base_estimator__c__max_features': ['auto'],  #'sqrt',,  'log2'
     'base_estimator__c__class_weight': [None, 'balanced']
 }
 

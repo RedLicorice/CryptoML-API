@@ -6,7 +6,7 @@ from cryptoml_core.services.dataset_building_service import DatasetBuildingServi
 from cryptoml_core.services.storage_service import StorageService
 import logging
 import math
-from typing import List
+from typing import List, Optional
 import pandas as pd
 
 
@@ -121,8 +121,8 @@ class DatasetService:
     def by_type(self, type: str):
         return [d for d in self.repo.yield_by_type(type)]
 
-    def query(self, query):
-        return self.repo.query(query)
+    def query(self, query, projection: Optional[dict] = None):
+        return self.repo.query(query, projection)
 
     def get_train_test_split_indices(self, dataset: Dataset, split: float):
         if split > 1.0:

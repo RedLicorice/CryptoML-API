@@ -1,6 +1,10 @@
 from cryptoml.util.selection_pipeline import Pipeline
-from sklearn.neural_network import MLPClassifier
 from cryptoml.util.import_proxy import SimpleImputer, MinMaxScaler, StandardScaler
+from sklearn.neural_network import MLPClassifier
+from imblearn.over_sampling import SMOTE
+
+
+TARGET='binary_bin'
 
 PARAMETER_GRID = {
     'c__hidden_layer_sizes': [(2, 4), (4, 8), (20, 20), (100, 100)],
@@ -13,7 +17,8 @@ PARAMETER_GRID = {
 }
 
 estimator = Pipeline([
-    ('i', SimpleImputer()),  # Replace nan's with the median value between previous and next observation
+    ('i', SimpleImputer(strategy='mean')),
     ('s', StandardScaler()),
+    ('o', SMOTE()),
     ('c', MLPClassifier()),
 ])

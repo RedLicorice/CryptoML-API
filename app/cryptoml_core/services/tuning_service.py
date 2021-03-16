@@ -26,6 +26,7 @@ from skrebate import ReliefF, MultiSURF
 import math
 import numpy as np
 
+
 def select_rfecv(X, y, sync=False):
     # Load pipeline
     pipeline_module = get_pipeline("selection_logistic", unlisted=True)

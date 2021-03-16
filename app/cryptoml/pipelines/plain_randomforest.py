@@ -7,11 +7,11 @@ PARAMETER_GRID = {
     'c__n_estimators': [100, 200, 500],
     'i__strategy': ['mean'],  # 'median', 'most_frequent', 'constant'
     'c__criterion': ['gini'],  # , 'entropy'],
-    'c__max_depth': [2, 4, 8],
+    'c__max_depth': [2, 3, 4],
     'c__min_samples_split': [2],
-    'c__min_samples_leaf': [1, 0.1, 0.2],
-    'c__max_features': ['auto', 'log2', 0.1, 0.2, 0.6],  # 'sqrt',
-    'c__class_weight': [None],#, 'balanced', 'balanced_subsample'
+    'c__min_samples_leaf': [1, 0.05, 0.2],
+    'c__max_features': ['auto'],  # 'sqrt',
+    'c__class_weight': [None, 'balanced'],#, 'balanced_subsample'
 }
 
 estimator = Pipeline([

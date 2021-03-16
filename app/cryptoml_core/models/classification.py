@@ -1,4 +1,4 @@
-from typing import Optional, List, Dict
+from typing import Optional, List, Dict, Union
 from cryptoml_core.deps.mongodb.document_model import DocumentModel, BaseModel
 
 
@@ -85,8 +85,8 @@ class Model(DocumentModel):
     # What pipeline should be used
     pipeline: str
     # Optimization results
-    parameters: Optional[List[ModelParameters]] = []
-    features: Optional[List[ModelFeatures]] = []
+    parameters: Optional[Union[List[ModelParameters], None]] = []
+    features: Optional[Union[List[ModelFeatures], None]] = []
     # Model test results
     tests: Optional[List[ModelTest]] = []
 

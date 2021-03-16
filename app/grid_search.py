@@ -7,7 +7,13 @@ from cryptoml_core.util.timestamp import get_timestamp
 def main(dataset, target, pipeline):
     tuning = TuningService()
     models = ModelService()
-    search_models = models.query_models({"dataset": dataset, "target": target, "pipeline": pipeline})
+    query = {"dataset": dataset, "target": target, "pipeline": pipeline}
+    if pipeline == 'all':
+        del query['pipeline']
+    if target == 'all':
+        del query['target']
+    models.clear_parameters(query)
+    search_models = models.query_models(query)
     print("[i] {} models to train".format(len(search_models)))
     for i, m in enumerate(search_models):
         print("==[{}/{}]== MODEL: {} {} {} {} =====".format(i+1, len(search_models), m.symbol, m.dataset, m.target, m.pipeline))

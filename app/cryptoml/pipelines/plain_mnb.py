@@ -4,7 +4,7 @@ from cryptoml.util.import_proxy import SimpleImputer, MinMaxScaler, StandardScal
 
 
 PARAMETER_GRID = {
-    'c__alpha':[0.2, 0.4, 0.6, 0.8, 1], # Additive (Laplace/Lidstone) smoothing parameter (0 for no smoothing).
+    'c__alpha': [0.01, 0.1, 0.5, 0.8, 1],  # Additive (Laplace/Lidstone) smoothing parameter (0 for no smoothing).
 }
 
 estimator = Pipeline([

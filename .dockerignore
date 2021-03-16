@@ -1,6 +1,7 @@
 .env
 .venv/
 .venv-3.8/
+.venv-py39-linux/
 datasets/
 docker/
 infrastructure/

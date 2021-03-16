@@ -45,6 +45,13 @@
             </Attribute>
           </value>
         </entry>
+        <entry key="\.venv-3.8\Lib\site-packages\imblearn\over_sampling\_smote\base.py">
+          <value>
+            <Attribute>
+              <option name="separator" value="," />
+            </Attribute>
+          </value>
+        </entry>
         <entry key="\.venv-3.8\Lib\site-packages\xgboost\sklearn.py">
           <value>
             <Attribute>
@@ -81,6 +88,55 @@
           </value>
         </entry>
         <entry key="\app.py">
+          <value>
+            <Attribute>
+              <option name="separator" value="," />
+            </Attribute>
+          </value>
+        </entry>
+        <entry key="\app\cryptoml\pipelines\plain_mlp.py">
+          <value>
+            <Attribute>
+              <option name="separator" value="," />
+            </Attribute>
+          </value>
+        </entry>
+        <entry key="\app\cryptoml\pipelines\plain_xgboost.py">
+          <value>
+            <Attribute>
+              <option name="separator" value="," />
+            </Attribute>
+          </value>
+        </entry>
+        <entry key="\app\cryptoml\pipelines\smote_knn.py">
+          <value>
+            <Attribute>
+              <option name="separator" value="," />
+            </Attribute>
+          </value>
+        </entry>
+        <entry key="\app\cryptoml\pipelines\smote_mlp.py">
+          <value>
+            <Attribute>
+              <option name="separator" value="," />
+            </Attribute>
+          </value>
+        </entry>
+        <entry key="\app\cryptoml_core\services\model_service.py">
+          <value>
+            <Attribute>
+              <option name="separator" value="," />
+            </Attribute>
+          </value>
+        </entry>
+        <entry key="\app\grid_search.py">
+          <value>
+            <Attribute>
+              <option name="separator" value="," />
+            </Attribute>
+          </value>
+        </entry>
+        <entry key="\app\test_model.py">
           <value>
             <Attribute>
               <option name="separator" value="," />
@@ -382,6 +438,13 @@
           </value>
         </entry>
         <entry key="\dask-test.py">
+          <value>
+            <Attribute>
+              <option name="separator" value="," />
+            </Attribute>
+          </value>
+        </entry>
+        <entry key="\datasets\kraken\missing.txt">
           <value>
             <Attribute>
               <option name="separator" value="," />

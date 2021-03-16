@@ -1,7 +1,10 @@
 from cryptoml.util.selection_pipeline import Pipeline
-from sklearn.svm import SVC
 from cryptoml.util.import_proxy import SimpleImputer, MinMaxScaler, StandardScaler
+from sklearn.svm import SVC
+from imblearn.over_sampling import SMOTE
 
+
+TARGET='binary_bin'
 
 PARAMETER_GRID = {
     'c__C': [1, 5, 10],
@@ -13,12 +16,11 @@ PARAMETER_GRID = {
     # Degree of the polynomial kernel function (‘poly’). Ignored by all other kernels.
     # Independent term in kernel function. It is only significant in ‘poly’ and ‘sigmoid’.
     'c__class_weight': [None, 'balanced']
-
 }
 
 estimator = Pipeline([
-    ('i', SimpleImputer()),  # Replace nan's with the median value between previous and next observation
-    ('s', StandardScaler()),  # Scale data in order to center it and increase robustness against noise and outliers
-    #('n', MinMaxScaler()),  # Scale data in order to center it and increase robustness against noise and outliers
+    ('i', SimpleImputer(strategy='mean')),
+    ('s', StandardScaler()),
+    ('o', SMOTE()),
     ('c', SVC()),
 ])
