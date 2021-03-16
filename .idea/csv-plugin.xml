@@ -94,6 +94,13 @@
             </Attribute>
           </value>
         </entry>
+        <entry key="\app\create_models.py">
+          <value>
+            <Attribute>
+              <option name="separator" value=":" />
+            </Attribute>
+          </value>
+        </entry>
         <entry key="\app\cryptoml\pipelines\plain_mlp.py">
           <value>
             <Attribute>

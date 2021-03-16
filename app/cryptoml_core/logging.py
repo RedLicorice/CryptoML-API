@@ -12,3 +12,12 @@ def setup_logger():
     formatter = logging.Formatter("%(levelname)s - %(asctime)s - %(name)s: %(message)s", "%Y-%m-%d %H:%M:%S")
     handler.setFormatter(formatter)
     root.addHandler(handler)
+
+def setup_file_logger(filename):
+    setup_logger()
+    root = logging.getLogger()
+
+    handler = logging.FileHandler(filename, mode='a')
+    formatter = logging.Formatter("%(levelname)s - %(asctime)s - %(name)s: %(message)s", "%Y-%m-%d %H:%M:%S")
+    handler.setFormatter(formatter)
+    root.addHandler(handler)

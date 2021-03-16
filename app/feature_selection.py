@@ -2,6 +2,7 @@ import typer
 from cryptoml_core.services.tuning_service import TuningService
 from cryptoml_core.services.model_service import ModelService
 from cryptoml_core.util.timestamp import get_timestamp
+from cryptoml_core.logging import setup_file_logger
 
 
 def main(dataset: str, target: str, pipeline: str):
@@ -24,4 +25,5 @@ def main(dataset: str, target: str, pipeline: str):
 
 
 if __name__ == '__main__':
+    setup_file_logger('feature_selection.log')
     typer.run(main)
