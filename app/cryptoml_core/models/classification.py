@@ -29,7 +29,7 @@ class ModelParameters(BaseModel):
     cv_interval: TimeInterval = None  # Begin and end timestamps of data used for parameter search
     cv_splits: Optional[int] = 5  # Number of cv splits to perform
     precision_weights: Optional[dict] = {"0": 1.0, "1": 1.0, "2": 1.0}
-    features: Optional[str] = None
+    features: Optional[List[str]] = None
     # Search results
     task_key: Optional[str] = None  # For making sure not to run the same task twice
     start_at: Optional[str] = None

@@ -3,9 +3,10 @@ from cryptoml_core.services.model_service import ModelService
 from cryptoml_core.util.timestamp import get_timestamp
 from cryptoml_core.exceptions import MessageException
 import json
+from typing import Optional
 
 
-def main(dataset, target, pipeline):
+def main(dataset: str, target: str, pipeline: str, features: Optional[str] = None, parameters: Optional[str] = None):
     models = ModelService()
     query = {"dataset": dataset, "target": target, "pipeline": pipeline}
     if pipeline == 'all':
@@ -19,9 +20,9 @@ def main(dataset, target, pipeline):
     for i, m in enumerate(test_models):
         print("==[{}/{}]== MODEL: {} {} {} {} =====".format(i + 1, len(test_models), m.symbol, m.dataset, m.target,
                                                             m.pipeline))
-        t1 = models.create_model_test(model=m, split=0.7, step={'days': 1}, window={'days': 30})
-        t2 = models.create_model_test(model=m, split=0.7, step={'days': 1}, window={'days': 90})
-        t3 = models.create_model_test(model=m, split=0.7, step={'days': 1}, window={'days': 150})
+        t1 = models.create_model_test(model=m, split=0.7, step={'days': 1}, window={'days': 30}, parameters=parameters, features=features)
+        t2 = models.create_model_test(model=m, split=0.7, step={'days': 1}, window={'days': 90}, parameters=parameters, features=features)
+        t3 = models.create_model_test(model=m, split=0.7, step={'days': 1}, window={'days': 150}, parameters=parameters, features=features)
         try:
             # Test T1
             print("[{}] {} Start T1".format(get_timestamp(), m.symbol))

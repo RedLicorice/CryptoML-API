@@ -106,13 +106,22 @@ class TuningService:
         self.model_repo = ModelRepository()
         self.dataset_service = DatasetService()
 
-    def create_parameters_search(self, model: Model, split: float, task_key: str = None) -> ModelParameters:
+    def create_parameters_search(self, model: Model, split: float, task_key: str = None, **kwargs) -> ModelParameters:
         ds = self.dataset_service.get_dataset(model.dataset, model.symbol)
         splits = self.dataset_service.get_train_test_split_indices(ds, split)
+
+        features = kwargs.get('features')
+        if isinstance(features, str) and features == 'latest':
+            if model.features:
+                features = model.features[-1].features
+            else:
+                features = None
+
         result = ModelParameters(
             cv_interval=splits['train'],
             cv_splits=5,
-            task_key=task_key or str(uuid4())
+            task_key=task_key or str(uuid4()),
+            features=features or None
         )
         return result
 
@@ -168,7 +177,7 @@ class TuningService:
         self.model_repo.append_parameters(model.id, mp)
         return mp
 
-    def create_features_search(self, model: Model, split: float, method: str, task_key: str = None) -> ModelFeatures:
+    def create_features_search(self, *, model: Model, split: float, method: str, task_key: str = None) -> ModelFeatures:
         ds = self.dataset_service.get_dataset(model.dataset, model.symbol)
         splits = self.dataset_service.get_train_test_split_indices(ds, split)
         result = ModelFeatures(

@@ -94,9 +94,15 @@ class ModelService:
         parameters = kwargs.get('parameters')
         features = kwargs.get('features')
         if isinstance(parameters, str) and parameters == 'latest':
-            parameters = model.parameters[-1].parameters
+            if model.parameters:
+                parameters = model.parameters[-1].parameters
+            else:
+                parameters = None
         if isinstance(features, str) and features == 'latest':
-            features = model.features[-1].features
+            if model.features:
+                features = model.features[-1].features
+            else:
+                features = None
         result = ModelTest(
             window=window or {'days': 30},
             step=step or ds.interval,

@@ -2,9 +2,10 @@ import typer
 from cryptoml_core.services.tuning_service import TuningService
 from cryptoml_core.services.model_service import ModelService
 from cryptoml_core.util.timestamp import get_timestamp
+from typing import Optional
 
 
-def main(dataset, target, pipeline):
+def main(dataset: str, target: str, pipeline: str, features: Optional[str] = None):
     tuning = TuningService()
     models = ModelService()
     query = {"dataset": dataset, "target": target, "pipeline": pipeline}
@@ -17,9 +18,9 @@ def main(dataset, target, pipeline):
     print("[i] {} models to train".format(len(search_models)))
     for i, m in enumerate(search_models):
         print("==[{}/{}]== MODEL: {} {} {} {} =====".format(i+1, len(search_models), m.symbol, m.dataset, m.target, m.pipeline))
-        mp = tuning.create_parameters_search(m, split=0.7)
+        mp = tuning.create_parameters_search(m, split=0.7, features=features)
         print("[{}] Start grid search".format(get_timestamp()))
-        mp = tuning.grid_search(m, mp, sync="true", verbose=1, n_jobs=8)
+        mp = tuning.grid_search(m, mp, sync=True, verbose=1, n_jobs=8)
         print("[{}] End grid search".format(get_timestamp()))
 
 
