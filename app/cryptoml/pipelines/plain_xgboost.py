@@ -15,11 +15,12 @@ PARAMETER_GRID = {
     'c__learning_rate': [0.3, 0.001], # 0.3 Step size shrinkage used in update to prevents overfitting. Shrinks the feature weights to make the boosting process more conservative.
     # 'c__scale_pos_weight': [1] # should be negative_samples_count / positive_samples_count
     'c__objective': ['multi:softmax'],
-    'c__eval_metric': ['mlogloss']
+    'c__eval_metric': ['mlogloss'],
+    'c__tree_method': ['hist']
 }
 
 estimator = Pipeline([
     ('i', SimpleImputer()),  # Replace nan's with the median value between previous and next observation
     ('s', StandardScaler()),  # Scale data in order to center it and increase robustness against noise and outliers
-    ('c', XGBClassifier(use_label_encoder=False, n_jobs=16)),
+    ('c', XGBClassifier(use_label_encoder=False, n_jobs=16, verbosity=2)),
 ])
