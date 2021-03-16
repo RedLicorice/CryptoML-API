@@ -5,7 +5,7 @@ from typing import Optional
 
 def main(dataset: str, target: str, pipeline: str, features: Optional[str] = None, parameters: Optional[str] = None):
     models = ModelService()
-    query = {}
+    query = {'type': "FEATURES"}
     if pipeline != 'all':
         query['pipeline'] = pipeline
     if target != 'all':

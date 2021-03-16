@@ -49,7 +49,7 @@ class ModelService:
     def create_classification_models(self, query):
         ds = DatasetService()
         models = []
-        if not query:
+        if query is None:
             query = {
                 {"type": "FEATURES", }
             }
