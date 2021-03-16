@@ -1,21 +1,6 @@
 from typing import Optional, List, Dict, Union
 from cryptoml_core.deps.mongodb.document_model import DocumentModel, BaseModel
-
-
-# Encapsulates model training hyperparameters, including:
-# - Coordinates for getting training data
-# - Symbol/Dataset/Target source names
-# - Pipeline and parameters to use for training
-# class Hyperparameters(DocumentModel):
-#     # For dataset indexing
-#     symbol: str  # What symbol are we tuning the model for?
-#     dataset: str
-#     target: str
-#     # What pipeline should be used
-#     pipeline: str
-#     parameters: Optional[dict] = None
-#     features: Optional[List[str]] = []
-
+from pydantic import validator
 
 # Hold prediction result for a given day
 class TimeInterval(BaseModel):
@@ -89,6 +74,12 @@ class Model(DocumentModel):
     features: Optional[Union[List[ModelFeatures], None]] = []
     # Model test results
     tests: Optional[List[ModelTest]] = []
+
+    @validator('parameters', 'features', 'tests', pre=True, each_item=False, always=True)
+    def check_is_list(cls, v):
+        if not isinstance(v, list):
+            return []
+        return v
 
 
 
