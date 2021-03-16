@@ -122,6 +122,20 @@
             </Attribute>
           </value>
         </entry>
+        <entry key="\app\cryptoml\util\sliding_window.py">
+          <value>
+            <Attribute>
+              <option name="separator" value="," />
+            </Attribute>
+          </value>
+        </entry>
+        <entry key="\app\cryptoml_core\deps\mongodb\__init__.py">
+          <value>
+            <Attribute>
+              <option name="separator" value="," />
+            </Attribute>
+          </value>
+        </entry>
         <entry key="\app\cryptoml_core\services\model_service.py">
           <value>
             <Attribute>

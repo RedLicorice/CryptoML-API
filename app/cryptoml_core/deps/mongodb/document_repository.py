@@ -1,7 +1,7 @@
 from uuid import uuid4
 from pydantic import BaseModel
 from typing import List
-from cryptoml_core.deps.mongodb import Collection, get_collection
+from cryptoml_core.deps.mongodb import MongoClient, Collection, get_client_and_db
 from cryptoml_core.util.timestamp import get_timestamp
 from cryptoml_core.exceptions import NotFoundException
 from typing import Optional
@@ -24,9 +24,24 @@ class DocumentRepository:
     __collection__: str = None
     __model__: BaseModel = None
     collection: Collection = None
+    client: MongoClient = None
 
     def __init__(self):
-        self.collection = get_collection(self.__collection__)
+        self.connect()
+
+    def __enter__(self):
+        if not self.client:
+            self.connect()
+        return self
+
+    def __exit__(self, _exc_type, _exc_value, _traceback):
+        if self.client:
+            self.client.close()
+        return
+
+    def connect(self):
+        self.client, db = get_client_and_db()
+        self.collection = db[self.__collection__]
 
     def get(self, id: str):
         document = self.collection.find_one({"_id": id})

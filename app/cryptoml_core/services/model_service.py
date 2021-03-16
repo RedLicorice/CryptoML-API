@@ -12,7 +12,35 @@ import itertools
 from typing import Optional
 from uuid import uuid4
 from cryptoml_core.util.timestamp import get_timestamp
+from pydantic.error_wrappers import ValidationError
 import numpy as np
+from joblib import Parallel, delayed
+
+
+def create_models_batch(symbol, items):
+    print("Model batch: {}".format(symbol, len(items)))
+    with ModelRepository() as model_repo:
+        models = []
+        for d, t, p in items:
+            try:
+                m = model_repo.find_by_symbol_dataset_target_pipeline(d.symbol, d.name, t, p)
+                logging.info("Model exists: {}-{}-{}-{}".format(d.symbol, d.name, t, p))
+                models.append(m)
+            except ValidationError as e:
+                logging.info("Model exists and is invalid: {}-{}-{}-{}".format(d.symbol, d.name, t, p))
+                pass
+            except DocumentNotFoundException as e:
+                m = Model(
+                    symbol=d.symbol,
+                    dataset=d.name,
+                    target=t,
+                    pipeline=p,
+                )
+                models.append(model_repo.create(m))
+                logging.info("Model created: {}-{}-{}-{}".format(d.symbol, d.name, t, p))
+                pass
+        return models
+
 
 class ModelService:
     def __init__(self):
@@ -26,30 +54,20 @@ class ModelService:
                 {"type": "FEATURES", }
             }
         datasets = ds.query(query)
+        # All possible combinations
+        all_models = {}
         for d in datasets:
             # Get targets for this symbol
             tgt = ds.get_dataset('target', d.symbol)
-            # For each of the available targets
+            if not d.symbol in all_models:
+                all_models[d.symbol] = []
             for t, p in itertools.product(tgt.features, PIPELINE_LIST):
-                # Skip price/pct which are regression targets
                 if t in ['price', 'pct']:
                     continue
-                # Create a model for each available pipeline
-                try:
-                    m = self.model_repo.find_by_symbol_dataset_target_pipeline(d.symbol, d.name, t, p)
-                    logging.info("Model exists: {}-{}-{}-{}".format(d.symbol, d.name, t, p))
-                    models.append(m)
-                except DocumentNotFoundException as e:
-                    m = Model(
-                        symbol=d.symbol,
-                        dataset=d.name,
-                        target=t,
-                        pipeline=p,
-                    )
-                    models.append(self.model_repo.create(m))
-                    logging.info("Model created: {}-{}-{}-{}".format(d.symbol, d.name, t, p))
-                    pass
-        return models
+                all_models[d.symbol].append((d, t, p))
+        # Method to process a batch of items
+        results = Parallel(n_jobs=-1)(delayed(create_models_batch)(symbol, items) for symbol, items in all_models.items())
+        return [item for sublist in results for item in sublist]
 
     def clear_features(self, query = {}):
         return self.model_repo.clear_features(query)
