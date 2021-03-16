@@ -66,17 +66,18 @@ class ModelService:
                     continue
                 all_models[d.symbol].append((d, t, p))
         # Method to process a batch of items
-        results = Parallel(n_jobs=-1)(delayed(create_models_batch)(symbol, items) for symbol, items in all_models.items())
+        results = Parallel(n_jobs=-1)(
+            delayed(create_models_batch)(symbol, items) for symbol, items in all_models.items())
         return [item for sublist in results for item in sublist]
 
-    def clear_features(self, query = {}):
-        return self.model_repo.clear_features(query)
+    def clear_features(self, query=None):
+        return self.model_repo.clear_features(query or {})
 
-    def clear_parameters(self, query = {}):
-        return self.model_repo.clear_parameters(query)
+    def clear_parameters(self, query=None):
+        return self.model_repo.clear_parameters(query or {})
 
-    def clear_tests(self, query = {}):
-        return self.model_repo.clear_tests(query)
+    def clear_tests(self, query=None):
+        return self.model_repo.clear_tests(query or {})
 
     def all(self):
         return [m for m in self.model_repo.iterable()]
@@ -126,7 +127,7 @@ class ModelService:
         begin = sub_interval(timestamp=mt.test_interval.begin, interval=mt.window)
         end = add_interval(timestamp=mt.test_interval.end, interval=mt.step)
         if from_timestamp(d.valid_index_min).timestamp() > from_timestamp(begin).timestamp():
-            raise MessageException("Not enough data for training! [Pipeline: {} Dataset: {} Symbol: {} Window: {}]"\
+            raise MessageException("Not enough data for training! [Pipeline: {} Dataset: {} Symbol: {} Window: {}]" \
                                    .format(model.pipeline, model.dataset, model.symbol, mt.window))
         X = ds.get_features(model.dataset, model.symbol, begin=begin, end=end)
         y = ds.get_target(model.target, model.symbol, begin=begin, end=end)

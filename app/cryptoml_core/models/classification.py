@@ -79,7 +79,7 @@ class Model(DocumentModel):
     def check_is_list(cls, v):
         if not isinstance(v, list):
             return []
-        return v
+        return v or []
 
 
 
