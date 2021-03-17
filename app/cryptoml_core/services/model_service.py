@@ -134,6 +134,8 @@ class ModelService:
 
         unique, counts = np.unique(y, return_counts=True)
         if len(unique) < 2:
+            logging.error("[{}-{}-{}-{}]Training data contains less than 2 classes: {}"
+                          .format(model.symbol, model.dataset, model.target, model.pipeline, unique))
             raise MessageException("Training data contains less than 2 classes: {}".format(unique))
 
         # Load pipeline

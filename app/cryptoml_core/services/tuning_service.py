@@ -100,6 +100,7 @@ def select_multisurf(X, y, percentile=10):
     selector.fit(X, y)
     return selector
 
+
 class TuningService:
     def __init__(self):
         self.storage = StorageService()
@@ -135,6 +136,12 @@ class TuningService:
         ds = DatasetService()
         X = ds.get_features(model.dataset, model.symbol, mp.cv_interval.begin, mp.cv_interval.end, columns=mp.features)
         y = ds.get_target(model.target, model.symbol, mp.cv_interval.begin, mp.cv_interval.end)
+
+        unique, counts = np.unique(y, return_counts=True)
+        if len(unique) < 2:
+            logging.error("[{}-{}-{}-{}]Training data contains less than 2 classes: {}"
+                          .format(model.symbol, model.dataset, model.target, model.pipeline, unique))
+            raise MessageException("Training data contains less than 2 classes: {}".format(unique))
 
         # Load pipeline
         pipeline_module = get_pipeline(model.pipeline)
@@ -179,7 +186,7 @@ class TuningService:
         # Update search request with results
         mp.parameter_search_method = 'gridsearch'
         mp.parameters = gscv.best_params_
-        tag = "{}-{}-{}-{}-{}"\
+        tag = "{}-{}-{}-{}-{}" \
             .format(model.symbol, model.dataset, model.target, model.pipeline, dict_hash(mp.parameters))
         mp.result_file = 'cv_results-{}.csv'.format(tag)
 
@@ -210,8 +217,15 @@ class TuningService:
             return mf
         # Load dataset
         ds = DatasetService()
-        X = ds.get_features(model.dataset, model.symbol, mf.search_interval.begin, mf.search_interval.end, columns=mf.features)
+        X = ds.get_features(model.dataset, model.symbol, mf.search_interval.begin, mf.search_interval.end,
+                            columns=mf.features)
         y = ds.get_target(model.target, model.symbol, mf.search_interval.begin, mf.search_interval.end)
+
+        unique, counts = np.unique(y, return_counts=True)
+        if len(unique) < 2:
+            logging.error("[{}-{}-{}-{}]Training data contains less than 2 classes: {}"
+                          .format(model.symbol, model.dataset, model.target, model.pipeline, unique))
+            raise MessageException("Training data contains less than 2 classes: {}".format(unique))
 
         # Perform search
         mf.start_at = get_timestamp()  # Log starting timestamp
@@ -242,9 +256,3 @@ class TuningService:
         else:
             self.model_repo.append_features(model.id, mf)
         return mf
-
-
-
-
-
-
