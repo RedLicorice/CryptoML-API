@@ -42,7 +42,7 @@ class FeatureRepository:
         df = query_dataframe(measure, tags={'symbol': symbol}, columns=[type], **kwargs)
         s = df[type]
         s.name = 'label'
-        return s
+        return s.astype('int32')
 
     def get_dask_features(self, dataset, symbol, **kwargs):
         measure = 'dataset_{}'.format(dataset)
