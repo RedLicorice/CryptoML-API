@@ -1,7 +1,8 @@
 from cryptoml_core.deps.celery import current_app, states
 from fastapi import APIRouter, Body, HTTPException, Depends
 from cryptoml_core.models.classification import Model, ModelParameters, ModelFeatures
-from cryptoml_core.services.tuning_service import TuningService
+from cryptoml_core.services.grid_search import GridSearchService
+from cryptoml_core.services.feature_selection import FeatureSelectionService
 from cryptoml_core.services.model_service import ModelService
 from cryptoml_core.services.task_service import TaskService
 from cryptoml_core.exceptions import MessageException
@@ -23,14 +24,14 @@ def grid_search(
         task_key: Optional[str] = None,
         sync: Optional[bool] = False,
         model_service: ModelService = Depends(ModelService),
-        tuning_service: TuningService = Depends(TuningService),
+        service: GridSearchService = Depends(GridSearchService),
         tasks: TaskService = Depends(TaskService)
 ):
     try:
         model = model_service.get_model(model_id)
-        parameters = tuning_service.create_parameters_search(model, split, task_key=task_key)
+        parameters = service.create_parameters_search(model, split, task_key=task_key)
         if sync:
-            return tuning_service.grid_search(model, parameters, sync=True)
+            return service.grid_search(model, parameters, sync=True)
         return tasks.send(task_name='gridsearch',
                           task_args={'model': model.dict(), 'search_parameters': parameters.dict()},
                           name='grid_search-{}-{}-{}-{}'.format(model.symbol, model.pipeline, model.dataset,
@@ -47,12 +48,12 @@ def grid_search_batch(
         split: Optional[float] = 0.7,
         query: dict = Body(...),
         model_service: ModelService = Depends(ModelService),
-        tuning_service: TuningService = Depends(TuningService),
+        service: GridSearchService = Depends(GridSearchService),
         tasks: TaskService = Depends(TaskService)
 ):
     try:
         models = model_service.query_models(query)
-        tests = [(model, tuning_service.create_parameters_search(model, split, task_key=task_key)) for model in models]
+        tests = [(model, service.create_parameters_search(model, split, task_key=task_key)) for model in models]
         return [tasks.send(task_name='gridsearch',
                            task_args={'model': model.dict(), 'search_parameters': search_parameters.dict()},
                            name='grid_search-{}-{}-{}-{}'.format(model.symbol, model.pipeline,
@@ -67,7 +68,7 @@ def grid_search_batch(
 def task_grid_search(req: dict):
     model = Model(**req['model'])
     search_parameters = ModelParameters(**req['search_parameters'])
-    service = TuningService()
+    service = GridSearchService()
     res = service.grid_search(model, search_parameters)
     return res.dict()
 
@@ -84,14 +85,14 @@ def feature_selection(
         task_key: Optional[str] = None,
         sync: Optional[bool] = False,
         model_service: ModelService = Depends(ModelService),
-        tuning_service: TuningService = Depends(TuningService),
+        service: FeatureSelectionService = Depends(FeatureSelectionService),
         tasks: TaskService = Depends(TaskService)
 ):
     try:
         model = model_service.get_model(model_id)
-        mf = tuning_service.create_features_search(model, split, method, task_key=task_key)
+        mf = service.create_features_search(model, split, method, task_key=task_key)
         if sync:
-            return tuning_service.feature_selection(model, mf, sync=True)
+            return service.feature_selection(model, mf, sync=True)
         return tasks.send(task_name='featureselection',
                           task_args={'model': model.dict(), 'search_parameters': mf.dict()},
                           name='feature_selection-{}-{}-{}-{}'.format(model.symbol, model.pipeline, model.dataset,
@@ -109,7 +110,7 @@ def feature_selection_batch(
         split: Optional[float] = 0.7,
         query: dict = Body(...),
         model_service: ModelService = Depends(ModelService),
-        tuning_service: TuningService = Depends(TuningService),
+        service: FeatureSelectionService = Depends(FeatureSelectionService),
         tasks: TaskService = Depends(TaskService)
 ):
     try:
@@ -123,7 +124,7 @@ def feature_selection_batch(
                 _model.symbol, _model.pipeline, _model.dataset, _model.target)
 
         tests = [
-            (model, tuning_service.create_features_search(model, split, method, task_key=task_key)) for model in models
+            (model, service.create_features_search(model, split, method, task_key=task_key)) for model in models
         ]
         return [tasks.send(task_name='featureselection',
                            task_args={'model': model.dict(), 'search_parameters': search_parameters.dict()},
@@ -138,6 +139,6 @@ def feature_selection_batch(
 def task_feature_selection(req: dict):
     model = Model(**req['model'])
     search_parameters = ModelFeatures(**req['search_parameters'])
-    service = TuningService()
+    service = FeatureSelectionService()
     res = service.feature_selection(model, search_parameters)
     return res.dict()

@@ -1,6 +1,5 @@
 import numpy as np
 
-
 class BlockingTimeSeriesSplit():
     def __init__(self, n_splits):
         self.n_splits = n_splits
@@ -18,4 +17,11 @@ class BlockingTimeSeriesSplit():
             start = i * k_fold_size
             stop = start + k_fold_size
             mid = int(0.8 * (stop - start)) + start
-            yield indices[start: mid], indices[mid + margin: stop]
+            beg = indices[start: mid]
+            end = indices[mid + margin: stop]
+            if y is not None:
+                unique = np.unique(y[beg:end])
+                n_classes = len(unique)
+                if n_classes < 2:
+                    raise Exception("Number of classes in fold {} is invalid! ({}, {})".format(i, n_classes, unique))
+            yield beg, end
