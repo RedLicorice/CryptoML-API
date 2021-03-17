@@ -6,16 +6,16 @@ from ..exceptions import MessageException
 # CryptoML Lib Dependencies
 from cryptoml.util.weighted_precision_score import get_weighted_precision_scorer, get_precision_scorer
 from cryptoml.util.blocking_timeseries_split import BlockingTimeSeriesSplit
-from cryptoml.util.import_proxy import GridSearchCV
+from cryptoml.util.import_proxy import GridSearchCV, HalvingGridSearchCV
 from cryptoml.pipelines import get_pipeline
 # CryptoML Common Dependencies
 from cryptoml_core.deps.dask import get_client
 from cryptoml_core.models.classification import Model, ModelParameters, ModelFeatures
 from cryptoml_core.repositories.classification_repositories import ModelRepository
-# from cryptoml_core.models.tuning import GridSearch, ModelTestBlueprint, ModelTest
 from cryptoml_core.util.timestamp import get_timestamp
 from cryptoml_core.util.dict_hash import dict_hash
 from cryptoml.util.feature_importances import label_feature_importances, label_support
+# SKLearn
 from sklearn.utils import parallel_backend
 from sklearn.feature_selection import SelectFromModel, RFECV, SelectPercentile, f_classif
 from cryptoml_core.exceptions import NotFoundException
@@ -140,14 +140,28 @@ class TuningService:
         pipeline_module = get_pipeline(model.pipeline)
 
         # Perform search
-        gscv = GridSearchCV(
-            estimator=pipeline_module.estimator,
-            param_grid=kwargs.get('parameter_grid', pipeline_module.PARAMETER_GRID),
-            cv=BlockingTimeSeriesSplit(n_splits=mp.cv_splits),
-            scoring=get_precision_scorer(),
-            verbose=kwargs.get("verbose", 0),
-            n_jobs=kwargs.get("n_jobs", None)
-        )
+        if not kwargs.get('halving'):
+            gscv = GridSearchCV(
+                estimator=pipeline_module.estimator,
+                param_grid=kwargs.get('parameter_grid', pipeline_module.PARAMETER_GRID),
+                cv=BlockingTimeSeriesSplit(n_splits=mp.cv_splits),
+                scoring=get_precision_scorer(),
+                verbose=kwargs.get("verbose", 0),
+                n_jobs=kwargs.get("n_jobs", None),
+                refit=False
+            )
+        else:
+            gscv = HalvingGridSearchCV(
+                estimator=pipeline_module.estimator,
+                param_grid=kwargs.get('parameter_grid', pipeline_module.PARAMETER_GRID),
+                factor=2,
+                cv=BlockingTimeSeriesSplit(n_splits=mp.cv_splits),
+                scoring=get_precision_scorer(),
+                verbose=kwargs.get("verbose", 0),
+                n_jobs=kwargs.get("n_jobs", None),
+                refit=False,
+                random_state=0
+            )
 
         mp.start_at = get_timestamp()  # Log starting timestamp
         if kwargs.get('sync', False):

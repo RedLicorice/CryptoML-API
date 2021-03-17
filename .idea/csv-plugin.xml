@@ -129,6 +129,13 @@
             </Attribute>
           </value>
         </entry>
+        <entry key="\app\cryptoml\util\import_proxy.py">
+          <value>
+            <Attribute>
+              <option name="separator" value="," />
+            </Attribute>
+          </value>
+        </entry>
         <entry key="\app\cryptoml\util\sliding_window.py">
           <value>
             <Attribute>
