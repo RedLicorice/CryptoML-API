@@ -2,7 +2,7 @@ import pandas as pd
 # APP Dependencies
 from .storage_service import StorageService
 from .dataset_service import DatasetService
-from ..exceptions import MessageException
+from cryptoml_core.exceptions import MessageException, NotFoundException
 # CryptoML Lib Dependencies
 from cryptoml.util.weighted_precision_score import get_weighted_precision_scorer, get_precision_scorer
 from cryptoml.util.blocking_timeseries_split import BlockingTimeSeriesSplit
@@ -18,8 +18,7 @@ from cryptoml.util.feature_importances import label_feature_importances, label_s
 # SKLearn
 from sklearn.utils import parallel_backend
 from sklearn.feature_selection import SelectFromModel, RFECV, SelectPercentile, f_classif
-from cryptoml_core.exceptions import NotFoundException
-from dask.distributed import CancelledError
+from sklearn.exceptions import NotFittedError
 from uuid import uuid4
 import logging
 from skrebate import ReliefF, MultiSURF
@@ -132,6 +131,8 @@ class TuningService:
         if self.model_repo.exist_parameters(model.id, mp.task_key):
             logging.info("Model {} Grid search {} already executed!".format(model.id, mp.task_key))
             return mp
+        tag = "{}-{}-{}-{}-{}" \
+            .format(model.symbol, model.dataset, model.target, model.pipeline, dict_hash(mp.parameters))
         # Load dataset
         ds = DatasetService()
         X = ds.get_features(model.dataset, model.symbol, mp.cv_interval.begin, mp.cv_interval.end, columns=mp.features)
@@ -171,23 +172,26 @@ class TuningService:
             )
 
         mp.start_at = get_timestamp()  # Log starting timestamp
-        if kwargs.get('sync', False):
-            gscv.fit(X, y)
-        else:
-            # Only run parallel backend if not sync
-            dask = get_client()  # Connect to Dask scheduler
-            with parallel_backend('dask'):
+        try:
+            if kwargs.get('sync', False):
                 gscv.fit(X, y)
+            else:
+                # Only run parallel backend if not sync
+                dask = get_client()  # Connect to Dask scheduler
+                with parallel_backend('dask'):
+                    gscv.fit(X, y)
+        except NotFittedError as e:
+            logging.exception("Model {} fit failed!".format(tag))
+            return mp  # Fit failed, don't save this.
+            pass
         mp.end_at = get_timestamp()  # Log ending timestamp
 
         # Collect results
         results_df = pd.DataFrame(gscv.cv_results_)
 
         # Update search request with results
-        mp.parameter_search_method = 'gridsearch'
+        mp.parameter_search_method = 'halving_grid_search' if kwargs.get('halving') else 'gridsearch'
         mp.parameters = gscv.best_params_
-        tag = "{}-{}-{}-{}-{}" \
-            .format(model.symbol, model.dataset, model.target, model.pipeline, dict_hash(mp.parameters))
         mp.result_file = 'cv_results-{}.csv'.format(tag)
 
         # Store grid search results on storage
