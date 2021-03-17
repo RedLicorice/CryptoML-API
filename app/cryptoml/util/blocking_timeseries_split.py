@@ -1,5 +1,14 @@
 import numpy as np
 
+
+class SplitException(Exception):
+    message = ""
+
+    def __init__(self, message):
+        self.message = message
+        super(SplitException, self).__init__()
+
+
 class BlockingTimeSeriesSplit():
     def __init__(self, n_splits):
         self.n_splits = n_splits
@@ -23,5 +32,6 @@ class BlockingTimeSeriesSplit():
                 unique = np.unique(y[beg:end])
                 n_classes = len(unique)
                 if n_classes < 2:
-                    raise Exception("Number of classes in fold {} is invalid! ({}, {})".format(i, n_classes, unique))
+                    raise SplitException("Number of classes in fold {} ({}:{}) is invalid! ({}, {})"
+                                         .format(i, beg, end, n_classes, unique))
             yield beg, end

@@ -5,7 +5,7 @@ from cryptoml_core.services.dataset_service import DatasetService
 from cryptoml_core.exceptions import MessageException, NotFoundException
 # CryptoML Lib Dependencies
 from cryptoml.util.weighted_precision_score import get_weighted_precision_scorer, get_precision_scorer
-from cryptoml.util.blocking_timeseries_split import BlockingTimeSeriesSplit
+from cryptoml.util.blocking_timeseries_split import BlockingTimeSeriesSplit, SplitException
 from cryptoml.util.import_proxy import GridSearchCV, HalvingGridSearchCV
 from cryptoml.pipelines import get_pipeline
 # CryptoML Common Dependencies
@@ -104,6 +104,9 @@ class GridSearchService:
                 dask = get_client()  # Connect to Dask scheduler
                 with parallel_backend('dask'):
                     gscv.fit(X, y)
+        except SplitException as e:
+            logging.exception("Model {} splitting yields single-class folds!\n{}".format(tag, e.message))
+            return mp  # Fit failed, don't save this.
         except NotFittedError as e:
             logging.exception("Model {} fit failed!".format(tag))
             return mp  # Fit failed, don't save this.
