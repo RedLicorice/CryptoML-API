@@ -1,4 +1,5 @@
 import numpy as np
+import pandas as pd
 
 
 class SplitException(Exception):
@@ -30,7 +31,10 @@ class BlockingTimeSeriesSplit():
             if y is not None:
                 beg = indices[start: mid]
                 end = indices[mid + margin: stop]
-                unique = np.unique(y[beg:end])
+                _y = y
+                if isinstance(y, pd.Series) or isinstance(y, pd.DataFrame):
+                    _y = y.values
+                unique = np.unique(_y[beg:end])
                 n_classes = len(unique)
                 if n_classes < 2:
                     raise SplitException("Number of classes in fold {} ({}:{}) is invalid! ({}, {})"
