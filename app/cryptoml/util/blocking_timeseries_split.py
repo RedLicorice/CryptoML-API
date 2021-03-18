@@ -29,14 +29,12 @@ class BlockingTimeSeriesSplit():
             mid = int(0.8 * (stop - start)) + start
 
             if y is not None:
-                beg = indices[start: mid]
-                end = indices[mid + margin: stop]
                 _y = y
                 if isinstance(y, pd.Series) or isinstance(y, pd.DataFrame):
                     _y = y.values
-                unique = np.unique(_y[beg:end])
+                unique = np.unique(_y[indices[start: mid]])
                 n_classes = len(unique)
                 if n_classes < 2:
-                    raise SplitException("Number of classes in fold {} ({}:{}) is invalid! ({}, {})"
-                                         .format(i, beg, end, n_classes, unique))
+                    raise SplitException("Number of classes in fold {} is invalid! ({}, {})"
+                                         .format(i, n_classes, unique))
             yield indices[start: mid], indices[mid + margin: stop]
