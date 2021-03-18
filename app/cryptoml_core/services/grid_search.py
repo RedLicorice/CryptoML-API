@@ -95,8 +95,9 @@ class GridSearchService:
                 random_state=0
             )
 
-        mp.start_at = get_timestamp()  # Log starting timestamp
+
         try:
+            mp.start_at = get_timestamp()  # Log starting timestamp
             if kwargs.get('sync', False):
                 gscv.fit(X, y)
             else:
@@ -104,17 +105,13 @@ class GridSearchService:
                 dask = get_client()  # Connect to Dask scheduler
                 with parallel_backend('dask'):
                     gscv.fit(X, y)
-        except ValueError as e:
-            logging.exception("Model {} raised ValueError!\n{}".format(tag, e))
-            pass
+            mp.end_at = get_timestamp()  # Log ending timestamp
         except SplitException as e:
             logging.exception("Model {} splitting yields single-class folds!\n{}".format(tag, e.message))
             return mp  # Fit failed, don't save this.
-        except NotFittedError as e:
-            logging.exception("Model {} fit failed!".format(tag))
+        except ValueError as e:
+            logging.exception("Model {} raised ValueError!\n{}".format(tag, e))
             return mp  # Fit failed, don't save this.
-            pass
-        mp.end_at = get_timestamp()  # Log ending timestamp
 
         # Collect results
         results_df = pd.DataFrame(gscv.cv_results_)

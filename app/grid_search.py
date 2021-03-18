@@ -15,13 +15,16 @@ def main(dataset: str, target: str, pipeline: str, features: Optional[str] = Non
         del query['pipeline']
     if target == 'all':
         del query['target']
-    if save:
-        models.clear_parameters(query)
-    else:
-        logging.info("Results will not  be saved [--no-save]")
+    # if save:
+    #     models.clear_parameters(query)
+    # else:
+    #     logging.info("Results will not  be saved [--no-save]")
     search_models = models.query_models(query)
     logging.info("[i] {} models to train".format(len(search_models)))
     for i, m in enumerate(search_models):
+        if m.parameters:
+            logging.info("==[{}/{}]== MODEL: {} {} {} {} ==> SKIP".format(i+1, len(search_models), m.symbol, m.dataset, m.target, m.pipeline))
+            continue  # Skip this as search has already been performed
         logging.info("==[{}/{}]== MODEL: {} {} {} {} =====".format(i+1, len(search_models), m.symbol, m.dataset, m.target, m.pipeline))
         mp = service.create_parameters_search(m, split=0.7, features=features)
         logging.info("[{}] Start grid search".format(get_timestamp()))
