@@ -67,7 +67,7 @@ class GridSearchService:
             logging.error("[{}-{}-{}-{}]Training data contains less than 2 classes: {}"
                           .format(model.symbol, model.dataset, model.target, model.pipeline, unique))
             raise MessageException("Training data contains less than 2 classes: {}".format(unique))
-
+        logging.info("Dataset loaded: X {} y {} (unique: {})".format(X.shape, y.shape, unique))
         # Load pipeline
         pipeline_module = get_pipeline(model.pipeline)
 
@@ -104,6 +104,9 @@ class GridSearchService:
                 dask = get_client()  # Connect to Dask scheduler
                 with parallel_backend('dask'):
                     gscv.fit(X, y)
+        except ValueError as e:
+            logging.exception("Model {} raised ValueError!\n{}".format(tag, e))
+            pass
         except SplitException as e:
             logging.exception("Model {} splitting yields single-class folds!\n{}".format(tag, e.message))
             return mp  # Fit failed, don't save this.
@@ -122,10 +125,11 @@ class GridSearchService:
         mp.result_file = 'cv_results-{}.csv'.format(tag)
 
         # Store grid search results on storage
-        self.storage.upload_json_obj(mp.parameters, 'grid-search-results', 'parameters-{}.json'.format(tag))
-        self.storage.save_df(results_df, 'grid-search-results', mp.result_file)
+        if kwargs.get('save', True):
+            self.storage.upload_json_obj(mp.parameters, 'grid-search-results', 'parameters-{}.json'.format(tag))
+            self.storage.save_df(results_df, 'grid-search-results', mp.result_file)
+            # Update model with the new results
+            self.model_repo.append_parameters(model.id, mp)
 
-        # Update model with the new results
-        self.model_repo.append_parameters(model.id, mp)
         return mp
 

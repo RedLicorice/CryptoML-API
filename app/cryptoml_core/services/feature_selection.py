@@ -122,11 +122,12 @@ class FeatureSelectionService:
         mf.features = label_support(selector.get_support(), X.columns)
 
         # Update model with the new results
-        if mf.feature_selection_method in INDEPENDENT_SEARCH_METHODS:
-            self.model_repo.append_features_query(
-                {"dataset": model.dataset, "symbol": model.symbol, "target": model.target},
-                mf
-            )
-        else:
-            self.model_repo.append_features(model.id, mf)
+        if kwargs.get('save', True):
+            if mf.feature_selection_method in INDEPENDENT_SEARCH_METHODS:
+                self.model_repo.append_features_query(
+                    {"dataset": model.dataset, "symbol": model.symbol, "target": model.target},
+                    mf
+                )
+            else:
+                self.model_repo.append_features(model.id, mf)
         return mf
