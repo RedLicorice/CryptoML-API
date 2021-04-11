@@ -4,5 +4,6 @@ BUILDER_LIST = [
     'engineered',
     'faceted',
     'splines',
-    'target'
+    'target',
+    'merged'
 ]

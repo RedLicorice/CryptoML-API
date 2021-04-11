@@ -50,14 +50,14 @@ class ModelTest(BaseModel):
     window: dict  # Sliding window width (ie 10 days)
     step: Optional[dict] = {'days': 1}  # Sliding interval, how many days to advance at each step
     parameters: dict  # Parameters to use for building the test model
-    features: Optional[List[str]] = None # Names of the features to use for building the test model (Use all if none)
+    features: Optional[List[str]] = [] # Names of the features to use for building the test model (Use all if none)
     test_interval: TimeInterval  # Begin and end timestamps of data used for testing
     # Test results
     task_key: Optional[str] = None  # For making sure not to run the same task twice
     start_at: Optional[str] = None
     end_at: Optional[str] = None
-    classification_report: Optional[dict] = None  # Classification report for this run
-    classification_results: Optional[List[DayResult]] = None
+    classification_report: Optional[dict] = {}  # Classification report for this run
+    classification_results: Optional[Union[List[DayResult], None]] = []
 
 
 # Identifies a combination of symbol, dataset, target and pipeline
@@ -73,7 +73,7 @@ class Model(DocumentModel):
     parameters: Optional[Union[List[ModelParameters], None]] = []
     features: Optional[Union[List[ModelFeatures], None]] = []
     # Model test results
-    tests: Optional[List[ModelTest]] = []
+    tests: Optional[Union[List[ModelTest], None]] = []
 
     @validator('parameters', 'features', 'tests', pre=True, each_item=False, always=True)
     def check_is_list(cls, v):
@@ -82,4 +82,15 @@ class Model(DocumentModel):
         return v or []
 
 
-
+class Model(DocumentModel):
+    # For dataset indexing
+    symbol: str  # What symbol are we tuning the model for?
+    dataset: str
+    target: str
+    # What pipeline should be used
+    pipeline: str
+    # Optimization results
+    parameters: Optional[Union[List[ModelParameters], ModelParameters, None]] = []
+    features: Optional[Union[List[ModelFeatures], ModelFeatures, None]] = []
+    # Model test results
+    tests: Optional[Union[List[ModelTest], ModelTest, None]] = []

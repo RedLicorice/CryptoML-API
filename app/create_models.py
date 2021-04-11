@@ -4,7 +4,7 @@ from typing import Optional
 from cryptoml_core.logging import setup_file_logger
 
 
-def main(dataset: str, target: str, pipeline: str, features: Optional[str] = None, parameters: Optional[str] = None):
+def main(dataset: str, target: str, pipeline: str):
     models = ModelService()
     query = {'type': "FEATURES"}
     if pipeline != 'all':

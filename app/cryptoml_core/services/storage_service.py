@@ -18,6 +18,7 @@ class StorageService:
         try:
             self.s3.mkdirs(bucket, exist_ok=True)
         except Exception as e:
+            print('bucket creation failed: {}'.format(bucket))
             logging.exception(e)
 
     def exist_file(self, bucket, name):
@@ -30,7 +31,6 @@ class StorageService:
                 copyfileobj(file, dst) # Copy a file object from src to dst
         except Exception as e:
             logging.exception(e)
-
 
     def upload_pickle_obj(self, obj, bucket, name):
         self.create_bucket(bucket)
@@ -70,6 +70,7 @@ class StorageService:
         # df.to_csv(csv_buffer, **kwargs)
         # self.create_bucket(bucket)
         # self.s3.put_object(Bucket=bucket, Key=name, Body=csv_buffer.getvalue())
+        self.create_bucket(bucket)
         df.to_csv(
             's3://{}/{}'.format(bucket,name),
             index_label=kwargs.get('index_label', 'time'),

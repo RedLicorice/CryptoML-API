@@ -5,7 +5,7 @@ def get_timestamp(tz='utc') -> str:
     return datetime.now(getattr(timezone, tz, timezone.utc)).isoformat('T')
 
 
-def from_timestamp(timestamp: str):
+def from_timestamp(timestamp: str) -> datetime:
     if timestamp.endswith('Z'):
         timestamp = timestamp[:-1]
     dt = datetime.fromisoformat(timestamp)

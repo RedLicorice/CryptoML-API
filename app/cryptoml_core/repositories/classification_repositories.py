@@ -1,22 +1,43 @@
 from cryptoml_core.models.classification import Model, ModelTest, ModelFeatures, ModelParameters
 from cryptoml_core.deps.mongodb.document_repository import DocumentRepository, DocumentNotFoundException
 from cryptoml_core.util.timestamp import get_timestamp
+from typing import Union, List
 
 
 class ModelRepository(DocumentRepository):
     __collection__ = 'models'
     __model__ = Model
 
-    def find_by_symbol_dataset_target_pipeline(self, symbol: str, dataset: str, target: str, pipeline: str) -> Model:
-        query = {"symbol": symbol, "dataset": dataset, "target": target, "pipeline":pipeline}
-        document = self.collection.find_one(query)
-        if not document:
-            raise DocumentNotFoundException(collection=self.__collection__, identifier=str(query))
-        return self.__model__.parse_obj(document)
+    def find_by_symbol_dataset_target_pipeline(self, *, symbol: str = None, dataset: str, target: str, pipeline: str) -> Union[Model,List[Model]]:
+        query = {}
+        if symbol:
+            query['symbol'] = symbol
+        if dataset:
+            query['dataset'] = dataset
+        if target:
+            query['target'] = target
+        if pipeline:
+            query['pipeline'] = pipeline
+        if len(query.keys()) == 4:
+            document = self.collection.find_one(query)
+            if not document:
+                raise DocumentNotFoundException(collection=self.__collection__, identifier=str(query))
+            return self.__model__.parse_obj(document)
+        else:
+            cursor = self.collection.find(query)
+            return [self.__model__.parse_obj(document) for document in cursor]
+
+    def find_tests(self, *, symbol, dataset, target):
+        cursor = self.collection.aggregate([
+            {"$match": {"symbol": symbol, "dataset": dataset, "target": target}},
+            {"$unwind": "$tests"},
+            {"$unset": ["features", "parameters"]}
+        ])
+        return [document for document in cursor]
 
     def create(self, model: Model):
         try:
-            _model = self.find_by_symbol_dataset_target_pipeline(model.symbol, model.dataset, model.target, model.pipeline)
+            _model = self.find_by_symbol_dataset_target_pipeline(symbol=model.symbol, dataset=model.dataset, target=model.target, pipeline=model.pipeline)
             self.update(_model.id, model)
         except DocumentNotFoundException:
             model = super(ModelRepository, self).create(model)
@@ -106,4 +127,3 @@ class ModelRepository(DocumentRepository):
         if not result.modified_count:
             raise DocumentNotFoundException(collection=self.__collection__, identifier=id)
         return result.modified_count
-

@@ -23,7 +23,7 @@ def replace_env_variables(loader, node):
             full_value = full_value.replace(
                 f'${{{g}}}', os.environ.get(g, g)
             )
-        return full_value
+        return full_value if not full_value.isnumeric() else int(full_value)
     return value
 
 confuse.Loader.add_constructor('!ENV', replace_env_variables)

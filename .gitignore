@@ -3,4 +3,5 @@ experiment/
 dask-worker-space/
 datasets/
 infrastructure/
-
+.ignore/*
+__pycache__

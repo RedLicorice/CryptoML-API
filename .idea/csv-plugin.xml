@@ -52,6 +52,13 @@
             </Attribute>
           </value>
         </entry>
+        <entry key="\.venv-3.8\Lib\site-packages\sklearn\feature_selection\_from_model.py">
+          <value>
+            <Attribute>
+              <option name="separator" value="," />
+            </Attribute>
+          </value>
+        </entry>
         <entry key="\.venv-3.8\Lib\site-packages\xgboost\sklearn.py">
           <value>
             <Attribute>
@@ -94,10 +101,38 @@
             </Attribute>
           </value>
         </entry>
+        <entry key="\app\config.yml">
+          <value>
+            <Attribute>
+              <option name="separator" value=":" />
+            </Attribute>
+          </value>
+        </entry>
         <entry key="\app\create_models.py">
           <value>
             <Attribute>
               <option name="separator" value=":" />
+            </Attribute>
+          </value>
+        </entry>
+        <entry key="\app\cryptoml\builders\faceted.py">
+          <value>
+            <Attribute>
+              <option name="separator" value="," />
+            </Attribute>
+          </value>
+        </entry>
+        <entry key="\app\cryptoml\builders\merged.py">
+          <value>
+            <Attribute>
+              <option name="separator" value="," />
+            </Attribute>
+          </value>
+        </entry>
+        <entry key="\app\cryptoml\builders\splines.py">
+          <value>
+            <Attribute>
+              <option name="separator" value="," />
             </Attribute>
           </value>
         </entry>
@@ -129,6 +164,13 @@
             </Attribute>
           </value>
         </entry>
+        <entry key="\app\cryptoml\util\flattened_classification_report.py">
+          <value>
+            <Attribute>
+              <option name="separator" value="," />
+            </Attribute>
+          </value>
+        </entry>
         <entry key="\app\cryptoml\util\import_proxy.py">
           <value>
             <Attribute>
@@ -143,6 +185,13 @@
             </Attribute>
           </value>
         </entry>
+        <entry key="\app\cryptoml_api\endpoints\api\features.py">
+          <value>
+            <Attribute>
+              <option name="separator" value=":" />
+            </Attribute>
+          </value>
+        </entry>
         <entry key="\app\cryptoml_api\endpoints\api\tuning.py">
           <value>
             <Attribute>
@@ -150,7 +199,28 @@
             </Attribute>
           </value>
         </entry>
+        <entry key="\app\cryptoml_api\requests\merge_datasets.json">
+          <value>
+            <Attribute>
+              <option name="separator" value="," />
+            </Attribute>
+          </value>
+        </entry>
         <entry key="\app\cryptoml_core\deps\mongodb\__init__.py">
+          <value>
+            <Attribute>
+              <option name="separator" value="," />
+            </Attribute>
+          </value>
+        </entry>
+        <entry key="\app\cryptoml_core\models\classification.py">
+          <value>
+            <Attribute>
+              <option name="separator" value=":" />
+            </Attribute>
+          </value>
+        </entry>
+        <entry key="\app\cryptoml_core\services\feature_selection.py">
           <value>
             <Attribute>
               <option name="separator" value="," />
@@ -175,6 +245,13 @@
           <value>
             <Attribute>
               <option name="separator" value="," />
+            </Attribute>
+          </value>
+        </entry>
+        <entry key="\app\get_tests.py">
+          <value>
+            <Attribute>
+              <option name="separator" value=":" />
             </Attribute>
           </value>
         </entry>
@@ -563,10 +640,31 @@
             </Attribute>
           </value>
         </entry>
+        <entry key="\infrastructure\.env">
+          <value>
+            <Attribute>
+              <option name="separator" value="," />
+            </Attribute>
+          </value>
+        </entry>
         <entry key="\infrastructure\cryptoml-api.tf">
           <value>
             <Attribute>
               <option name="separator" value="," />
+            </Attribute>
+          </value>
+        </entry>
+        <entry key="\infrastructure\docker-compose.frontends.yml">
+          <value>
+            <Attribute>
+              <option name="separator" value=":" />
+            </Attribute>
+          </value>
+        </entry>
+        <entry key="\infrastructure\docker-compose.yml">
+          <value>
+            <Attribute>
+              <option name="separator" value=":" />
             </Attribute>
           </value>
         </entry>

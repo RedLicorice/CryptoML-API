@@ -31,10 +31,12 @@ class GridSearchService:
         self.model_repo = ModelRepository()
         self.dataset_service = DatasetService()
 
-    def create_parameters_search(self, model: Model, split: float, task_key: str = None, **kwargs) -> ModelParameters:
+    def create_parameters_search(self, model: Model, split: float, **kwargs) -> ModelParameters:
         ds = self.dataset_service.get_dataset(model.dataset, model.symbol)
         splits = self.dataset_service.get_train_test_split_indices(ds, split)
 
+        # Features can either be a list of features to use, or a string
+        #   If it is a string, and it is "latest", pick the latest
         features = kwargs.get('features')
         if isinstance(features, str) and features == 'latest':
             if model.features:
@@ -42,10 +44,23 @@ class GridSearchService:
             else:
                 features = None
 
+        # Determine K for K-fold cross validation based on dataset's sample count
+        # Train-test split for each fold is 80% train, the lowest training window for accurate results is 30 samples
+        # so we need X samples where X is given by the proportion:
+        #       30/0.8 = X/1; X= 30/0.8 = 37.5 ~ 40 samples per fold
+        X = 40
+        k = 5
+        # If samples per fold with 5-fold CV are too low, use 3-folds
+        if ds.count / k < X:
+            k = 3
+        # If samples are still too low, raise a value error
+        if ds.count / k < X and not kwargs.get("permissive"):
+            raise ValueError("Not enough samples to perform cross validation!")
+
         result = ModelParameters(
             cv_interval=splits['train'],
-            cv_splits=5,
-            task_key=task_key or str(uuid4()),
+            cv_splits=k,
+            task_key=kwargs.get('task_key', str(uuid4())),
             features=features or None
         )
         return result

@@ -11,3 +11,4 @@ Jenkinsfile
 app/config.yml
 app/.env
 app/.env
+portainer_data

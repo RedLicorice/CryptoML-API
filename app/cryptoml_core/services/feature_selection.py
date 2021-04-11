@@ -6,10 +6,12 @@ from cryptoml_core.models.classification import Model, ModelParameters, ModelFea
 from cryptoml_core.repositories.classification_repositories import ModelRepository
 from cryptoml_core.exceptions import MessageException, NotFoundException
 from cryptoml_core.util.timestamp import get_timestamp
-
+from sklearn.model_selection import GridSearchCV
+from cryptoml.util.blocking_timeseries_split import BlockingTimeSeriesSplit
 from sklearn.utils import parallel_backend
 from skrebate import ReliefF, MultiSURF
 from sklearn.feature_selection import SelectFromModel, SelectPercentile, f_classif
+from cryptoml.util.flattened_classification_report import classification_report_imbalanced
 import numpy as np
 import math
 import logging
@@ -33,6 +35,37 @@ def select_from_model(X, y, sync=False):
         with parallel_backend('dask'):
             sfm.fit(X, y)
     return sfm
+
+
+def select_from_model_cv(X, y, sync=False):
+    # Load pipeline
+    pipeline_module = get_pipeline("selection_xgboost", unlisted=True)
+    gscv = GridSearchCV(
+        estimator=pipeline_module.estimator,
+        param_grid=pipeline_module.PARAMETER_GRID,
+        scoring='precision',
+        cv=3,
+        n_jobs=8
+    )
+
+    # Fit grid search
+    gscv.fit(X, y)
+
+    # Perform search
+    sfm = SelectFromModel(
+        gscv,
+        # prefit=True,
+        threshold='mean',
+        importance_getter='best_estimator_.named_steps.c.feature_importances_'
+    )
+    if sync:
+        sfm.fit(X, y)
+    else:
+        dask = get_client()  # Connect to Dask scheduler
+        with parallel_backend('dask'):
+            sfm.fit(X, y)
+    return sfm
+
 
 
 def select_percentile(X, y, percentile=10):
@@ -86,7 +119,7 @@ class FeatureSelectionService:
         return result
 
     def feature_selection(self, model: Model, mf: ModelFeatures, **kwargs) -> ModelFeatures:
-        INDEPENDENT_SEARCH_METHODS = ['importances', 'fscore', 'relieff', 'multisurf']
+        INDEPENDENT_SEARCH_METHODS = ['importances_cv', 'importances', 'fscore', 'relieff', 'multisurf']
         if not model.id:  # Make sure the model exists
             model = self.model_repo.create(model)
         if self.model_repo.exist_features(model.id, mf.task_key):
@@ -108,6 +141,9 @@ class FeatureSelectionService:
         if not mf.feature_selection_method or mf.feature_selection_method == 'importances':
             selector = select_from_model(X, y, sync=kwargs.get('sync', False))
             mf.feature_importances = label_feature_importances(selector.estimator_, X.columns)
+        elif mf.feature_selection_method == 'importances_cv':
+            selector = select_from_model_cv(X, y, sync=kwargs.get('sync', False))
+            mf.feature_importances = label_feature_importances(selector.estimator_.best_estimator_, X.columns)
         elif mf.feature_selection_method == 'fscore':
             selector = select_percentile(X, y, percentile=10)
         elif mf.feature_selection_method == 'relieff':

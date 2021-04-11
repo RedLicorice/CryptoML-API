@@ -14,6 +14,7 @@ from uuid import uuid4
 from cryptoml_core.util.timestamp import get_timestamp
 from pydantic.error_wrappers import ValidationError
 import numpy as np
+import pandas as pd
 from joblib import Parallel, delayed
 
 
@@ -23,7 +24,7 @@ def create_models_batch(symbol, items):
         models = []
         for d, t, p in items:
             try:
-                m = model_repo.find_by_symbol_dataset_target_pipeline(d.symbol, d.name, t, p)
+                m = model_repo.find_by_symbol_dataset_target_pipeline(symbol=d.symbol, dataset=d.name, target=t, pipeline=p)
                 logging.info("Model exists: {}-{}-{}-{}".format(d.symbol, d.name, t, p))
                 models.append(m)
             except ValidationError as e:
@@ -157,3 +158,12 @@ class ModelService:
         self.model_repo.append_test(model.id, mt)
 
         return mt
+
+    def compare_models(self, symbol: str, dataset: str, target:str):
+        tests = self.model_repo.find_tests(symbol=symbol, dataset=dataset, target=target)
+        return tests
+
+        
+
+
+
