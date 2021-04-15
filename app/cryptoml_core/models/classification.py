@@ -26,6 +26,9 @@ class ModelParameters(BaseModel):
 
 # Hold feature selection results for a Model document
 class ModelFeatures(BaseModel):
+    dataset: str
+    target: str
+    symbol: str
     # Search inputs
     feature_selection_method: str = 'importances'
     search_interval: TimeInterval = None  # Begin and end timestamps of data used for search

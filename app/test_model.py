@@ -8,13 +8,10 @@ from cryptoml_core.logging import setup_file_logger
 import logging
 
 
-def main(dataset: str, target: str, pipeline: str, features: Optional[str] = None, parameters: Optional[str] = None):
+def main(queryfile: str, features: Optional[str] = None, parameters: Optional[str] = None):
     models = ModelService()
-    query = {"dataset": dataset, "target": target, "pipeline": pipeline}
-    if pipeline == 'all':
-        del query['pipeline']
-    if target == 'all':
-        del query['target']
+    with open(queryfile, 'r') as f:
+        query = json.load(f)
     models.clear_tests(query)
     test_models = models.query_models(query)
     logging.info("[i] {} models to test".format(len(test_models)))
@@ -37,11 +34,11 @@ def main(dataset: str, target: str, pipeline: str, features: Optional[str] = Non
             models.test_model(m, t3, sync=True)
         except MessageException as e:
             logging.error("[!] " + e.message)
-            failed.append((m, t1, t2, t3))
+            failed.append((m.dict(), t1.dict(), t2.dict(), t3.dict()))
             pass
         except Exception as e:
             logging.exception("[!] " + str(e))
-            failed.append((m, t1, t2, t3))
+            failed.append((m.dict(), t1.dict(), t2.dict(), t3.dict()))
             pass
 
         logging.info("[{}] Done".format(m.symbol))

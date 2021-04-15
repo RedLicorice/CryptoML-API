@@ -1,0 +1,8 @@
+{
+    "dataset": "merged",
+    "target": "class",
+    "pipeline": "plain_xgboost",
+    "symbol": {
+      "$in": ["WAVESUSD", "XEMUSD", "XMRUSD", "XRPUSD", "ZECUSD", "ZRXUSD"]
+    }
+}

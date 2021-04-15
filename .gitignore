@@ -5,3 +5,5 @@ datasets/
 infrastructure/
 .ignore/*
 __pycache__
+*.log
+test-failed.json

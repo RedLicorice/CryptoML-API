@@ -25,6 +25,12 @@ class DatasetRepository(DocumentRepository):
         for document in cursor:
             yield self.__model__.parse_obj(document)
 
+    def get_symbols(self, name: str):
+        query = {"name": name}
+        cursor = self.collection.find(query, {"symbol": 1})
+        symbols = [d['symbol'] for d in cursor]
+        return symbols
+
     def create(self, model: Dataset):
         try:
             _model = self.find_by_dataset_and_symbol(model.name, model.symbol)

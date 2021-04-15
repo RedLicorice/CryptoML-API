@@ -1,0 +1,7 @@
+{
+    "dataset": "merged",
+    "target": "class",
+    "pipeline": {
+      "$nin": ["plain_xgboost"]
+    }
+}

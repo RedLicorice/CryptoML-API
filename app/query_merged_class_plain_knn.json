@@ -1,0 +1,5 @@
+{
+  "dataset": "merged",
+  "target": "class",
+  "pipeline": "plain_knn"
+}

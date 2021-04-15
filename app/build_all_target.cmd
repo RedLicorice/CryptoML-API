@@ -1,0 +1,24 @@
+@echo off
+python dataset.py build ADAUSD target ohlcv coinmetrics
+python dataset.py build BCHUSD target ohlcv coinmetrics
+python dataset.py build BNBUSD target ohlcv coinmetrics
+python dataset.py build BTCUSD target ohlcv coinmetrics
+python dataset.py build BTGUSD target ohlcv coinmetrics
+python dataset.py build DASHUSD target ohlcv coinmetrics
+python dataset.py build DOGEUSD target ohlcv coinmetrics
+python dataset.py build EOSUSD target ohlcv coinmetrics
+python dataset.py build ETCUSD target ohlcv coinmetrics
+python dataset.py build ETHUSD target ohlcv coinmetrics
+python dataset.py build LINKUSD target ohlcv coinmetrics
+python dataset.py build LTCUSD target ohlcv coinmetrics
+python dataset.py build NEOUSD target ohlcv coinmetrics
+python dataset.py build QTUMUSD target ohlcv coinmetrics
+python dataset.py build TRXUSD target ohlcv coinmetrics
+python dataset.py build USDTUSD target ohlcv coinmetrics
+python dataset.py build VENUSD target ohlcv coinmetrics
+python dataset.py build WAVESUSD target ohlcv coinmetrics
+python dataset.py build XEMUSD target ohlcv coinmetrics
+python dataset.py build XMRUSD target ohlcv coinmetrics
+python dataset.py build XRPUSD target ohlcv coinmetrics
+python dataset.py build ZECUSD target ohlcv coinmetrics
+python dataset.py build ZRXUSD target ohlcv coinmetrics

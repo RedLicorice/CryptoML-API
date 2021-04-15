@@ -22,9 +22,11 @@ def build(symbol: str, builder: str, ohlcv: str, coinmetrics: str):
         'coinmetrics': coinmetrics
     }
     print("Building {} [{} -> {}]".format(symbol, build_args, builder))
-    service = DatasetBuildingService()
-    service.check_builder_args(builder, build_args)
-    service.build_dataset(symbol, builder, build_args)
+    bs = DatasetBuildingService()
+    bs.check_builder_args(builder, build_args)
+    df = bs.build_dataset(symbol, builder, build_args)
+    ds = DatasetService()
+    ds.create_dataset(df, builder, symbol, 'FEATURES' if builder != 'target' else 'TARGET')
     print("Done")
 
 

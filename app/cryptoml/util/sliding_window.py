@@ -1,6 +1,8 @@
 import pandas as pd
 from joblib import Parallel, delayed
 
+from cryptoml_core.exceptions import MessageException
+
 
 def _test_window(est, parameters, X, y, e):
     # Get data for this window
@@ -13,11 +15,15 @@ def _test_window(est, parameters, X, y, e):
     est.set_params(**parameters)
     est = est.fit(train_X, train_y)
     pred = est.predict(test_X)
-    return {
+    proba = est.predict_proba(test_X)
+    result = {
         'time': e,
         'predicted': pred[0],
         'label': test_y
     }
+    for cls, prob in enumerate(proba[0]):
+        result['predicted_proba_'+str(cls)] = prob
+    return result
 
 
 def test_windows(est, parameters, X, y, ranges, parallel=True):
@@ -26,6 +32,7 @@ def test_windows(est, parameters, X, y, ranges, parallel=True):
     else:
         results = [_test_window(est, parameters, X.loc[b:e, :], y.loc[b:e], e) for b, e in ranges]
     df = pd.DataFrame(results)
-    # df['time'] = pd.to_datetime(df.time)
+    if df.empty:
+        raise MessageException("TestWindows: Empty result dataframe!")
     df = df.set_index('time')
     return df

@@ -17,6 +17,7 @@ from cryptoml_core.util.dict_hash import dict_hash
 
 # SKLearn
 from sklearn.utils import parallel_backend
+from sklearn.model_selection import StratifiedKFold
 from sklearn.exceptions import NotFittedError
 from uuid import uuid4
 import logging
@@ -91,7 +92,8 @@ class GridSearchService:
             gscv = GridSearchCV(
                 estimator=pipeline_module.estimator,
                 param_grid=kwargs.get('parameter_grid', pipeline_module.PARAMETER_GRID),
-                cv=BlockingTimeSeriesSplit(n_splits=mp.cv_splits),
+                # cv=BlockingTimeSeriesSplit(n_splits=mp.cv_splits),
+                cv=StratifiedKFold(n_splits=mp.cv_splits),
                 scoring=get_precision_scorer(),
                 verbose=kwargs.get("verbose", 0),
                 n_jobs=kwargs.get("n_jobs", None),
@@ -136,7 +138,7 @@ class GridSearchService:
         mp.parameters = gscv.best_params_
         mp.result_file = 'cv_results-{}.csv'.format(tag)
 
-        # Store grid search results on storage
+        # Save grid search results on storage
         if kwargs.get('save', True):
             self.storage.upload_json_obj(mp.parameters, 'grid-search-results', 'parameters-{}.json'.format(tag))
             self.storage.save_df(results_df, 'grid-search-results', mp.result_file)

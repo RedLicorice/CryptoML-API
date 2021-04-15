@@ -4,15 +4,13 @@ from typing import Optional
 from cryptoml_core.logging import setup_file_logger
 
 
-def main(dataset: str, target: str, pipeline: str):
+def main(dataset: str, pipeline: str):
     models = ModelService()
     query = {'type': "FEATURES"}
     if pipeline != 'all':
         query['pipeline'] = pipeline
-    if target != 'all':
-        query['target'] = target
     if dataset != 'all':
-        query['dataset'] = dataset
+        query['name'] = dataset
     models.create_classification_models(query=query)
 
 

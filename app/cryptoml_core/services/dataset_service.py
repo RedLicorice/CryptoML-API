@@ -70,6 +70,7 @@ class DatasetService:
             features=[c for c in df.columns],  # Name of included columns
             feature_indices=_indices
         )
+        logging.info(f"Create dataset {item.name} {item.symbol}")
         return self.repo.create(item)
 
     def merge_datasets(self, datasets: List[Dataset], name: str, symbol: str):
@@ -98,6 +99,9 @@ class DatasetService:
 
     def find_by_symbol(self, symbol):
         return self.repo.yield_by_symbol(symbol)
+
+    def get_dataset_symbols(self, name: str):
+        return self.repo.get_symbols(name)
 
     def get_features(self, name, symbol, begin, end, **kwargs):
         # storage_path = '{}-{}.csv'.format(name, symbol)

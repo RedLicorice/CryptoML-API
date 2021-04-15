@@ -21,6 +21,6 @@ PARAMETER_GRID = {
 estimator = Pipeline([
     ('i', SimpleImputer(strategy='mean')),
     ('s', StandardScaler()),
-    ('o', SMOTE()),
+    ('o', SMOTE(k_neighbors=3)),
     ('c', SVC()),
 ])

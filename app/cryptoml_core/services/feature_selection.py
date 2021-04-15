@@ -108,32 +108,30 @@ class FeatureSelectionService:
         self.model_repo = ModelRepository()
         self.dataset_service = DatasetService()
 
-    def create_features_search(self, *, model: Model, split: float, method: str, task_key: str = None) -> ModelFeatures:
-        ds = self.dataset_service.get_dataset(model.dataset, model.symbol)
+    def create_features_search(self, *, symbol: str, dataset: str, target: str, split: float, method: str, task_key: str = None) -> ModelFeatures:
+        ds = self.dataset_service.get_dataset(dataset, symbol)
         splits = self.dataset_service.get_train_test_split_indices(ds, split)
         result = ModelFeatures(
+            dataset=dataset,
+            target=target,
+            symbol=symbol,
             search_interval=splits['train'],
             feature_selection_method=method,
             task_key=task_key or str(uuid4())
         )
         return result
 
-    def feature_selection(self, model: Model, mf: ModelFeatures, **kwargs) -> ModelFeatures:
-        INDEPENDENT_SEARCH_METHODS = ['importances_cv', 'importances', 'fscore', 'relieff', 'multisurf']
-        if not model.id:  # Make sure the model exists
-            model = self.model_repo.create(model)
-        if self.model_repo.exist_features(model.id, mf.task_key):
-            logging.info("Model {} Feature selection {} already executed!".format(model.id, mf.task_key))
-            return mf
+    def feature_selection(self, mf: ModelFeatures, **kwargs) -> ModelFeatures:
+
         # Load dataset
-        X = self.dataset_service.get_features(model.dataset, model.symbol, mf.search_interval.begin, mf.search_interval.end,
+        X = self.dataset_service.get_features(mf.dataset, mf.symbol, mf.search_interval.begin, mf.search_interval.end,
                             columns=mf.features)
-        y = self.dataset_service.get_target(model.target, model.symbol, mf.search_interval.begin, mf.search_interval.end)
+        y = self.dataset_service.get_target(mf.target, mf.symbol, mf.search_interval.begin, mf.search_interval.end)
 
         unique, counts = np.unique(y, return_counts=True)
         if len(unique) < 2:
-            logging.error("[{}-{}-{}-{}]Training data contains less than 2 classes: {}"
-                          .format(model.symbol, model.dataset, model.target, model.pipeline, unique))
+            logging.error("[{}-{}-{}]Training data contains less than 2 classes: {}"
+                          .format(mf.symbol, mf.dataset, mf.target, unique))
             raise MessageException("Training data contains less than 2 classes: {}".format(unique))
 
         # Perform search
@@ -159,11 +157,8 @@ class FeatureSelectionService:
 
         # Update model with the new results
         if kwargs.get('save', True):
-            if mf.feature_selection_method in INDEPENDENT_SEARCH_METHODS:
-                self.model_repo.append_features_query(
-                    {"dataset": model.dataset, "symbol": model.symbol, "target": model.target},
-                    mf
-                )
-            else:
-                self.model_repo.append_features(model.id, mf)
+            self.model_repo.append_features_query(
+                {"dataset": mf.dataset, "symbol": mf.symbol, "target": mf.target},
+                mf
+            )
         return mf

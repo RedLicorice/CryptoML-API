@@ -89,12 +89,13 @@ def build(ohlcv: pd.DataFrame, coinmetrics: pd.DataFrame, **kwargs):
     ohlcv_stats['close_volatility_3d'] = ohlcv.close.pct_change().rolling(3).std(ddof=0)
     ohlcv_stats['close_volatility_7d'] = ohlcv.close.pct_change().rolling(7).std(ddof=0)
     ohlcv_stats['close_volatility_30d'] = ohlcv.close.pct_change().rolling(30).std(ddof=0)
-    if ohlcv.close.shape[0] > 90:
-        ohlcv_stats['close_volatility_90d'] = ohlcv.close.pct_change().rolling(90).std(ddof=0)
-    if ohlcv.close.shape[0] > 180:
-        ohlcv_stats['close_volatility_180d'] = ohlcv.close.pct_change().rolling(180).std(ddof=0)
-    if ohlcv.close.shape[0] > 360:
-        ohlcv_stats['close_volatility_360d'] = ohlcv.close.pct_change().rolling(360).std(ddof=0)
+    ## Dropped these features because they exclude too much data! Enable if building with MORE DATA!
+    # if ohlcv.close.shape[0] > 90:
+    #     ohlcv_stats['close_volatility_90d'] = ohlcv.close.pct_change().rolling(90).std(ddof=0)
+    # if ohlcv.close.shape[0] > 180:
+    #     ohlcv_stats['close_volatility_180d'] = ohlcv.close.pct_change().rolling(180).std(ddof=0)
+    # if ohlcv.close.shape[0] > 360:
+    #     ohlcv_stats['close_volatility_360d'] = ohlcv.close.pct_change().rolling(360).std(ddof=0)
 
     # Stats from resampled OHLC data
     for d in [3, 7, 30]:
@@ -247,7 +248,7 @@ def build(ohlcv: pd.DataFrame, coinmetrics: pd.DataFrame, **kwargs):
         #    cm_picks['vtydayret30d'] = coinmetrics.vtydayret30d
         #if 'isscontpctann' in coinmetrics.columns:
         #    cm_picks['isscontpctann'] = coinmetrics.isscontpctann
-        merge_dataframes.append(coinmetrics)
+        # merge_dataframes.append(coinmetrics)
         merge_dataframes.append(cm_picks)
 
     # Drop columns whose values are all nan or inf from each facet

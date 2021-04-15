@@ -1,5 +1,5 @@
 from cryptoml.util.sliding_window import test_windows
-from cryptoml.util.flattened_classification_report import flattened_classification_report
+from cryptoml.util.flattened_classification_report import flattened_classification_report_imbalanced, roc_auc_report
 from cryptoml.pipelines import get_pipeline, PIPELINE_LIST
 from cryptoml_core.util.timestamp import sub_interval, add_interval, from_timestamp, timestamp_windows
 from cryptoml_core.models.classification import Model, ModelTest
@@ -153,7 +153,11 @@ class ModelService:
         mt.end_at = get_timestamp()
 
         mt.classification_results = df.to_dict()
-        mt.classification_report = flattened_classification_report(df.label, df.predicted)
+
+        clf_report = flattened_classification_report_imbalanced(df.label, df.predicted)
+        roc_report = roc_auc_report(df.label, df.predicted, df[[c for c in df.columns if '_proba_' in c]])
+        clf_report.update(roc_report)
+        mt.classification_report = clf_report
 
         self.model_repo.append_test(model.id, mt)
 

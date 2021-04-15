@@ -5,16 +5,14 @@ from cryptoml_core.util.timestamp import get_timestamp
 from typing import Optional
 from cryptoml_core.logging import setup_file_logger
 import logging
+import json
 
 
-def main(dataset: str, target: str, pipeline: str, features: Optional[str] = None, halving: Optional[bool] = False, save: Optional[bool] = True):
+def main(queryfile: str, features: Optional[str] = None, halving: Optional[bool] = False, save: Optional[bool] = True):
     service = GridSearchService()
     models = ModelService()
-    query = {"dataset": dataset, "target": target, "pipeline": pipeline}
-    if pipeline == 'all':
-        del query['pipeline']
-    if target == 'all':
-        del query['target']
+    with open(queryfile, 'r') as f:
+        query = json.load(f)
     # if save:
     #     models.clear_parameters(query)
     # else:
