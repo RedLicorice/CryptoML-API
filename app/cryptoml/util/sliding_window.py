@@ -1,5 +1,5 @@
 import pandas as pd
-from joblib import Parallel, delayed
+from joblib import Parallel, delayed, cpu_count
 
 from cryptoml_core.exceptions import MessageException
 
@@ -26,9 +26,10 @@ def _test_window(est, parameters, X, y, e):
     return result
 
 
-def test_windows(est, parameters, X, y, ranges, parallel=True):
+def test_windows(est, parameters, X, y, ranges, parallel=True, **kwargs):
+    _n_jobs = int(kwargs.get('n_jobs', cpu_count() / 2))
     if parallel:
-        results = Parallel(n_jobs=-1)(delayed(_test_window)(est, parameters, X.loc[b:e, :], y.loc[b:e], e) for b, e in ranges)
+        results = Parallel(n_jobs=_n_jobs)(delayed(_test_window)(est, parameters, X.loc[b:e, :], y.loc[b:e], e) for b, e in ranges)
     else:
         results = [_test_window(est, parameters, X.loc[b:e, :], y.loc[b:e], e) for b, e in ranges]
     df = pd.DataFrame(results)

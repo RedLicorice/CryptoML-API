@@ -1,0 +1,6 @@
+{
+    "dataset": "merged",
+    "target": "class",
+    "pipeline": "plain_xgboost",
+    "symbol": "ADAUSD"
+}
