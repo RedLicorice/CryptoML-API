@@ -1,6 +1,6 @@
 import pandas as pd
 from joblib import Parallel, delayed, cpu_count
-
+from datetime import datetime
 from cryptoml_core.exceptions import MessageException
 
 
@@ -13,16 +13,20 @@ def _test_window(est, parameters, X, y, e):
     test_y = y.iloc[-1]
 
     est.set_params(**parameters)
+    start_at = datetime.utcnow().timestamp()
     est = est.fit(train_X, train_y)
+    dur = datetime.utcnow().timestamp() - start_at
     pred = est.predict(test_X)
     proba = est.predict_proba(test_X)
     result = {
         'time': e,
+        'duration': dur,
         'predicted': pred[0],
         'label': test_y
     }
-    for cls, prob in enumerate(proba[0]):
-        result['predicted_proba_'+str(cls)] = prob
+    if proba.any():
+        for cls, prob in enumerate(proba[0]):
+            result['predicted_proba_'+str(cls)] = prob
     return result
 
 

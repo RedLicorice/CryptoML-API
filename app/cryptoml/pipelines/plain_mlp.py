@@ -1,7 +1,6 @@
 from cryptoml.util.selection_pipeline import Pipeline
 from sklearn.neural_network import MLPClassifier
 from cryptoml.util.import_proxy import SimpleImputer, MinMaxScaler, StandardScaler
-from joblib import cpu_count
 
 PARAMETER_GRID = {
     'c__hidden_layer_sizes': [(2, 4), (4, 8), (20, 20), (100, 100)],
@@ -16,5 +15,5 @@ PARAMETER_GRID = {
 estimator = Pipeline([
     ('i', SimpleImputer()),  # Replace nan's with the median value between previous and next observation
     ('s', StandardScaler()),
-    ('c', MLPClassifier(n_jobs=int(cpu_count()/2))),
+    ('c', MLPClassifier()),
 ])

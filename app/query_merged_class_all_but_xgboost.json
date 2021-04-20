@@ -3,5 +3,11 @@
     "target": "class",
     "pipeline": {
       "$nin": ["plain_xgboost"]
+    },
+    "symbol": {
+      "$nin": ["USDTUSD"]
+    },
+    "parameters": {
+      "$size": 0
     }
 }

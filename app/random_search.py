@@ -17,9 +17,9 @@ def main(queryfile: str, features: Optional[str] = None, halving: Optional[bool]
     search_models = models.query_models(query)
     logging.info("[i] {} models to train".format(len(search_models)))
     for i, m in enumerate(search_models):
-        if m.parameters:
-            logging.info("==[{}/{}]== MODEL: {} {} {} {} ==> SKIP".format(i+1, len(search_models), m.symbol, m.dataset, m.target, m.pipeline))
-            continue  # Skip this as search has already been performed
+        # if m.parameters:
+        #     logging.info("==[{}/{}]== MODEL: {} {} {} {} ==> SKIP".format(i+1, len(search_models), m.symbol, m.dataset, m.target, m.pipeline))
+        #     continue  # Skip this as search has already been performed
         logging.info("==[{}/{}]== MODEL: {} {} {} {} =====".format(i+1, len(search_models), m.symbol, m.dataset, m.target, m.pipeline))
         mp = service.create_parameters_search(m, split=0.7, features=features)
         logging.info("[{}] Start random search".format(get_timestamp()))

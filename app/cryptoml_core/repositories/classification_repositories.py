@@ -44,9 +44,10 @@ class ModelRepository(DocumentRepository):
         return model
 
     def append_test(self, model_id: str, test: ModelTest):
+        test_dict = test.dict()
         result = self.collection.update_one(
             {"_id": model_id},
-            {'$push': {'tests': test.dict()}}
+            {'$push': {'tests': test_dict}}
         )
         if not result.modified_count:
             raise DocumentNotFoundException(collection=self.__collection__, identifier=id)

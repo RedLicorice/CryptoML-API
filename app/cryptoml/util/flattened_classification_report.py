@@ -39,7 +39,7 @@ def flattened_classification_report_imbalanced(y_true, y_pred):
                 result['{}_{}_avg'.format(m, splits[0])] = _v
         else:
             result[k] = v
-    return result
+    return {k: float(v) for k, v in result.items()}
 
 
 def roc_auc_report(y_true, y_pred, y_pred_proba):
@@ -60,4 +60,4 @@ def roc_auc_report(y_true, y_pred, y_pred_proba):
     # fpr_1, tpr_1, thr_1 = roc_curve(y_true, y_pred, pos_label=1)
     # fpr_2, tpr_2, thr_2 = roc_curve(y_true, y_pred, pos_label=2)
 
-    return result
+    return {k: float(v) for k, v in result.items()}

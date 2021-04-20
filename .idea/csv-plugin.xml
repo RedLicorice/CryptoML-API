@@ -318,6 +318,13 @@
             </Attribute>
           </value>
         </entry>
+        <entry key="\app\query_merged_class_all_but_xgboost.json">
+          <value>
+            <Attribute>
+              <option name="separator" value=":" />
+            </Attribute>
+          </value>
+        </entry>
         <entry key="\app\query_merged_class_no_xgboost.json">
           <value>
             <Attribute>
