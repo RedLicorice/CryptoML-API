@@ -2,7 +2,8 @@ import pandas as pd
 from joblib import Parallel, delayed, cpu_count
 from datetime import datetime
 from cryptoml_core.exceptions import MessageException
-
+import numpy as np
+import logging
 
 def _test_window(est, parameters, X, y, e):
     # Get data for this window
@@ -12,6 +13,10 @@ def _test_window(est, parameters, X, y, e):
     test_X = X.iloc[-1:, :] # This way it returns a pandas dataframe with a single row
     test_y = y.iloc[-1]
 
+    y_unique, y_indices, y_counts = np.unique(train_y, return_index=True, return_counts=True)
+    if (y_counts < 3).any():
+        logging.error("train_y contains less than 3 samples for some class! \nUnique: {}\nIndices: {}\nCounts: {}".format(y_unique, y_indices, y_counts))
+        return None
     est.set_params(**parameters)
     start_at = datetime.utcnow().timestamp()
     est = est.fit(train_X, train_y)
