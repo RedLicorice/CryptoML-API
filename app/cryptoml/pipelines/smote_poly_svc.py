@@ -22,5 +22,5 @@ estimator = Pipeline([
     ('i', SimpleImputer(strategy='mean')),
     ('s', StandardScaler()),
     ('o', SMOTE(k_neighbors=3)),
-    ('c', SVC()),
+    ('c', SVC(probability=True)),
 ])

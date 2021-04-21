@@ -20,5 +20,5 @@ estimator = Pipeline([
     ('i', SimpleImputer()),  # Replace nan's with the median value between previous and next observation
     ('s', StandardScaler()),  # Scale data in order to center it and increase robustness against noise and outliers
     #('n', MinMaxScaler()),  # Scale data in order to center it and increase robustness against noise and outliers
-    ('c', SVC()),
+    ('c', SVC(probability=True)),
 ])

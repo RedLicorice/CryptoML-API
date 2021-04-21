@@ -20,7 +20,7 @@ pipeline = Pipeline([
     ('i', SimpleImputer()),  # Replace nan's with the median value between previous and next observation
     ('s', StandardScaler()),
     # ('n', MinMaxScaler()),
-    ('c', SVC()),
+    ('c', SVC(probability=True)),
 ])
 
 estimator = BaggingClassifier(base_estimator=pipeline)
