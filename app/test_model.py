@@ -37,11 +37,13 @@ def main(queryfile: str, features: Optional[str] = None, parameters: Optional[st
             models.test_model(m, t4, sync=True)
         except MessageException as e:
             logging.error("[!] " + e.message)
-            failed.append((m.dict(), t1.dict(), t2.dict(), t3.dict()))
+            # failed.append((m.dict(), t1.dict(), t2.dict(), t3.dict()))
+            failed.append((m.dict(), t2.dict(), t3.dict(), t4.dict()))
             pass
         except Exception as e:
             logging.exception("[!] " + str(e))
-            failed.append((m.dict(), t1.dict(), t2.dict(), t3.dict()))
+            # failed.append((m.dict(), t1.dict(), t2.dict(), t3.dict()))
+            failed.append((m.dict(), t2.dict(), t3.dict(), t4.dict()))
             pass
 
         logging.info("[{}] Done".format(m.symbol))
