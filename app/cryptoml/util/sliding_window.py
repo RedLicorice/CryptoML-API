@@ -13,9 +13,9 @@ def _test_window(est, parameters, X, y, e):
     test_X = X.iloc[-1:, :] # This way it returns a pandas dataframe with a single row
     test_y = y.iloc[-1]
 
-    y_unique, y_indices, y_counts = np.unique(train_y, return_index=True, return_counts=True)
+    y_unique, _, y_counts = np.unique(train_y, return_index=True, return_counts=True)
     if (y_counts < 3).any():
-        logging.error("train_y contains less than 3 samples for some class! \nUnique: {}\nIndices: {}\nCounts: {}".format(y_unique, y_indices, y_counts))
+        logging.warning(f"train_y contains less than 3 samples for some class! \nUnique: {y_unique}\nCounts: {y_counts}")
         return None
     est.set_params(**parameters)
     start_at = datetime.utcnow().timestamp()
@@ -32,6 +32,8 @@ def _test_window(est, parameters, X, y, e):
     if proba.any():
         for cls, prob in enumerate(proba[0]):
             result['predicted_proba_'+str(cls)] = prob
+    for u, c in zip(y_unique, y_counts):
+        result[f"class_{u}_count"] = c
     return result
 
 
@@ -41,6 +43,7 @@ def test_windows(est, parameters, X, y, ranges, parallel=True, **kwargs):
         results = Parallel(n_jobs=_n_jobs)(delayed(_test_window)(est, parameters, X.loc[b:e, :], y.loc[b:e], e) for b, e in ranges)
     else:
         results = [_test_window(est, parameters, X.loc[b:e, :], y.loc[b:e], e) for b, e in ranges]
+    results = [r for r in results if r is not None]
     df = pd.DataFrame(results)
     if df.empty:
         raise MessageException("TestWindows: Empty result dataframe!")

@@ -19,19 +19,22 @@ def main(queryfile: str, features: Optional[str] = None, parameters: Optional[st
     for i, m in enumerate(test_models):
         logging.info("==[{}/{}]== MODEL: {} {} {} {} =====".format(i + 1, len(test_models), m.symbol, m.dataset, m.target,
                                                             m.pipeline))
-        t1 = models.create_model_test(model=m, split=0.7, step={'days': 1}, window={'days': 30}, parameters=parameters, features=features)
+        #t1 = models.create_model_test(model=m, split=0.7, step={'days': 1}, window={'days': 60}, parameters=parameters, features=features)
         t2 = models.create_model_test(model=m, split=0.7, step={'days': 1}, window={'days': 90}, parameters=parameters, features=features)
-        t3 = models.create_model_test(model=m, split=0.7, step={'days': 1}, window={'days': 150}, parameters=parameters, features=features)
+        t3 = models.create_model_test(model=m, split=0.7, step={'days': 1}, window={'days': 180}, parameters=parameters, features=features)
+        t4 = models.create_model_test(model=m, split=0.7, step={'days': 1}, window={'days': 240}, parameters=parameters, features=features)
         try:
             # Test T1
-            logging.info("[{}] {} Start T1".format(get_timestamp(), m.symbol))
-            models.test_model(m, t1, sync=True)
+            # logging.info("[{}] {} Start T1".format(get_timestamp(), m.symbol))
+            # models.test_model(m, t1, sync=True)
             # Test T2
             logging.info("[{}] {} Start T2".format(get_timestamp(), m.symbol))
             models.test_model(m, t2, sync=True)
             # Test T3
             logging.info("[{}] {} Start T3".format(get_timestamp(), m.symbol))
             models.test_model(m, t3, sync=True)
+            logging.info("[{}] {} Start T4".format(get_timestamp(), m.symbol))
+            models.test_model(m, t4, sync=True)
         except MessageException as e:
             logging.error("[!] " + e.message)
             failed.append((m.dict(), t1.dict(), t2.dict(), t3.dict()))
