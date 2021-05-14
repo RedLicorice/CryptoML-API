@@ -23,3 +23,4 @@ fastavro
 # Compression algos for data transfers across clusters
 python-snappy
 lz4
+

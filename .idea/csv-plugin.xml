@@ -52,6 +52,13 @@
             </Attribute>
           </value>
         </entry>
+        <entry key="\.venv-3.8\Lib\site-packages\mplfinance\plotting.py">
+          <value>
+            <Attribute>
+              <option name="separator" value="," />
+            </Attribute>
+          </value>
+        </entry>
         <entry key="\.venv-3.8\Lib\site-packages\sklearn\feature_selection\_from_model.py">
           <value>
             <Attribute>
@@ -136,6 +143,13 @@
             </Attribute>
           </value>
         </entry>
+        <entry key="\app\cryptoml\builders\merged-multicoin.py">
+          <value>
+            <Attribute>
+              <option name="separator" value="," />
+            </Attribute>
+          </value>
+        </entry>
         <entry key="\app\cryptoml\builders\merged.py">
           <value>
             <Attribute>
@@ -179,6 +193,13 @@
           </value>
         </entry>
         <entry key="\app\cryptoml\pipelines\smote_mlp.py">
+          <value>
+            <Attribute>
+              <option name="separator" value="," />
+            </Attribute>
+          </value>
+        </entry>
+        <entry key="\app\cryptoml\util\dataframe_converter.py">
           <value>
             <Attribute>
               <option name="separator" value="," />
@@ -248,10 +269,31 @@
             </Attribute>
           </value>
         </entry>
+        <entry key="\app\cryptoml_core\repositories\classification_repositories.py">
+          <value>
+            <Attribute>
+              <option name="separator" value=":" />
+            </Attribute>
+          </value>
+        </entry>
+        <entry key="\app\cryptoml_core\repositories\trading_repository.py">
+          <value>
+            <Attribute>
+              <option name="separator" value=":" />
+            </Attribute>
+          </value>
+        </entry>
         <entry key="\app\cryptoml_core\services\dataset_building_service.py">
           <value>
             <Attribute>
               <option name="separator" value=":" />
+            </Attribute>
+          </value>
+        </entry>
+        <entry key="\app\cryptoml_core\services\dataset_service.py">
+          <value>
+            <Attribute>
+              <option name="separator" value="," />
             </Attribute>
           </value>
         </entry>
@@ -276,10 +318,31 @@
             </Attribute>
           </value>
         </entry>
+        <entry key="\app\cryptoml_core\services\trading_service.py">
+          <value>
+            <Attribute>
+              <option name="separator" value="," />
+            </Attribute>
+          </value>
+        </entry>
         <entry key="\app\cryptoml_core\services\tuning_service.py">
           <value>
             <Attribute>
               <option name="separator" value="," />
+            </Attribute>
+          </value>
+        </entry>
+        <entry key="\app\cryptoml_core\util\series_encoding.py">
+          <value>
+            <Attribute>
+              <option name="separator" value="," />
+            </Attribute>
+          </value>
+        </entry>
+        <entry key="\app\cryptoml_core\util\timestamp.py">
+          <value>
+            <Attribute>
+              <option name="separator" value=":" />
             </Attribute>
           </value>
         </entry>
@@ -318,6 +381,13 @@
             </Attribute>
           </value>
         </entry>
+        <entry key="\app\query_merged_binary_plain_knn.json">
+          <value>
+            <Attribute>
+              <option name="separator" value=":" />
+            </Attribute>
+          </value>
+        </entry>
         <entry key="\app\query_merged_class_all_but_xgboost.json">
           <value>
             <Attribute>
@@ -343,6 +413,27 @@
           <value>
             <Attribute>
               <option name="separator" value="," />
+            </Attribute>
+          </value>
+        </entry>
+        <entry key="\app\trading_plot.py">
+          <value>
+            <Attribute>
+              <option name="separator" value="," />
+            </Attribute>
+          </value>
+        </entry>
+        <entry key="\app\trading_plotly.py">
+          <value>
+            <Attribute>
+              <option name="separator" value="," />
+            </Attribute>
+          </value>
+        </entry>
+        <entry key="\app\trading_simulation.py">
+          <value>
+            <Attribute>
+              <option name="separator" value=":" />
             </Attribute>
           </value>
         </entry>

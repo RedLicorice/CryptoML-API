@@ -20,6 +20,16 @@ def to_timestamp(date: datetime) -> str:
     return date.isoformat('T')
 
 
+def get_timestamps(begin, end, return_string=False):
+    date1 = from_timestamp(begin)
+    date2 = from_timestamp(end)
+    for n in range(int((date2 - date1).days)+1):
+        if not return_string:
+            yield date1 + timedelta(n)
+        else:
+            yield to_timestamp(date1 + timedelta(n))
+
+
 def mul_interval(interval: dict, factor: int):
     seconds = timedelta(**interval).total_seconds()
     return {'seconds': seconds*factor}
@@ -35,6 +45,10 @@ def sub_interval(timestamp: str, interval: dict):
     return to_timestamp(date - timedelta(**interval))
 
 
+def timestamp_diff(second: str, first: str):
+    return from_timestamp(second).timestamp() - from_timestamp(first).timestamp()
+
+
 def timestamp_range(start: str, end: str, delta: dict):
     _delta = timedelta(**delta)
     _end = from_timestamp(end)
@@ -45,6 +59,16 @@ def timestamp_range(start: str, end: str, delta: dict):
             _next = _end
         yield to_timestamp(curr), to_timestamp(_next)
         curr = _next
+
+
+def is_timestamp_between(start: str, ts: str, end: str):
+    _end = from_timestamp(end)
+    _start = from_timestamp(start)
+    cur = from_timestamp(ts)
+    if _start.timestamp() <= cur.timestamp() < _end.timestamp():
+        return True
+    return False
+
 
 def timestamp_windows(start: str, end: str, window: dict, step: dict):
     _step = timedelta(**step)

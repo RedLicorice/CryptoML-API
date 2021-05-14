@@ -1,4 +1,4 @@
-from cryptoml.util.sliding_window import test_windows
+from cryptoml.util.sliding_window import test_windows, predict_day
 from cryptoml.util.flattened_classification_report import flattened_classification_report_imbalanced, roc_auc_report
 from cryptoml.pipelines import get_pipeline, PIPELINE_LIST
 from cryptoml_core.util.timestamp import sub_interval, add_interval, from_timestamp, timestamp_windows
@@ -86,6 +86,30 @@ class ModelService:
     def get_model(self, model_id):
         return self.model_repo.get(model_id)
 
+    def get_model(self, pipeline: str, dataset: str, target: str, symbol: str):
+        result = self.model_repo.query({"symbol": symbol, "dataset": dataset, "target": target, "pipeline": pipeline})
+        if not result:
+            return None
+        return result[0]
+
+    def get_test(self, pipeline: str, dataset: str, target: str, symbol: str, window: int):
+        result = self.model_repo.get_model_test(pipeline, dataset, target, symbol, window)
+        if not result:
+            return None
+        return result[0]
+
+    @staticmethod
+    def parse_test_results(test: ModelTest):
+        # Re-convert classification results from test to a DataFrame
+        results = pd.DataFrame(test.classification_results)
+        # Parse index so it's a DateTimeIndex, because Mongo stores it as a string
+        results.index = pd.to_datetime(results.index)
+        return results
+
+    def get_test_results(self, pipeline: str, dataset: str, target: str, symbol: str, window: int):
+        test = self.get_test(pipeline, dataset, target, symbol, window)
+        return ModelService.parse_test_results(test)
+
     def query_models(self, query, projection: Optional[dict] = None):
         return self.model_repo.query(query, projection)
 
@@ -167,7 +191,33 @@ class ModelService:
         tests = self.model_repo.find_tests(symbol=symbol, dataset=dataset, target=target)
         return tests
 
-        
+    def predict_day(self, pipeline: str, dataset: str, target: str, symbol: str, day: str, window: dict):
+        model = self.get_model(pipeline, dataset, target, symbol)
+        # Load dataset
+        ds = DatasetService()
+        d = ds.get_dataset(model.dataset, model.symbol)
+        # Get training data including the first training window
+        begin = sub_interval(timestamp=day, interval=window)
+        if from_timestamp(d.valid_index_min).timestamp() > from_timestamp(begin).timestamp():
+            raise MessageException("Not enough data for training! [Pipeline: {} Dataset: {} Symbol: {} Window: {}]" \
+                                   .format(model.pipeline, model.dataset, model.symbol, window))
+        X = ds.get_features(model.dataset, model.symbol, begin=begin, end=day)
+        y = ds.get_target(model.target, model.symbol, begin=begin, end=day)
+
+        unique, counts = np.unique(y, return_counts=True)
+        if len(unique) < 2:
+            logging.error("[{}-{}-{}-{}]Training data contains less than 2 classes: {}"
+                          .format(model.symbol, model.dataset, model.target, model.pipeline, unique))
+            raise MessageException("Training data contains less than 2 classes: {}".format(unique))
+
+        # Load pipeline
+        pipeline_module = get_pipeline(model.pipeline)
+        # Slice testing interval in windows
+
+        df = predict_day(pipeline_module.estimator, model.parameters[-1], X, y, day)
+
+        return df
+
 
 
 

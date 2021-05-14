@@ -91,7 +91,7 @@ def query_dataframe(measure, first=None, last=None, columns=None, **kwargs)-> pd
         columns = ','.join(columns)
 
     query = "SELECT {} FROM {}".format(columns, measure)
-    query += " WHERE time >= '{}' AND time < '{}'".format(first, last)
+    query += " WHERE time >= '{}' AND time <= '{}'".format(first, last)
     query = append_tags(query, tags)
     query += " ORDER BY time"
     logging.debug("InfluxDB Query: {}".format(query))

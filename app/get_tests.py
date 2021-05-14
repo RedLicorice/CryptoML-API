@@ -23,35 +23,57 @@ def main(dataset: str, target: str, symbols: List[str]):
             test = m["tests"]
             report = test["classification_report"] if "classification_report" in test else None
             duration = from_timestamp(test["end_at"]).timestamp() - from_timestamp(test["start_at"]).timestamp()
+            mean_dur = pd.Series(test["classification_results"]["duration"]).mean()
             result.append({
                 "pipeline": m["pipeline"],
                 "window": test['window']['days'],
                 #"step": str(test["step"]),
                 "duration": duration,
-                "precision_0": report["precision_0"] if report else np.nan,
-                "recall_0": report["recall_0"] if report else np.nan,
-                "f1-score_0": report["f1-score_0"] if report else np.nan,
-                "support_0": report["support_0"] if report else np.nan,
-                "precision_1": report["precision_1"] if report else np.nan,
-                "recall_1": report["recall_1"] if report else np.nan,
-                "f1-score_1": report["f1-score_1"] if report else np.nan,
-                "support_1": report["support_1"] if report else np.nan,
-                "precision_2": report["precision_2"] if report else np.nan,
-                "recall_2": report["recall_2"] if report else np.nan,
-                "f1-score_2": report["f1-score_2"] if report else np.nan,
-                "support_2": report["support_2"] if report else np.nan,
-                "accuracy": report["accuracy"] if report else np.nan,
-                "precision_macro_avg": report["precision_macro_avg"] if report else np.nan,
-                "recall_macro_avg": report["recall_macro_avg"] if report else np.nan,
-                "f1-score_macro_avg": report["f1-score_macro_avg"] if report else np.nan,
-                "precision_weighted_avg": report["precision_weighted_avg"] if report else np.nan,
-                "recall_weighted_avg": report["recall_weighted_avg"] if report else np.nan,
-                "f1-score_weighted_avg": report["f1-score_weighted_avg"] if report else np.nan,
+                "duration_mean": mean_dur,
+                "support_all": report["total_support"] if report else np.nan,
+                "support_0": report["sup_0"] if report else np.nan,
+                "support_1": report["sup_1"] if report else np.nan,
+                "support_2": report["sup_2"] if report else np.nan,
+                # Per-class precision/recall/f1/spe/geom/iba
+                "precision_0": report["pre_0"] if report else np.nan,
+                "recall_0": report["rec_0"] if report else np.nan,
+                "specificity_0": report["spe_0"] if report else np.nan,
+                "f1-score_0": report["f1_0"] if report else np.nan,
+                "geometric_mean_0": report["geo_0"] if report else np.nan,
+                "index_balanced_accuracy_0": report["iba_0"] if report else np.nan,
+
+                "precision_1": report["pre_1"] if report else np.nan,
+                "recall_1": report["rec_1"] if report else np.nan,
+                "specificity_1": report["spe_1"] if report else np.nan,
+                "f1-score_1": report["f1_1"] if report else np.nan,
+                "geometric_mean_1": report["geo_1"] if report else np.nan,
+                "index_balanced_accuracy_1": report["iba_1"] if report else np.nan,
+
+                "precision_2": report["pre_2"] if report else np.nan,
+                "recall_2": report["rec_2"] if report else np.nan,
+                "specificity_2": report["spe_2"] if report else np.nan,
+                "f1-score_2": report["f1_2"] if report else np.nan,
+                "geometric_mean_2": report["geo_2"] if report else np.nan,
+                "index_balanced_accuracy_2": report["iba_2"] if report else np.nan,
+
+                # Roc-auc
+                "roc_auc_ovo_macro": report["roc_auc_ovo_macro"] if report else np.nan,
+                "roc_auc_ovo_weighted": report["roc_auc_ovo_weighted"] if report else np.nan,
+                "roc_auc_ovr_macro": report["roc_auc_ovr_macro"] if report else np.nan,
+                "roc_auc_ovr_weighted": report["roc_auc_ovr_weighted"] if report else np.nan,
+                # Averages
+                "precision_avg": report["avg_pre"] if report else np.nan,
+                "recall_avg": report["avg_rec"] if report else np.nan,
+                "specificity_avg": report["avg_spe"] if report else np.nan,
+                "f1-score_avg": report["avg_f1"] if report else np.nan,
+                "geometric_mean_avg": report["avg_geo"] if report else np.nan,
+                "index_balanced_accuracy_avg": report["avg_iba"] if report else np.nan,
+
             })
         df = pd.DataFrame(result)
         # Plot to XLSX with conditional formatting by coolwarm color map,
         # ordering by ascending accuracy
-        df.sort_values(by='accuracy', ascending=True)\
+        df.sort_values(by='precision_avg', ascending=True)\
             .style.background_gradient(cmap=cm.get_cmap('coolwarm')) \
             .format(None, na_rep="-")\
             .to_excel(writer, sheet_name=symbol, index_label="#", float_format = "%0.3f")

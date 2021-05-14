@@ -111,8 +111,13 @@ class DatasetService:
     def get_dataset_features(self, ds: Dataset, **kwargs):  # begin and end
         # storage_path = '{}-{}.csv'.format(name, symbol)
         # self.storage.load_df('datasets', storage_path)
-        return self.get_features(ds.name, ds.symbol, kwargs.get('begin', ds.index_min), kwargs.get('end', ds.index_max),
-                                 **kwargs)
+        begin = kwargs.get('begin', ds.index_min)
+        end = kwargs.get('end', ds.index_max)
+        if 'begin' in kwargs:
+            del kwargs['begin']
+        if 'end' in kwargs:
+            del kwargs['end']
+        return self.get_features(name=ds.name, symbol=ds.symbol, begin=begin, end=end)
 
     def get_target(self, name, symbol, begin, end):
         # storage_path = '{}-{}.csv'.format(name, symbol)

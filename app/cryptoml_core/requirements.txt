@@ -14,3 +14,7 @@ pydantic
 influxdb
 # S3 Storage Client
 s3fs
+# Plotting
+matplotlib
+mplfinance
+adjustText

@@ -79,6 +79,7 @@ class DocumentRepository:
         result = self.collection.update_one({"_id": id}, {"$set": document})
         if not result.modified_count:
             raise DocumentNotFoundException(collection=self.__collection__, identifier=id)
+        return self.get(id)
 
     def touch(self, id):
         result = self.collection.update_one({"_id": id}, {"$set": {"updated": get_timestamp()}})

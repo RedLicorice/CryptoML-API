@@ -49,3 +49,12 @@ def test_windows(est, parameters, X, y, ranges, parallel=True, **kwargs):
         raise MessageException("TestWindows: Empty result dataframe!")
     df = df.set_index('time')
     return df
+
+
+def predict_day(est, parameters, X, y, day, **kwargs):
+    result = _test_window(est, parameters, X, y, day)
+    df = pd.DataFrame([result])
+    if df.empty:
+        raise MessageException("predict_day: Empty result dataframe!")
+    df = df.set_index('time')
+    return df

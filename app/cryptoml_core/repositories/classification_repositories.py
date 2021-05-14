@@ -128,3 +128,22 @@ class ModelRepository(DocumentRepository):
         if not result.modified_count:
             raise DocumentNotFoundException(collection=self.__collection__, identifier=id)
         return result.modified_count
+
+    def get_model_test(self, pipeline, dataset, target, symbol, window):
+        result = self.collection.aggregate([
+            {
+                '$match': {'pipeline': pipeline, 'dataset': dataset, 'target': target, 'symbol': symbol}
+            },
+            {
+                '$project': {
+                    'tests': {
+                        '$filter': {
+                            'input': '$tests',
+                            'as': 'test',
+                            'cond': {'$eq': ['$$test.window.days', window]}
+                        }
+                    }
+                }
+            }
+        ])
+        return [ModelTest.parse_obj(p) for p in [d['tests'] for d in result][0]]

@@ -18,22 +18,23 @@ import logging
 from uuid import uuid4
 
 
-def select_from_model(X, y, sync=False):
+def select_from_model(X, y):
     # Load pipeline
     pipeline_module = get_pipeline("selection_xgboost", unlisted=True)
-
+    classes = np.unique(y)
+    print(f"unique y: {classes} count: {classes.size}")
+    pipeline_module.PARAMETERS.update({
+        'num_class': classes.size
+    })
+    pipeline = pipeline_module.estimator
+    pipeline.named_steps.c.set_params(**pipeline_module.PARAMETERS)
     # Perform search
     sfm = SelectFromModel(
-        pipeline_module.estimator,
+        pipeline,
         threshold='mean',
         importance_getter='named_steps.c.feature_importances_'
     )
-    if sync:
-        sfm.fit(X, y)
-    else:
-        dask = get_client()  # Connect to Dask scheduler
-        with parallel_backend('dask'):
-            sfm.fit(X, y)
+    sfm.fit(X, y)
     return sfm
 
 
@@ -58,14 +59,8 @@ def select_from_model_cv(X, y, sync=False):
         threshold='mean',
         importance_getter='best_estimator_.named_steps.c.feature_importances_'
     )
-    if sync:
-        sfm.fit(X, y)
-    else:
-        dask = get_client()  # Connect to Dask scheduler
-        with parallel_backend('dask'):
-            sfm.fit(X, y)
+    sfm.fit(X, y)
     return sfm
-
 
 
 def select_percentile(X, y, percentile=10):
@@ -137,10 +132,10 @@ class FeatureSelectionService:
         # Perform search
         mf.start_at = get_timestamp()  # Log starting timestamp
         if not mf.feature_selection_method or mf.feature_selection_method == 'importances':
-            selector = select_from_model(X, y, sync=kwargs.get('sync', False))
+            selector = select_from_model(X, y)
             mf.feature_importances = label_feature_importances(selector.estimator_, X.columns)
         elif mf.feature_selection_method == 'importances_cv':
-            selector = select_from_model_cv(X, y, sync=kwargs.get('sync', False))
+            selector = select_from_model_cv(X, y)
             mf.feature_importances = label_feature_importances(selector.estimator_.best_estimator_, X.columns)
         elif mf.feature_selection_method == 'fscore':
             selector = select_percentile(X, y, percentile=10)

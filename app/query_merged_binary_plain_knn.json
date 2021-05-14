@@ -1,0 +1,8 @@
+{
+  "dataset": "merged",
+  "target": "binary",
+  "pipeline": "plain_knn",
+  "symbol": {
+    "$nin": ["USDTUSD"]
+  }
+}

@@ -60,7 +60,7 @@ class ModelTest(BaseModel):
     start_at: Optional[str] = None
     end_at: Optional[str] = None
     classification_report: Optional[dict] = {}  # Classification report for this run
-    classification_results: Optional[Union[List[DayResult], None]] = []
+    classification_results: Optional[dict] = {}
 
 
 # Identifies a combination of symbol, dataset, target and pipeline
@@ -85,7 +85,7 @@ class Model(DocumentModel):
         return v or []
 
 
-class Model(DocumentModel):
+class TradingModel(DocumentModel):
     # For dataset indexing
     symbol: str  # What symbol are we tuning the model for?
     dataset: str
