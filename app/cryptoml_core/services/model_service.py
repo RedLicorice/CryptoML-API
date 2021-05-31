@@ -47,7 +47,7 @@ class ModelService:
     def __init__(self):
         self.model_repo: ModelRepository = ModelRepository()
 
-    def create_classification_models(self, query):
+    def create_classification_models(self, query, pipeline):
         ds = DatasetService()
         models = []
         if query is None:
@@ -83,6 +83,13 @@ class ModelService:
     def all(self):
         return [m for m in self.model_repo.iterable()]
 
+    @staticmethod
+    def get_model_parameters(m: Model, method: str):
+        for mp in m.parameters:
+            if mp.parameter_search_method == method:
+                return mp
+        return None
+
     def get_model(self, model_id):
         return self.model_repo.get(model_id)
 
@@ -116,7 +123,7 @@ class ModelService:
     def create_model_test(self, *, model: Model, split=0.7, step=None, task_key=None, window=None, **kwargs):
         service = DatasetService()
         ds = service.get_dataset(model.dataset, model.symbol)
-        splits = service.get_train_test_split_indices(ds, split)
+        splits = DatasetService.get_train_test_split_indices(ds, split)
         parameters = kwargs.get('parameters')
         features = kwargs.get('features')
         if isinstance(parameters, str) and parameters == 'latest':

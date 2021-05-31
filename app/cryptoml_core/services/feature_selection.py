@@ -3,6 +3,7 @@ from cryptoml.util.feature_importances import label_feature_importances, label_s
 from cryptoml_core.services.dataset_service import DatasetService
 from cryptoml_core.deps.dask import get_client
 from cryptoml_core.models.classification import Model, ModelParameters, ModelFeatures
+from cryptoml_core.models.dataset import FeatureSelection
 from cryptoml_core.repositories.classification_repositories import ModelRepository
 from cryptoml_core.exceptions import MessageException, NotFoundException
 from cryptoml_core.util.timestamp import get_timestamp
@@ -10,13 +11,15 @@ from sklearn.model_selection import GridSearchCV
 from cryptoml.util.blocking_timeseries_split import BlockingTimeSeriesSplit
 from sklearn.utils import parallel_backend
 from skrebate import ReliefF, MultiSURF
+from shap import TreeExplainer, GPUTreeExplainer, KernelExplainer
 from sklearn.feature_selection import SelectFromModel, SelectPercentile, f_classif
 from cryptoml.util.flattened_classification_report import classification_report_imbalanced
+import pandas as pd
 import numpy as np
 import math
 import logging
 from uuid import uuid4
-
+from cryptoml.util.shap import get_shap_values, parse_shap_values
 
 def select_from_model(X, y):
     # Load pipeline
@@ -36,7 +39,6 @@ def select_from_model(X, y):
     )
     sfm.fit(X, y)
     return sfm
-
 
 def select_from_model_cv(X, y, sync=False):
     # Load pipeline
@@ -105,7 +107,7 @@ class FeatureSelectionService:
 
     def create_features_search(self, *, symbol: str, dataset: str, target: str, split: float, method: str, task_key: str = None) -> ModelFeatures:
         ds = self.dataset_service.get_dataset(dataset, symbol)
-        splits = self.dataset_service.get_train_test_split_indices(ds, split)
+        splits = DatasetService.get_train_test_split_indices(ds, split)
         result = ModelFeatures(
             dataset=dataset,
             target=target,
@@ -157,3 +159,70 @@ class FeatureSelectionService:
                 mf
             )
         return mf
+
+    def get_available_symbols(self, dataset: str):
+        return self.dataset_service.get_dataset_symbols(name=dataset)
+
+    def feature_selection_new(self, *, symbol: str, dataset: str, target: str, split: float, method: str, **kwargs) -> ModelFeatures:
+        ds = self.dataset_service.get_dataset(dataset, symbol)
+        if DatasetService.has_feature_selection(ds=ds, method=method, target=target):
+            if kwargs.get('replace'):
+                self.dataset_service.remove_feature_selection(ds=ds, method=method, target=target)
+            else:
+                raise MessageException(f"Feature selection with method '{method}' alrady performed for '{dataset}.{symbol}' and target '{target}'")
+
+        splits = DatasetService.get_train_test_split_indices(ds, split)
+        fs = FeatureSelection(
+            target=target,
+            method=method,
+            search_interval=splits['train'],
+            task_key=kwargs.get('task_key', str(uuid4()))
+        )
+
+        # Load dataset
+        X = self.dataset_service.get_dataset_features(
+            ds=ds,
+            begin=fs.search_interval.begin,
+            end=fs.search_interval.end
+        )
+        y = self.dataset_service.get_dataset_target(
+            name=fs.target,
+            ds=ds,
+            begin=fs.search_interval.begin,
+            end=fs.search_interval.end
+        )
+
+        unique, counts = np.unique(y, return_counts=True)
+        if len(unique) < 2:
+            logging.error("[{}-{}-{}]Training data contains less than 2 classes: {}"
+                          .format(symbol, dataset, target, unique))
+            raise MessageException("Training data contains less than 2 classes: {}".format(unique))
+
+        # Perform search
+        fs.start_at = get_timestamp()  # Log starting timestamp
+        if not fs.method or 'importances' in fs.method:
+            if '_cv' in fs.method:
+                selector = select_from_model_cv(X, y)
+            else:
+                selector = select_from_model(X, y)
+            fs.feature_importances = label_feature_importances(selector.estimator_, X.columns)
+            if '_shap' in fs.method:
+                fs.shap_values = get_shap_values(selector.estimator_.named_steps.c, X)
+                shap_values = parse_shap_values(fs.shap_values)
+        elif fs.method == 'fscore':
+            selector = select_percentile(X, y, percentile=10)
+        elif fs.method == 'relieff':
+            selector = select_relieff(X, y, percentile=10)
+        elif fs.method == 'multisurf':
+            selector = select_multisurf(X, y, percentile=10)
+        else:
+            raise NotFoundException("Cannot find feature selection method by {}".format(fs.method))
+        fs.end_at = get_timestamp()  # Log ending timestamp
+
+
+
+
+        # Update search request with results
+        fs.features = label_support(selector.get_support(), X.columns)
+
+        return self.dataset_service.append_feature_selection(ds, fs)

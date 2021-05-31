@@ -53,13 +53,17 @@ def roc_auc_report(y_true, y_pred, y_pred_proba):
         #raise MessageException("y_pred_proba contains NaN")
     classes = np.unique(y_true)
     result = {}
-    if classes.size < 2:
-        result['roc_auc_ovo_macro'] = roc_auc_score(y_true, y_pred_proba, average='macro', multi_class='ovo')
-        result['roc_auc_ovo_weighted'] = roc_auc_score(y_true, y_pred_proba, average='weighted', multi_class='ovo')
-        result['roc_auc_ovr_macro'] = roc_auc_score(y_true, y_pred_proba, average='macro', multi_class='ovr')
-        result['roc_auc_ovr_weighted'] = roc_auc_score(y_true, y_pred_proba, average='weighted', multi_class='ovr')
-    else:
-        result['roc_auc'] = roc_auc_score(y_true, y_pred)
+    try:
+        if classes.size < 2:
+            result['roc_auc_ovo_macro'] = roc_auc_score(y_true, y_pred_proba, average='macro', multi_class='ovo')
+            result['roc_auc_ovo_weighted'] = roc_auc_score(y_true, y_pred_proba, average='weighted', multi_class='ovo')
+            result['roc_auc_ovr_macro'] = roc_auc_score(y_true, y_pred_proba, average='macro', multi_class='ovr')
+            result['roc_auc_ovr_weighted'] = roc_auc_score(y_true, y_pred_proba, average='weighted', multi_class='ovr')
+        else:
+            result['roc_auc'] = roc_auc_score(y_true, y_pred)
+    except ValueError as e:
+        print("ROC_AUC Failed {}".format(e))
+        pass
     # fpr_0, tpr_0, thr_0 = roc_curve(y_true, y_pred, pos_label=0)
     # fpr_1, tpr_1, thr_1 = roc_curve(y_true, y_pred, pos_label=1)
     # fpr_2, tpr_2, thr_2 = roc_curve(y_true, y_pred, pos_label=2)

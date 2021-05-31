@@ -1,6 +1,7 @@
+from cryptoml_core.deps.mongodb.document_repository import DocumentNotFoundException
 from cryptoml_core.repositories.feature_repository import FeatureRepository
 from cryptoml_core.models.dataset import Dataset
-from cryptoml_core.repositories.dataset_repository import DatasetRepository
+from cryptoml_core.repositories.dataset_repository import DatasetRepository, FeatureSelection
 from cryptoml_core.util.timestamp import to_timestamp, from_timestamp, add_interval, mul_interval
 from cryptoml_core.services.dataset_building_service import DatasetBuildingService
 from cryptoml_core.services.storage_service import StorageService
@@ -54,7 +55,9 @@ class DatasetService:
     def create_dataset(self, df, name, symbol, type='FEATURES'):
         storage_path = '{}-{}.csv'.format(name, symbol)
         _first, _last, _indices = get_feature_indices(df)
+
         self.storage.save_df(df, 'datasets', storage_path)
+        self.feature_repo.delete_features(dataset=name, symbol=symbol)
         self.feature_repo.put_features(df, name, symbol)
         item = Dataset(
             name=name,  # Name of the dataset
@@ -70,8 +73,16 @@ class DatasetService:
             features=[c for c in df.columns],  # Name of included columns
             feature_indices=_indices
         )
-        logging.info(f"Create dataset {item.name} {item.symbol}")
-        return self.repo.create(item)
+        try:
+            existing_ds = self.repo.find_by_dataset_and_symbol(dataset=item.name, symbol=item.symbol)
+            logging.info(f"Delete old dataset {item.name} {item.symbol} CRE: {existing_ds.created} UPD: {existing_ds.updated}")
+            self.repo.delete(existing_ds.id)
+        except DocumentNotFoundException as e:
+            pass
+
+        new_ds = self.repo.create(item)
+        logging.info(f"Create dataset {item.name} {item.symbol} ID: {new_ds.id}")
+        return new_ds
 
     def merge_datasets(self, datasets: List[Dataset], name: str, symbol: str):
         dfs = [self.get_dataset_features(d) for d in datasets]
@@ -117,12 +128,29 @@ class DatasetService:
             del kwargs['begin']
         if 'end' in kwargs:
             del kwargs['end']
+        if 'method' in kwargs and 'target' in kwargs:
+            fs = DatasetService.get_feature_selection(ds, kwargs.get('method'), kwargs.get('target'))
+            return self.get_features(name=ds.name, symbol=ds.symbol, begin=begin, end=end, columns=fs.features)
         return self.get_features(name=ds.name, symbol=ds.symbol, begin=begin, end=end)
 
     def get_target(self, name, symbol, begin, end):
         # storage_path = '{}-{}.csv'.format(name, symbol)
         # self.storage.load_df('datasets', storage_path)
         return self.feature_repo.get_target(name, symbol, first=begin, last=end)
+
+    def get_dataset_target(self, ds: Dataset, name: str, **kwargs):
+        begin = kwargs.get('begin', ds.index_min)
+        end = kwargs.get('end', ds.index_max)
+        if 'begin' in kwargs:
+            del kwargs['begin']
+        if 'end' in kwargs:
+            del kwargs['end']
+        return self.get_target(
+            name=name,
+            symbol=ds.symbol,
+            begin=begin,
+            end=end
+        )
 
     def all(self):
         return self.repo.iterable()
@@ -133,7 +161,8 @@ class DatasetService:
     def query(self, query, projection: Optional[dict] = None):
         return self.repo.query(query, projection)
 
-    def get_train_test_split_indices(self, dataset: Dataset, split: float):
+    @staticmethod
+    def get_train_test_split_indices(dataset: Dataset, split: float):
         if split > 1.0:
             split = 1.0
         if split < 0.0:
@@ -145,3 +174,32 @@ class DatasetService:
             "train": {"begin": dataset.valid_index_min, "end": search_end},
             "test": {"begin": search_end, "end": dataset.valid_index_max}
         }
+
+    def append_feature_selection(self, ds: Dataset, fs: FeatureSelection):
+        ds.feature_selection.append(fs)
+        return self.repo.update(ds.id, ds)
+
+    @staticmethod
+    def has_feature_selection(ds: Dataset, method: str, target: str):
+        for fs in ds.feature_selection:
+            if fs.method == method and fs.target == target:
+                return True
+        return False
+
+    @staticmethod
+    def get_feature_selection(ds: Dataset, method: str, target: str) -> FeatureSelection:
+        for i in range(len(ds.feature_selection)-1, -1, -1):
+            if ds.feature_selection[i].method == method and ds.feature_selection[i].target == target:
+                return ds.feature_selection[i]
+        return None
+
+    def remove_feature_selection(self, ds: Dataset, method: str, target: str):
+        found = None
+        for i in range(len(ds.feature_selection)):
+            if ds.feature_selection[i].method == method and ds.feature_selection[i].target == target:
+                found = i
+        if found is not None:
+            del ds.feature_selection[found]
+            self.repo.update(ds.id, ds)
+            return True
+        return False

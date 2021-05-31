@@ -1,5 +1,20 @@
 from typing import Optional, List, Set
-from cryptoml_core.deps.mongodb.document_model import DocumentModel
+from cryptoml_core.deps.mongodb.document_model import DocumentModel, BaseModel
+from cryptoml_core.models.common import TimeInterval
+from typing import List, Union
+
+class FeatureSelection(BaseModel):
+    target: str
+    # Search inputs
+    method: str = 'importances'
+    search_interval: TimeInterval = None  # Begin and end timestamps of data used for search
+    # Search results
+    task_key: Optional[str] = None  # For making sure not to run the same task twice
+    start_at: Optional[str] = None
+    end_at: Optional[str] = None
+    features: Optional[List[str]] = None  # Features resulting from feature selection
+    feature_importances: Optional[dict] = None  # Features resulting from feature selection
+    shap_values: Optional[str] = None  # SHAP values for explainability
 
 # Store a list of features included in each dataset,
 # and for each currency included min/max index
@@ -16,4 +31,5 @@ class Dataset(DocumentModel):
     interval: dict  # Timedelta args for sampling interval of the features
     features_path: Optional[str]  # S3 Storage bucket location for features
     features: List[str]  # Name of included columns
-    feature_indices: Optional[dict] = None # First and Last valid index for each feature
+    feature_indices: Optional[dict] = None  # First and Last valid index for each feature
+    feature_selection: Optional[List[FeatureSelection]] = []

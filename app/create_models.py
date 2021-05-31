@@ -7,11 +7,10 @@ from cryptoml_core.logging import setup_file_logger
 def main(dataset: str, pipeline: str):
     models = ModelService()
     query = {'type': "FEATURES"}
-    if pipeline != 'all':
-        query['pipeline'] = pipeline
     if dataset != 'all':
         query['name'] = dataset
-    models.create_classification_models(query=query)
+    items = models.create_classification_models(query=query, pipeline=pipeline)
+    print(items)
 
 
 if __name__ == '__main__':

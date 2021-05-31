@@ -1,11 +1,7 @@
 from typing import Optional, List, Dict, Union
 from cryptoml_core.deps.mongodb.document_model import DocumentModel, BaseModel
+from cryptoml_core.models.common import TimeInterval
 from pydantic import validator
-
-# Hold prediction result for a given day
-class TimeInterval(BaseModel):
-    begin: str
-    end: str
 
 
 # Hold parameter search results for a Model document
@@ -21,6 +17,7 @@ class ModelParameters(BaseModel):
     end_at: Optional[str] = None
     parameter_search_method: Optional[str] = None
     parameters: Optional[dict] = None  # Parameters resulting from grid search
+    cv_results: Optional[List[dict]] = None  # pd.(cv_results_).to_dict('records')
     result_file: Optional[str] = None  # Dataframe with cross validation results
 
 

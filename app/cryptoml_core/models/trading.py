@@ -6,11 +6,12 @@ class Order(BaseModel):
     id: Optional[str] = ''  # Unique identifier for the order subdocument
     position_id: str  # Position this order refers to
     timestamp: str  # Timestamp for operation
-    type: str  # Type of operation OPEN/CLOSE/STOP_LOSS/TAKE_PROFIT
-    collateral: float  # Collateral amount involved in the operation
-    collateral_price: float  # Exchange price at time of operation
-    balance: float  # Price for this operation
+    type: str  # Type of operation OPEN_LONG/CLOSE_LONG/OPEN_SHORT/CLOSE_SHORT
+    amount: float  # Collateral amount involved in the operation
+    price: float  # Collateral exchange price at time of operation
+
     detail: Optional[str] = None
+    change: Optional[float] = None  # Price change wrt. open (only for CLOSE)
 
 
 class Position(BaseModel):
@@ -46,12 +47,8 @@ class Equity(BaseModel):
     num_short: int
     num_spot: int
 
-class Asset(DocumentModel):
-    symbol: str  # Treating each asset independently, this is the pair name Eg. "BTCUSD"
-    pipeline: str
-    dataset: str
-    target: str
-    window: int
+
+class TradingAccount(DocumentModel):
     fiat: float  # Amount of FIAT allocated for this asset and available for trades
     balance: float  # Amount of assets owned for this asset
     coll_loan: Optional[float] = 0.0  # Amount of this asset that should be returned to liquidity pool
@@ -61,4 +58,19 @@ class Asset(DocumentModel):
     num_spot: Optional[int] = 0  # Number of SPOT positions open for this asset
     positions: Optional[List[Position]] = []  # A list containing all positions for this asset (eg. open price ..)
     orders: Optional[List[Order]] = []  # A list containing the order history for this asset (Eg. open position)
-    equities: Optional[List[Equity]] = [] # A list containing equity history for this asset
+    equities: Optional[List[Equity]] = []  # A list containing equity history for this asset
+
+
+class Baseline(TradingAccount):
+    name: str
+    symbol: str
+    target: str
+
+
+class Asset(TradingAccount):
+    symbol: str  # Treating each asset independently, this is the pair name Eg. "BTCUSD"
+    pipeline: str
+    dataset: str
+    target: str
+    window: int
+

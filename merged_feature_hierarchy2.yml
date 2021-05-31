@@ -1,0 +1,109 @@
+features:
+  ohlcv:
+    price:
+      - open
+      - high
+      - low
+      - close
+      - open_pct
+      - high_pct
+      - low_pct
+      - close_pct
+      - open_spl_d1
+      - high_spl_d1
+      - low_spl_d1
+      - close_spl_d1
+      - open_spl_d2
+      - high_spl_d2
+      - low_spl_d2
+      - close_spl_d2
+      - open_resid
+      - high_resid
+      - low_resid
+      - close_resid
+    volume:
+      - volume_pct
+    history:
+      - open_lag{}
+      - high_lag{}
+      - low_lag{}
+      - close_lag{}
+      - open_pct_lag{}
+      - high_pct_lag{}
+      - low_pct_lag{}
+      - close_pct_lag{}
+      - volume_pct_lag{}
+    candlestick_patterns: # Mean/sum of scores from TALib's candlestick pattern functions
+      - talib_patterns_mean
+      - talib_patterns_sum
+    candle:
+      - close_open_pct # body
+      - high_close_dist_pct # wick
+      - low_close_dist_pct # shadow
+      - high_low_dist_pct # size
+    volatility: # Obtained by standard deviation of rolling mean over percent change
+      - close_volatility_3d
+      - close_volatility_7d
+      - close_volatility_30d
+
+  technical:
+    volume:
+      - pvo_12_26
+      - adi
+      - adi_pct
+      - adi_close_convergence # Does ADI converge with close price? Categorical in 0/1
+      - obv
+      - obv_pct
+      - obv_mean3_pct
+      - ao_14
+      - ao_14_div100
+    volatility:
+      - adx_14
+      - wd_14
+      - atrp_14
+      - fi_13
+      - fi_50
+      - fi_13_pct
+      - fi_50_pct
+    momentum:
+      - stoch_14
+      - stoch_14_mean3_div100  # Stoch 14d, rolling mean over 3 days (to decrease sensitivity), divided by 100
+      - rsi_14
+      - rsi_14_div100 # RSI 14d, divided by 100
+      - mfi_14
+      - mfi_14_div100 # MFI 14d, divided by 100
+      - cmo_14
+      - cmo_14_div100
+      - cmo_14_signal # SMA 10 of cmo_14
+      - cmo_14_diff_signal
+      - tsi
+    trend:
+      - rsma_5_20
+      - rsma_8_15
+      - rsma_20_50
+      - rema_5_20
+      - rema_8_15
+      - rema_20_50
+      - rsma_8_15_pct
+      - rema_8_15_pct
+      - macd_12_26
+      - macd_12_26_signal # EMA 9 of MACD
+      - macd_12_26_diff_signal 
+      - macd_12_26_pct
+      - ppo_12_26
+      - ppo_12_26_signal # EMA 9 of MACD
+      - ppo_12_26_diff_signal
+      - ppo_12_26_pct
+
+  blockchain: # Cherry picked features available across all assets
+    activity:
+      - adractcnt_pct # Percent change in number of addresses
+      - txtfrcount_pct # Percent change in number of transactions
+    mining:
+      - hashrate_pct # Percent change in hashrate
+      - isstotntv_pct # Percent change in number of issued tokens
+      - feetotntv_pct # Percent change in fees paid to miners
+      - earned_vs_transacted # miner_earnings / txtfrvaladjntv (total transacted value), with miner_earnings = isstotntv + feetotntv
+    supply:
+      - isstot1_isstot365_pct # Newly issued tokens in relation to token issued last year
+      - splycur_isstot1_pct # Newly issued tokens in relation to total supply

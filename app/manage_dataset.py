@@ -31,5 +31,5 @@ def build(symbol: str, builder: str, ohlcv: str, coinmetrics: str):
 
 
 if __name__ == '__main__':
-    setup_file_logger('create_models.log')
+    setup_file_logger('manage_dataset.log')
     app()

@@ -1,5 +1,6 @@
 import pandas as pd
 # APP Dependencies
+from cryptoml_core.services.model_service import ModelService
 from cryptoml_core.services.storage_service import StorageService
 from cryptoml_core.services.dataset_service import DatasetService
 from cryptoml_core.exceptions import MessageException, NotFoundException
@@ -9,7 +10,6 @@ from cryptoml.util.blocking_timeseries_split import BlockingTimeSeriesSplit, Spl
 from cryptoml.util.import_proxy import GridSearchCV, HalvingGridSearchCV, RandomizedSearchCV
 from cryptoml.pipelines import get_pipeline
 # CryptoML Common Dependencies
-from cryptoml_core.deps.dask import get_client
 from cryptoml_core.models.classification import Model, ModelParameters, ModelFeatures
 from cryptoml_core.repositories.classification_repositories import ModelRepository
 from cryptoml_core.util.timestamp import get_timestamp
@@ -32,20 +32,31 @@ class GridSearchService:
     def __init__(self):
         self.storage = StorageService()
         self.model_repo = ModelRepository()
+        self.model_service = ModelService()
         self.dataset_service = DatasetService()
 
     def create_parameters_search(self, model: Model, split: float, **kwargs) -> ModelParameters:
         ds = self.dataset_service.get_dataset(model.dataset, model.symbol)
-        splits = self.dataset_service.get_train_test_split_indices(ds, split)
+        splits = DatasetService.get_train_test_split_indices(ds, split)
 
         # Features can either be a list of features to use, or a string
         #   If it is a string, and it is "latest", pick the latest
         features = kwargs.get('features')
-        if isinstance(features, str) and features == 'latest':
-            if model.features:
-                features = model.features[-1].features
-            else:
-                features = None
+        # if isinstance(features, str) and features == 'latest':
+        #     if model.features:
+        #         features = model.features[-1].features
+        #     else:
+        #         features = None
+        if features:
+            target = kwargs.get('target', 'class')
+            mf = DatasetService.get_feature_selection(
+                ds=ds,
+                method=kwargs.get('features'),
+                target=target
+            )
+            if not mf:
+                raise MessageException(f"Feature selection not found for {model.dataset}.{model.symbol} -> {target}!")
+            features = mf.features
 
         # Determine K for K-fold cross validation based on dataset's sample count
         # Train-test split for each fold is 80% train, the lowest training window for accurate results is 30 samples
@@ -122,13 +133,7 @@ class GridSearchService:
 
         try:
             mp.start_at = get_timestamp()  # Log starting timestamp
-            if kwargs.get('sync', False):
-                gscv.fit(X, y)
-            else:
-                # Only run parallel backend if not sync
-                dask = get_client()  # Connect to Dask scheduler
-                with parallel_backend('dask'):
-                    gscv.fit(X, y)
+            gscv.fit(X, y)
             mp.end_at = get_timestamp()  # Log ending timestamp
         except SplitException as e:
             logging.exception("Model {} splitting yields single-class folds!\n{}".format(tag, e.message))
@@ -143,6 +148,7 @@ class GridSearchService:
         # Update search request with results
         mp.parameter_search_method = 'halving_grid_search' if kwargs.get('halving') else 'gridsearch'
         mp.parameters = gscv.best_params_
+        mp.cv_results = results_df.to_dict()
         mp.result_file = 'cv_results-{}.csv'.format(tag)
 
         # Save grid search results on storage
@@ -173,13 +179,7 @@ class GridSearchService:
 
         try:
             mp.start_at = get_timestamp()  # Log starting timestamp
-            if kwargs.get('sync', False):
-                rscv.fit(X, y)
-            else:
-                # Only run parallel backend if not sync
-                dask = get_client()  # Connect to Dask scheduler
-                with parallel_backend('dask'):
-                    rscv.fit(X, y)
+            rscv.fit(X, y)
             mp.end_at = get_timestamp()  # Log ending timestamp
         except SplitException as e:
             logging.exception("Model {} splitting yields single-class folds!\n{}".format(tag, e.message))
@@ -204,3 +204,118 @@ class GridSearchService:
             self.model_repo.append_parameters(model.id, mp)
 
         return mp
+
+    def grid_search_new(self, symbol: str, dataset: str, target: str, pipeline: str, split: float, feature_selection_method: str, **kwargs):
+        # Check if a model exists and has same search method
+        existing_model = self.model_service.get_model(pipeline=pipeline, dataset=dataset, target=target, symbol=symbol)
+        if existing_model:
+            mp = ModelService.get_model_parameters(existing_model, method='gridsearch')
+            if mp:
+                logging.info(f"Grid search already performed for {pipeline}({dataset}.{symbol}) -> {target}")
+                return mp
+
+        # Retrieve dataset to use
+        ds = self.dataset_service.get_dataset(dataset, symbol)
+
+        # Determine cv_splits=K for K-fold cross validation based on dataset's sample count
+        # Train-test split for each fold is 80% train, the lowest training window for accurate results is 30 samples
+        # so we need X samples where X is given by the proportion:
+        #       30/0.8 = X/1; X= 30/0.8 = 37.5 ~ 40 samples per fold
+        X = 40
+        cv_splits = 5
+        # If samples per fold with 5-fold CV are too low, use 3-folds
+        if ds.count / cv_splits < X:
+            cv_splits = 3
+        # If samples are still too low, raise a value error
+        if ds.count / cv_splits < X and not kwargs.get("permissive"):
+            raise ValueError("Not enough samples to perform cross validation!")
+
+        # Determine split indices based on dataset
+        splits = DatasetService.get_train_test_split_indices(ds, split)
+        cv_interval = splits['train']
+
+        # Load dataset features by applying a specified feature selection method
+        X = self.dataset_service.get_dataset_features(
+            ds=ds,
+            begin=cv_interval['begin'],
+            end=cv_interval['end'],
+            method=feature_selection_method,
+            target=target
+        )
+        y = self.dataset_service.get_target(
+            name=target,
+            symbol=symbol,
+            begin=cv_interval['begin'],
+            end=cv_interval['end'],
+        )
+
+        # Check number of samples for each class in training data, if less than 3 instances are present for
+        # each class, we're going to get a very unstable model (or no model at all for k-NN based algos)
+        unique, counts = np.unique(y, return_counts=True)
+        if len(unique) < 2:
+            logging.error("[{}-{}-{}-{}]Training data contains less than 2 classes: {}"
+                          .format(symbol, dataset, target, pipeline, unique))
+            raise MessageException("Training data contains less than 2 classes: {}".format(unique))
+        logging.info("Dataset loaded: X {} y {} (unique: {})".format(X.shape, y.shape, unique))
+
+        # Load pipeline algorithm and parameter grid
+        pipeline_module = get_pipeline(pipeline)
+
+        # Perform search
+        gscv = GridSearchCV(
+            estimator=pipeline_module.estimator,
+            param_grid=kwargs.get('parameter_grid', pipeline_module.PARAMETER_GRID),
+            # cv=BlockingTimeSeriesSplit(n_splits=mp.cv_splits),
+            cv=StratifiedKFold(n_splits=cv_splits),
+            scoring=get_precision_scorer(),
+            verbose=kwargs.get("verbose", 0),
+            n_jobs=kwargs.get("n_jobs", None),
+            refit=False
+        )
+
+        mp = ModelParameters(
+            cv_interval=splits['train'],
+            cv_splits=cv_splits,
+            task_key=kwargs.get('task_key', str(uuid4())),
+            features=[c for c in X.columns],
+            parameter_search_method='gridsearch'
+        )
+
+        mp.start_at = get_timestamp()
+        gscv.fit(X, y)
+        mp.end_at = get_timestamp()
+
+        # Collect results
+        results_df = pd.DataFrame(gscv.cv_results_)
+
+        mp.parameters = gscv.best_params_
+        mp.cv_results = results_df.loc[:, results_df.columns != 'params'].to_dict('records')
+
+        tag = "{}-{}-{}-{}-{}".format(
+            symbol,
+            dataset,
+            target,
+            pipeline,
+            dict_hash(mp.parameters)
+        )
+        mp.result_file = 'cv_results-{}.csv'.format(tag)
+
+        # Is there an existing model for this search?
+
+        model = Model(
+            pipeline=pipeline,
+            dataset=dataset,
+            target=target,
+            symbol=symbol,
+            features=feature_selection_method
+        )
+        model.parameters.append(mp)
+        self.model_repo.create(model)
+
+        # Save grid search results on storage
+        if kwargs.get('save', True):
+            self.storage.upload_json_obj(mp.parameters, 'grid-search-results', 'parameters-{}.json'.format(tag))
+            self.storage.save_df(results_df, 'grid-search-results', mp.result_file)
+        return mp
+
+

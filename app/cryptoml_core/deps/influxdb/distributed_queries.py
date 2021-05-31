@@ -1,9 +1,7 @@
 from cryptoml_core.util.timestamp import timestamp_range
 from cryptoml_core.deps.influxdb.client import DataFrameClient
 from cryptoml_core.deps.influxdb.queries import query_first_timestamp, query_last_timestamp, query_meta, append_tags
-from cryptoml_core.deps.dask import get_client
-from dask import delayed
-import dask.dataframe as dd
+from joblib import delayed
 import pandas as pd
 
 __all__ = ("query_dask_dataframe")
@@ -31,7 +29,7 @@ def query_range(measure, ranges, **kwargs):
         yield query_interval(measure=measure, begin=b, end=e, **kwargs)
 
 
-def query_dask_dataframe(measure, first=None, last=None, **kwargs)-> dd.DataFrame:
+def query_delayed_dataframe(measure, first=None, last=None, **kwargs)-> pd.DataFrame:
     tags = kwargs.get('tags')
     cols = kwargs.get('columns')
     if not first:
@@ -41,19 +39,18 @@ def query_dask_dataframe(measure, first=None, last=None, **kwargs)-> dd.DataFram
     delta = kwargs.get('delta', {'days': 365}) # fetch one year at a time
     ranges = timestamp_range(start=first, end=last, delta=delta)
     meta = query_meta(measure=measure, columns=cols)
-    ddf = dd.from_delayed(
-        dfs=query_range(measure, ranges, tags=tags, meta=meta),
-        meta=meta,
-        # divisions=tuple(b for b, e in ranges)
-    )
-    # dfs = [query_interval(dataset, symbol, b, e, columns=[c for c in meta.columns]) for b, e in ranges]
-    # ddf = pd.concat([meta]+dfs, axis='index')
+    # ddf = pd.from_delayed(
+    #     dfs=query_range(measure, ranges, tags=tags, meta=meta),
+    #     meta=meta,
+    #     # divisions=tuple(b for b, e in ranges)
+    # )
+    dfs = [query_interval(measure=measure, begin=b, end=e, columns=[c for c in meta.columns]) for b, e in ranges]
+    ddf = pd.concat([meta]+dfs, axis='index')
     return ddf
 
 
 
 if __name__ == '__main__':
-    dask = get_client()
-    range = query_dask_dataframe('dataset_atsa', first='2015-01-01', last='2017-12-31', tags={'symbol': 'BTC'})
+    range = query_dataframe('dataset_atsa', first='2015-01-01', last='2017-12-31', tags={'symbol': 'BTC'})
     print(range.head())
     print(range.tail())

@@ -17,6 +17,8 @@ from pyti.on_balance_volume import on_balance_volume
 from pyti.force_index import force_index
 from pyti.true_strength_index import true_strength_index
 from pyti.function_helper import fill_for_noncomputable_vals
+from pyti.bollinger_bands import percent_b, upper_bollinger_band, middle_bollinger_band, lower_bollinger_band
+from pyti.volatility import volatility
 from pyti import catch_errors
 import warnings
 import logging
@@ -155,6 +157,14 @@ def _get_ta_features(high, low, close, volume, desc):
 						 .format(40, record_count))
 		else:
 			ta['tsi'] = true_strength_index(close)
+
+	if 'boll' in desc:
+		for _period in desc['stoch']:
+			if record_count < _period:
+				logging.error("get_ta_features: not enough records for boll (period={}, records={})"
+							 .format(_period, record_count))
+				continue
+			ta['boll_{}'.format(_period)] = percent_b(close, _period)
 
 	# Stochastic Oscillator
 	if 'stoch' in desc:

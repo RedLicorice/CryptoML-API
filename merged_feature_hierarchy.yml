@@ -1,0 +1,120 @@
+features:
+  ohlcv:
+    price_history: # Historical prices, lag W=10 with _lag{} suffix
+      - open
+      - high
+      - low
+      - close
+    price_movement: 
+      percent_change: # Percent change of ohlc, lag W=10 with _lag{} suffix. Noisy signal.
+        - open_pct
+        - high_pct
+        - low_pct
+        - close_pct
+      splines: # Iteratively rebuild price action with polynomials, forcibly smoothening discontinuities. Still noisy, better than pct.
+        d1: # First derivative, == 0 in local min/max (Fermat)
+          - open_spl_d1
+          - high_spl_d1
+          - low_spl_d1
+          - close_spl_d1
+        d2: # Second derivative, == 0 in discontinuities
+          - open_spl_d2
+          - high_spl_d2
+          - low_spl_d2
+          - close_spl_d2
+      stl_decomposition: # Residual from Seasonal and Trend decomposition using Loess, R. B. Cleveland, Cleveland, McRae, & Terpenning (1990). Least noisy signal.
+        - open_resid
+        - high_resid
+        - low_resid
+        - close_resid
+    sentiment:
+      talib_patterns: # Mean/sum of scores from TALib's candlestick pattern functions
+        - talib_patterns_mean
+        - talib_patterns_sum
+      cdl_features: # Candle features, ie a strong shadow might indicate a support level. In 1, 3, 7, 30 days with _d{} suffix
+        - close_open_pct # body
+        - high_close_dist_pct # wick
+        - low_close_dist_pct # shadow
+        - high_low_dist_pct # size
+    volatility: # Obtained by standard deviation of rolling mean over percent change
+      - close_volatility_3d
+      - close_volatility_7d
+      - close_volatility_30d
+    volume: # Lag W=10 with _lag{} suffix
+      - volume_pct
+  technical:
+    volume:
+      pvo:
+        - pvo_12_26
+      adi:
+        - adi
+        - adi_pct
+        - adi_close_convergence # Does ADI converge with close price? Categorical in 0/1
+      obv:
+        - obv
+        - obv_pct
+        - obv_mean3_pct
+      ao:
+        - ao_14
+        - ao_14_div100
+    volatility:
+      adx:
+        - adx_14
+      wd:
+        - wd_14
+      atrp:
+        - atrp_14
+      fi:
+        - fi_13
+        - fi_50
+        - fi_13_pct
+        - fi_50_pct
+    momentum:
+      stoch:
+        - stoch_14
+        - stoch_14_mean3_div100  # Stoch 14d, rolling mean over 3 days (to decrease sensitivity), divided by 100
+      rsi:
+        - rsi_14
+        - rsi_14_div100 # RSI 14d, divided by 100
+      mfi:
+        - mfi_14
+        - mfi_14_div100 # MFI 14d, divided by 100
+      cmo:
+        - cmo_14
+        - cmo_14_div100
+        - cmo_14_signal # SMA 10 of cmo_14
+        - cmo_14_diff_signal
+      tsi:
+        - tsi
+    trend:
+      moving_averages:
+        - rsma_5_20
+        - rsma_8_15
+        - rsma_20_50
+        - rema_5_20
+        - rema_8_15
+        - rema_20_50
+        - rsma_8_15_pct
+        - rema_8_15_pct
+      macd:
+        - macd_12_26
+        - macd_12_26_signal # EMA 9 of MACD
+        - macd_12_26_diff_signal 
+        - macd_12_26_pct
+      ppo:
+        - ppo_12_26
+        - ppo_12_26_signal # EMA 9 of MACD
+        - ppo_12_26_diff_signal
+        - ppo_12_26_pct
+  blockchain: # Cherry picked features available across all assets
+    activity:
+      - adractcnt_pct # Percent change in number of addresses
+      - txtfrcount_pct # Percent change in number of transactions
+    mining:
+      - hashrate_pct # Percent change in hashrate
+      - isstotntv_pct # Percent change in number of issued tokens
+      - feetotntv_pct # Percent change in fees paid to miners
+      - earned_vs_transacted # miner_earnings / txtfrvaladjntv (total transacted value), with miner_earnings = isstotntv + feetotntv
+    supply:
+      - isstot1_isstot365_pct # Newly issued tokens in relation to token issued last year
+      - splycur_isstot1_pct # Newly issued tokens in relation to total supply

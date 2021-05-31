@@ -1,0 +1,24 @@
+@echo off
+python manage_dataset.py build ADAUSD merged_new ohlcv coinmetrics_new
+python manage_dataset.py build BCHUSD merged_new ohlcv coinmetrics_new
+python manage_dataset.py build BNBUSD merged_new ohlcv coinmetrics_new
+python manage_dataset.py build BTCUSD merged_new ohlcv coinmetrics_new
+python manage_dataset.py build BTGUSD merged_new ohlcv coinmetrics_new
+python manage_dataset.py build DASHUSD merged_new ohlcv coinmetrics_new
+python manage_dataset.py build DOGEUSD merged_new ohlcv coinmetrics_new
+python manage_dataset.py build EOSUSD merged_new ohlcv coinmetrics_new
+python manage_dataset.py build ETCUSD merged_new ohlcv coinmetrics_new
+python manage_dataset.py build ETHUSD merged_new ohlcv coinmetrics_new
+python manage_dataset.py build LINKUSD merged_new ohlcv coinmetrics_new
+python manage_dataset.py build LTCUSD merged_new ohlcv coinmetrics_new
+python manage_dataset.py build NEOUSD merged_new ohlcv coinmetrics_new
+python manage_dataset.py build QTUMUSD merged_new ohlcv coinmetrics_new
+python manage_dataset.py build TRXUSD merged_new ohlcv coinmetrics_new
+python manage_dataset.py build USDTUSD merged_new ohlcv coinmetrics_new
+python manage_dataset.py build VENUSD merged_new ohlcv coinmetrics_new
+python manage_dataset.py build WAVESUSD merged_new ohlcv coinmetrics_new
+python manage_dataset.py build XEMUSD merged_new ohlcv coinmetrics_new
+python manage_dataset.py build XMRUSD merged_new ohlcv coinmetrics_new
+python manage_dataset.py build XRPUSD merged_new ohlcv coinmetrics_new
+python manage_dataset.py build ZECUSD merged_new ohlcv coinmetrics_new
+python manage_dataset.py build ZRXUSD merged_new ohlcv coinmetrics_new

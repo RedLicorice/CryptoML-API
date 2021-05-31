@@ -1,4 +1,4 @@
-from cryptoml_core.models.dataset import Dataset
+from cryptoml_core.models.dataset import Dataset, FeatureSelection
 from cryptoml_core.deps.mongodb.document_repository import DocumentRepository, DocumentNotFoundException
 
 

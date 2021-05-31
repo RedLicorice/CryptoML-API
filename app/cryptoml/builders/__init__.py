@@ -5,5 +5,6 @@ BUILDER_LIST = [
     'faceted',
     'splines',
     'target',
-    'merged'
+    'merged',
+    'merged_new'
 ]

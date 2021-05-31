@@ -251,6 +251,99 @@ def build(ohlcv: pd.DataFrame, coinmetrics: pd.DataFrame, **kwargs):
         # merge_dataframes.append(coinmetrics)
         merge_dataframes.append(cm_picks)
 
+        groups = {
+            'addresses': [
+                'adrbal1in100kcnt', 'adrbal1in100mcnt', 'adrbal1in10bcnt', 'adrbal1in10kcnt',
+                'adrbal1in10mcnt', 'adrbal1in1bcnt', 'adrbal1in1kcnt', 'adrbal1in1mcnt',
+                'adrbalcnt',
+                'adrbalntv0_01cnt', 'adrbalntv0_1cnt', 'adrbalntv10cnt', 'adrbalntv100cnt',
+                'adrbalntv100kcnt', 'adrbalntv10cnt', 'adrbalntv10kcnt', 'adrbalntv1cnt',
+                'adrbalntv1kcnt', 'adrbalntv1mcnt', 'adrbalntv1kcnt'
+            ],
+            'network_usage': [
+                'blkcnt', 'blksizemeanbyte', 'blkwghtmean', 'blkwghttot',
+            ],
+            'market': [
+                'capact1yrusd',
+                'capmvrvcur', 'capmvrvff', 'capmrktcurusd', 'capmrktffusd', 'caprealusd',
+                'pricebtc',
+                # 'priceusd',
+                #'roi1yr',
+                'roi30d',
+                #'vtydayret180d',
+                'vtydayret30d'
+            ],
+            'mining': [
+                'difflast', 'diffmean', 'hashrate', 'hashrate30d',
+                'revhashntv', 'revhashratentv', 'revhashrateusd', 'revhashusd',
+                'splyminer0hopallntv', 'splyminer0hopallusd',
+                'splyminer1hopallntv', 'splyminer1hopallusd'
+            ],
+            'fees_revenue': [
+                'feebytemeanntv', 'feemeanntv', 'feemeanusd', #'feemedntv',
+                'feemedusd',
+                'feetotntv', 'feetotusd',
+                'gaslmtblk', 'gaslmtblkmean', 'gaslmttx', 'gaslmttxmean', 'gasusedtx',
+                'gasusedtxmean',
+                'revalltimeusd', 'revntv', 'revusd'
+            ],
+            'exchange': [
+                'flowinexntv', 'flowinexusd', 'flowoutexntv', 'flowoutexusd', 'flowtfrfromexcnt'
+            ],
+            'supply': [
+                'isscontntv', 'isscontpctann', 'isscontpctday', 'isscontusd',
+                'ser', 'splyact10yr', 'splyact180d', 'splyact1d', 'splyact1yr',
+                'splyact2yr', 'splyact30d', 'splyact3yr', 'splyact4yr', 'splyact5yr',
+                'splyact7d', 'splyact90d', 'splyactever', 'splyactpct1yr',
+                'splyadrbal1in100k', 'splyadrbal1in100m', 'splyadrbal1in10b', 'splyadrbal1in10k',
+                'splyadrbal1in10m', 'splyadrbal1in1b', 'splyadrbal1in1k', 'splyadrbal1in1m',
+                'splyadrbalntv0_001', 'splyadrbalntv0_01', 'splyadrbalntv0_1', 'splyadrbalntv1',
+                'splyadrbalntv10', 'splyadrbalntv100', 'splyadrbalntv100k', 'splyadrbalntv10k',
+                'splyadrbalntv1k', 'splyadrbalntv1m',
+                'splyadrbalusd1', 'splyadrbalusd10', 'splyadrbalusd100', 'splyadrbalusd100k', 'splyadrbalusd10k',
+                'splyadrbalusd10m', 'splyadrbalusd1k', 'splyadrbalusd1m',
+                'splyadrtop100', 'splyadrtop10pct', 'splyadrtop1pct', 'splycur',
+                'splyexpfut10yr', 'splyff'
+            ],
+            'economics': [
+                'nvtadj',
+                #'nvtadj90',
+                'nvtadjff',
+                #'nvtadjff90',
+            ],
+            'transactions': [
+                'txcnt', 'txcntsec', 'txtfrcnt', 'txtfrvaladjntv', 'txtfrvaladjusd', 'txtfrvalmeanntv', 'txtfrvalmeanusd',
+                'txtfrvalmedntv', 'txtfrvalmedusd',
+                'velcur1yr'
+            ]
+        }
+        cm_new = pd.DataFrame(index=ohlcv.index)
+        for group, features in groups.items():
+            for feature in features:
+                if not feature in coinmetrics.columns:
+                    print(f"Feature not in coinmetrics: {feature}")
+                    continue
+                if feature in cm_picks.columns:
+                    print(f"Feature already in coinmetrics-picks: {feature}")
+                    continue
+                null_count = coinmetrics[feature].isnull().sum()
+                total_count = coinmetrics[feature].shape[0]
+                pct_null = null_count / total_count
+                if pct_null > 0.11:
+                    print(f"Feature skipped because of nan pct: {feature} null_pct: {pct_null * 100}%")
+                    continue
+                new_feature = feature.replace('.', '_')
+                cm_new[new_feature] = coinmetrics[feature]
+                if not f"{feature}_pct" in cm_picks.columns:
+                    with pd.option_context('mode.use_inf_as_na', True):
+                        cm_new[f"{new_feature}_pct"] = coinmetrics[feature]\
+                            .fillna(method='ffill')\
+                            .pct_change()\
+                            .fillna(value=0)
+        merge_dataframes.append(cm_new)
+    else:
+        print("Coinmetrics data excluded because it's missing!")
+
     # Drop columns whose values are all nan or inf from each facet
     with pd.option_context('mode.use_inf_as_na', True):  # Set option temporarily
         for _df in merge_dataframes:

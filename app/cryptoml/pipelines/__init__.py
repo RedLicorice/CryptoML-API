@@ -11,6 +11,7 @@ PIPELINE_LIST = [
     'plain_knn',
     # 'plain_linear_svc',
     'plain_mlp',
+    #'plain_mlp_big',
     'plain_mnb',
     'plain_poly_svc',
     'plain_randomforest',

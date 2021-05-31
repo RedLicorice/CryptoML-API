@@ -1,0 +1,8 @@
+{
+  "dataset": "merged",
+  "target": "class",
+  "pipeline": "plain_mlp_big",
+  "symbol": {
+    "$nin": ["USDTUSD"]
+  }
+}

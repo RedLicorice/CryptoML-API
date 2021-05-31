@@ -7,3 +7,4 @@ infrastructure/
 __pycache__
 *.log
 test-failed.json
+app/images/*

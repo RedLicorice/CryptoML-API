@@ -1,7 +1,6 @@
 import pandas as pd
 from cryptoml_core.deps.influxdb.client import DataFrameClient
 from cryptoml_core.deps.influxdb.queries import query_dataframe
-from cryptoml_core.deps.influxdb.distributed_queries import query_dask_dataframe
 
 
 class FeatureRepository:
@@ -44,14 +43,19 @@ class FeatureRepository:
         s.name = 'label'
         return s.astype('int32')
 
+    def drop_features(self, dataset):
+        measure = 'dataset_{}'.format(dataset)
+        with DataFrameClient() as client:
+            client.drop_measurement(measurement=measure)
+
     def get_dask_features(self, dataset, symbol, **kwargs):
         measure = 'dataset_{}'.format(dataset)
-        df = query_dask_dataframe(measure, tags={'symbol': symbol, 'facet':kwargs.get('facet')}, delta={'days':10000})
+        df = query_dataframe(measure, tags={'symbol': symbol, 'facet':kwargs.get('facet')}, delta={'days':10000})
         return df
 
     def get_dask_target(self, type, symbol, **kwargs):
         measure = 'target_{}'.format(type)
-        df = query_dask_dataframe(measure, tags={'symbol': symbol}, delta={'days': 10000})
+        df = query_dataframe(measure, tags={'symbol': symbol}, delta={'days': 10000})
         return df['label']
 
 

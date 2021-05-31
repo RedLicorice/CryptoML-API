@@ -157,10 +157,31 @@
             </Attribute>
           </value>
         </entry>
+        <entry key="\app\cryptoml\builders\merged_new.py">
+          <value>
+            <Attribute>
+              <option name="separator" value="," />
+            </Attribute>
+          </value>
+        </entry>
         <entry key="\app\cryptoml\builders\splines.py">
           <value>
             <Attribute>
               <option name="separator" value="," />
+            </Attribute>
+          </value>
+        </entry>
+        <entry key="\app\cryptoml\features\targets.py">
+          <value>
+            <Attribute>
+              <option name="separator" value="," />
+            </Attribute>
+          </value>
+        </entry>
+        <entry key="\app\cryptoml\features\technical_indicators.py">
+          <value>
+            <Attribute>
+              <option name="separator" value="&#9;" />
             </Attribute>
           </value>
         </entry>
@@ -220,6 +241,13 @@
             </Attribute>
           </value>
         </entry>
+        <entry key="\app\cryptoml\util\shap.py">
+          <value>
+            <Attribute>
+              <option name="separator" value=":" />
+            </Attribute>
+          </value>
+        </entry>
         <entry key="\app\cryptoml\util\sliding_window.py">
           <value>
             <Attribute>
@@ -269,10 +297,24 @@
             </Attribute>
           </value>
         </entry>
+        <entry key="\app\cryptoml_core\models\trading.py">
+          <value>
+            <Attribute>
+              <option name="separator" value=":" />
+            </Attribute>
+          </value>
+        </entry>
         <entry key="\app\cryptoml_core\repositories\classification_repositories.py">
           <value>
             <Attribute>
               <option name="separator" value=":" />
+            </Attribute>
+          </value>
+        </entry>
+        <entry key="\app\cryptoml_core\repositories\feature_repository.py">
+          <value>
+            <Attribute>
+              <option name="separator" value="," />
             </Attribute>
           </value>
         </entry>
@@ -360,6 +402,20 @@
             </Attribute>
           </value>
         </entry>
+        <entry key="\app\feature_selection_new.py">
+          <value>
+            <Attribute>
+              <option name="separator" value="," />
+            </Attribute>
+          </value>
+        </entry>
+        <entry key="\app\get_gridsearch_script.py">
+          <value>
+            <Attribute>
+              <option name="separator" value=":" />
+            </Attribute>
+          </value>
+        </entry>
         <entry key="\app\get_tests.py">
           <value>
             <Attribute>
@@ -374,10 +430,38 @@
             </Attribute>
           </value>
         </entry>
+        <entry key="\app\grid_search_new.py">
+          <value>
+            <Attribute>
+              <option name="separator" value="," />
+            </Attribute>
+          </value>
+        </entry>
+        <entry key="\app\gridsearch_merged_new_class_all.cmd">
+          <value>
+            <Attribute>
+              <option name="separator" value="," />
+            </Attribute>
+          </value>
+        </entry>
         <entry key="\app\manage_dataset.py">
           <value>
             <Attribute>
               <option name="separator" value="," />
+            </Attribute>
+          </value>
+        </entry>
+        <entry key="\app\merged_class_feature_hierarchy.yml">
+          <value>
+            <Attribute>
+              <option name="separator" value=":" />
+            </Attribute>
+          </value>
+        </entry>
+        <entry key="\app\plot_features.py">
+          <value>
+            <Attribute>
+              <option name="separator" value=":" />
             </Attribute>
           </value>
         </entry>
@@ -738,6 +822,13 @@
             </Attribute>
           </value>
         </entry>
+        <entry key="\datasets\coinmetrics.io_new\preprocess_coinmetrics_new_blockchain.py">
+          <value>
+            <Attribute>
+              <option name="separator" value="," />
+            </Attribute>
+          </value>
+        </entry>
         <entry key="\datasets\kraken\missing.txt">
           <value>
             <Attribute>
@@ -833,6 +924,13 @@
           <value>
             <Attribute>
               <option name="separator" value=":" />
+            </Attribute>
+          </value>
+        </entry>
+        <entry key="\query_big_mlp.json">
+          <value>
+            <Attribute>
+              <option name="separator" value="," />
             </Attribute>
           </value>
         </entry>

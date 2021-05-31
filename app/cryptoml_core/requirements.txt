@@ -18,3 +18,8 @@ s3fs
 matplotlib
 mplfinance
 adjustText
+# Plotly
+plotly
+kaleido
+# Shap
+shap
