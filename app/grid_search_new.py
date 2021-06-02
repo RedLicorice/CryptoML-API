@@ -6,12 +6,16 @@ from typing import Optional
 from cryptoml_core.logging import setup_file_logger
 import logging
 import json
+from joblib import cpu_count
 
 
 def main(symbol: str, dataset: str, target: str, pipeline: str, feature_selection_method: Optional[str] = 'importances_shap', split: Optional[float] = 0.7, save: Optional[bool] = True):
     service = GridSearchService()
-
-    logging.info("[{}] Start grid search".format(get_timestamp()))
+    n_jobs = int(cpu_count() / 2)
+    multithread_pipeline = ['mlp', 'xgboost']
+    if any(ext in pipeline for ext in multithread_pipeline):
+        n_jobs = int(n_jobs / 2 + 1)
+    logging.info("[{}] {}({}.{}) -> {} Start grid search (JOBS: {})".format(get_timestamp(), pipeline, dataset, symbol, target, n_jobs))
     mp = service.grid_search_new(
         pipeline=pipeline,
         dataset=dataset,
@@ -20,10 +24,10 @@ def main(symbol: str, dataset: str, target: str, pipeline: str, feature_selectio
         split=split,
         feature_selection_method=feature_selection_method,
         verbose=1,
-        n_jobs=8,
+        n_jobs=n_jobs,
         save=save
     )
-    logging.info("[{}] End grid search".format(get_timestamp()))
+    logging.info("[{}] End grid search\n".format(get_timestamp()))
 
 
 if __name__ == '__main__':
