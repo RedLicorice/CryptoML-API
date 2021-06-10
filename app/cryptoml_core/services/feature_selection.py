@@ -220,8 +220,6 @@ class FeatureSelectionService:
         fs.end_at = get_timestamp()  # Log ending timestamp
 
 
-
-
         # Update search request with results
         fs.features = label_support(selector.get_support(), X.columns)
 

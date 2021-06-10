@@ -131,9 +131,10 @@ class ModelService:
                 parameters = model.parameters[-1].parameters
             else:
                 parameters = None
-        if isinstance(features, str) and features == 'latest':
-            if model.features:
-                features = model.features[-1].features
+        if isinstance(features, str):
+            fs = DatasetService.get_feature_selection(ds=ds, method=features, target=model.target)
+            if fs:
+                features = fs.features
             else:
                 features = None
         result = ModelTest(
