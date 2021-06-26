@@ -4,10 +4,10 @@ from cryptoml.util.discretization import to_discrete_double, to_discrete_single
 from sklearn.preprocessing import KBinsDiscretizer
 
 def target_price(close : pd.Series, **kwargs):
-    return close.shift(-kwargs.get('periods', 1))
+    return close.shift(-kwargs.get('periods', 1)).fillna(method='ffill')
 
 def target_pct(close : pd.Series, **kwargs):
-    pct_var = pd.Series(np.roll(close.pct_change(periods=kwargs.get('periods', 1)), -kwargs.get('periods', 1)), index=close.index)
+    pct_var = pd.Series(np.roll(close.pct_change(periods=kwargs.get('periods', 1)), -kwargs.get('periods', 1)), index=close.index).fillna(method='ffill')
     return pct_var
 
 def target_class(close : pd.Series, **kwargs):
