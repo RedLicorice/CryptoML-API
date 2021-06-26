@@ -222,8 +222,6 @@ def build(ohlcv: pd.DataFrame, coinmetrics: pd.DataFrame, **kwargs):
     # >> Only use blockchain data if we don't lose too many points, at most 60
     if coinmetrics is not None and (coinmetrics.shape[0] - ohlcv.shape[0]) > -60:
         cm_picks = pd.DataFrame(index=ohlcv.index)
-        if 'adractcnt' in coinmetrics.columns:
-            cm_picks['adractcnt_pct'] = coinmetrics.adractcnt.pct_change()
         if 'txtfrvaladjntv' in coinmetrics.columns and 'isstotntv' in coinmetrics.columns and 'feetotntv' in coinmetrics.columns:
             # I want to represent miners earnings (fees + issued coins) vs amount transacted in that interval
             cm_picks['earned_vs_transacted'] = (coinmetrics.isstotntv + coinmetrics.feetotntv) / coinmetrics.txtfrvaladjntv
@@ -234,16 +232,16 @@ def build(ohlcv: pd.DataFrame, coinmetrics: pd.DataFrame, **kwargs):
             cm_picks['isstot1_isstot365_pct'] = (coinmetrics.isstotntv / total_mined).pct_change()
         if 'splycur' in coinmetrics.columns and 'isstotntv' in coinmetrics.columns:
             cm_picks['splycur_isstot1_pct'] = (coinmetrics.isstotntv / coinmetrics.splycur).pct_change()
-        if 'hashrate' in coinmetrics.columns:
-            cm_picks['hashrate_pct'] = coinmetrics.hashrate.pct_change()
+        # if 'hashrate' in coinmetrics.columns:
+        #     cm_picks['hashrate_pct'] = coinmetrics.hashrate.pct_change()
         # if 'roi30d' in coinmetrics.columns:
         #    cm_picks['roi30d'] = coinmetrics.roi30d
         if 'isstotntv' in coinmetrics.columns:
             cm_picks['isstotntv_pct'] = coinmetrics.isstotntv.pct_change()
-        if 'feetotntv' in coinmetrics.columns:
-            cm_picks['feetotntv_pct'] = coinmetrics.feetotntv.pct_change()
-        if 'txtfrcnt' in coinmetrics.columns:
-            cm_picks['txtfrcnt_pct'] = coinmetrics.txtfrcnt.pct_change()
+        # if 'feetotntv' in coinmetrics.columns:
+        #     cm_picks['feetotntv_pct'] = coinmetrics.feetotntv.pct_change()
+        # if 'txtfrcnt' in coinmetrics.columns:
+        #     cm_picks['txtfrcnt_pct'] = coinmetrics.txtfrcnt.pct_change()
         # if 'vtydayret30d' in coinmetrics.columns:
         #    cm_picks['vtydayret30d'] = coinmetrics.vtydayret30d
         #if 'isscontpctann' in coinmetrics.columns:
@@ -253,6 +251,7 @@ def build(ohlcv: pd.DataFrame, coinmetrics: pd.DataFrame, **kwargs):
 
         groups = {
             'addresses': [
+                'adractcnt',
                 'adrbal1in100kcnt', 'adrbal1in100mcnt', 'adrbal1in10bcnt', 'adrbal1in10kcnt',
                 'adrbal1in10mcnt', 'adrbal1in1bcnt', 'adrbal1in1kcnt', 'adrbal1in1mcnt',
                 'adrbalcnt',
