@@ -142,6 +142,10 @@ def make_plot(ohlcv: pd.DataFrame, orders: pd.DataFrame, equity: pd.DataFrame, p
     ), row=3, col=1)
 
     # Equity plot
+    baselines = kwargs.get('baselines')
+    for name, b in baselines:
+        go_eq = go.Scatter(x=b.index, y=b.values, mode='lines', name=name)
+        fig.add_trace(go_eq, row=4, col=1)
     go_eq = go.Scatter(x=equity.index, y=equity.equity, mode='lines', name='Equity')
     fig.add_trace(go_eq, row=4, col=1)
 
@@ -279,8 +283,10 @@ def main(pipeline: str, dataset: str, symbol: str, window: int):
     test = ms.get_test(pipeline=pipeline, dataset=dataset, target='class', symbol=symbol, window=window)
     if not test:
         print(f"Test {pipeline}.{dataset}.class for {symbol} on window {window} not found!")
-    equity = ts.parse_equity_df(asset=asset)
-    orders = ts.parse_orders_df(asset=asset)
+
+    equity = TradingService.parse_equity_df(asset=asset)
+    buy_and_hold = TradingService.parse_baseline_df(asset=asset, name='buy_and_hold')
+    orders = TradingService.parse_orders_df(asset=asset)
 
     # Map order position_id to numbers so we don't get a mess in the graph
     position_uids = set(orders.position_id.values)
@@ -303,6 +309,7 @@ def main(pipeline: str, dataset: str, symbol: str, window: int):
         year_ohlcv = ohlcv[ohlcv.index.year == year]
         year_pred = enc_pred[enc_pred.index.year == year]
         year_equity = equity[equity.index.year == year]
+        year_buy_and_hodl = buy_and_hold[buy_and_hold.index.year == year]
         year_orders = orders[orders.index.year == year]
 
         unique_quarters = year_ohlcv.index.quarter.unique()
@@ -311,11 +318,15 @@ def main(pipeline: str, dataset: str, symbol: str, window: int):
             q_pred = year_pred[year_pred.index.quarter == quarter]
             q_equity = year_equity[year_equity.index.quarter == quarter]
             q_orders = year_orders[year_orders.index.quarter == quarter]
+            q_buy_and_hodl = year_buy_and_hodl[year_buy_and_hodl.index.quarter == quarter]
             #f"{ohlcv_ds.symbol}, {year} - Q{quarter}, 1D", 'Trades', 'Equity'
             make_plot(
                 ohlcv=q_ohlcv,
                 orders=q_orders,
                 equity=q_equity,
+                baselines=[
+                    q_buy_and_hodl
+                ],
                 pred=q_pred,
                 signals_title=f"{ohlcv_ds.symbol}, {year} - Q{quarter}, 1D",
                 img_path=f"images/{pipeline}-{dataset}-class-W{window}/{symbol}/",

@@ -6,7 +6,7 @@ import logging
 from typing import Optional
 
 
-def main(dataset: str, target: str, method: str, split: Optional[float] = 0.7, replace: Optional[bool] = False):
+def main(dataset: str, target: str, method: str, split: Optional[float] = 0.7, replace: Optional[bool] = False, save: Optional[bool] = True):
     service = FeatureSelectionService()
 
     symbols = service.get_available_symbols(dataset)
@@ -19,7 +19,8 @@ def main(dataset: str, target: str, method: str, split: Optional[float] = 0.7, r
             target=target,
             split=split,
             method=method,
-            replace=replace
+            replace=replace,
+            save=save
         )
         logging.info("[{}] End feature search".format(get_timestamp()))
 

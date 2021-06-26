@@ -65,7 +65,7 @@ def main(dataset: str, target: str, symbol: str):
     y = ds_service.get_target(name='class', symbol=symbol, begin=fs.search_interval.begin, end=fs.search_interval.end)
     fig = plt.figure()
     plt.suptitle(f"Shap summary plot for {dataset}.{symbol} -> {target}")
-    shap.summary_plot(shap_values, X, class_names=["SELL", "HOLD", "BUY"], show=False)
+    shap.summary_plot(shap_values, X, class_names=["SELL", "HOLD", "BUY"], show=False, max_display=352, use_log_scale=True)
     plt.tight_layout()
     fig.show()
 

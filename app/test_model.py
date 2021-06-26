@@ -8,17 +8,17 @@ from cryptoml_core.logging import setup_file_logger
 import logging
 
 
-def main(queryfile: str, features: Optional[str] = None, parameters: Optional[str] = None):
+def main(queryfile: str, features: Optional[str] = None, parameters: Optional[str] = None, save: Optional[bool] = True):
     models = ModelService()
     with open(queryfile, 'r') as f:
         query = json.load(f)
-    models.clear_tests(query)
+    if save:
+        models.clear_tests(query)
     test_models = models.query_models(query)
     logging.info("[i] {} models to test".format(len(test_models)))
     failed = []
     for i, m in enumerate(test_models):
-        logging.info("==[{}/{}]== MODEL: {} {} {} {} =====".format(i + 1, len(test_models), m.symbol, m.dataset, m.target,
-                                                            m.pipeline))
+        logging.info("==[{}/{}]== MODEL: {} {} {} {} =====".format(i + 1, len(test_models), m.symbol, m.dataset, m.target,m.pipeline))
         #t1 = models.create_model_test(model=m, split=0.7, step={'days': 1}, window={'days': 60}, parameters=parameters, features=features)
         t2 = models.create_model_test(model=m, split=0.7, step={'days': 1}, window={'days': 90}, parameters=parameters, features=features)
         t3 = models.create_model_test(model=m, split=0.7, step={'days': 1}, window={'days': 180}, parameters=parameters, features=features)

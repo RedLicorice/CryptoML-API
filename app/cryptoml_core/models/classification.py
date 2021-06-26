@@ -56,8 +56,8 @@ class ModelTest(BaseModel):
     task_key: Optional[str] = None  # For making sure not to run the same task twice
     start_at: Optional[str] = None
     end_at: Optional[str] = None
-    classification_report: Optional[dict] = {}  # Classification report for this run
-    classification_results: Optional[dict] = {}
+    classification_report: Optional[Union[dict, list]] = {}  # Classification report for this run
+    classification_results: Optional[Union[dict, list]] = {}
 
 
 # Identifies a combination of symbol, dataset, target and pipeline
@@ -81,6 +81,20 @@ class Model(DocumentModel):
             return []
         return v or []
 
+class Estimator(DocumentModel):
+    # Simulation day this model was trained for
+    day: str
+    # Trailing window time interval
+    window: dict
+    # For dataset indexing
+    dataset: str
+    target: str
+    symbol: str
+    pipeline: str
+    parameters: str
+    features: str
+    # File name on S3 for model dump
+    filename: str
 
 class TradingModel(DocumentModel):
     # For dataset indexing

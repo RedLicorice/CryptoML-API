@@ -1,5 +1,5 @@
 from cryptoml_core.repositories.feature_repository import FeatureRepository
-from cryptoml_core.services.storage_service import StorageService
+import cryptoml_core.services.storage_service as storage_service
 from cryptoml_core.exceptions import MessageException
 from cryptoml.builders import BUILDER_LIST
 import importlib, logging, inspect
@@ -11,7 +11,6 @@ import importlib, logging, inspect
 class DatasetBuildingService:
     def __init__(self):
         self.repo: FeatureRepository = FeatureRepository()
-        self.storage: StorageService = StorageService()
 
     def get_builders(self):
         result = {}

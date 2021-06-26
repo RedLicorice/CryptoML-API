@@ -77,7 +77,7 @@ def timestamp_windows(start: str, end: str, window: dict, step: dict):
     _w_begin = from_timestamp(start)
     _w_end = _w_begin + timedelta(**window)
 
-    while _w_end.timestamp() <= _end.timestamp():
+    while _w_end.timestamp() < _end.timestamp():
         yield to_timestamp(_w_begin), to_timestamp(_w_end)
         # Move window one step forward
         _w_begin += timedelta(**step)

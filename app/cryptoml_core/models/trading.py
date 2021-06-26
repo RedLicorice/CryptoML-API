@@ -47,6 +47,8 @@ class Equity(BaseModel):
     num_short: int
     num_spot: int
 
+class Baseline(Equity):
+    name: str
 
 class TradingAccount(DocumentModel):
     fiat: float  # Amount of FIAT allocated for this asset and available for trades
@@ -59,12 +61,7 @@ class TradingAccount(DocumentModel):
     positions: Optional[List[Position]] = []  # A list containing all positions for this asset (eg. open price ..)
     orders: Optional[List[Order]] = []  # A list containing the order history for this asset (Eg. open position)
     equities: Optional[List[Equity]] = []  # A list containing equity history for this asset
-
-
-class Baseline(TradingAccount):
-    name: str
-    symbol: str
-    target: str
+    baselines: Optional[List[Baseline]] = []  # A list containing equity history for this asset
 
 
 class Asset(TradingAccount):

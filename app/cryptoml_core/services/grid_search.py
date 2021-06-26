@@ -1,7 +1,7 @@
 import pandas as pd
 # APP Dependencies
 from cryptoml_core.services.model_service import ModelService
-from cryptoml_core.services.storage_service import StorageService
+import cryptoml_core.services.storage_service as storage_service
 from cryptoml_core.services.dataset_service import DatasetService
 from cryptoml_core.exceptions import MessageException, NotFoundException
 # CryptoML Lib Dependencies
@@ -30,7 +30,6 @@ import numpy as np
 
 class GridSearchService:
     def __init__(self):
-        self.storage = StorageService()
         self.model_repo = ModelRepository()
         self.model_service = ModelService()
         self.dataset_service = DatasetService()
@@ -153,8 +152,8 @@ class GridSearchService:
 
         # Save grid search results on storage
         if kwargs.get('save', True):
-            self.storage.upload_json_obj(mp.parameters, 'grid-search-results', 'parameters-{}.json'.format(tag))
-            self.storage.save_df(results_df, 'grid-search-results', mp.result_file)
+            storage_service.upload_json_obj(mp.parameters, 'grid-search-results', 'parameters-{}.json'.format(tag))
+            storage_service.save_df(results_df, 'grid-search-results', mp.result_file)
             # Update model with the new results
             self.model_repo.append_parameters(model.id, mp)
 
@@ -198,8 +197,8 @@ class GridSearchService:
 
         # Save grid search results on storage
         if kwargs.get('save', True):
-            self.storage.upload_json_obj(mp.parameters, 'random-search-results', 'parameters-{}.json'.format(tag))
-            self.storage.save_df(results_df, 'random-search-results', mp.result_file)
+            storage_service.upload_json_obj(mp.parameters, 'random-search-results', 'parameters-{}.json'.format(tag))
+            storage_service.save_df(results_df, 'random-search-results', mp.result_file)
             # Update model with the new results
             self.model_repo.append_parameters(model.id, mp)
 
@@ -209,10 +208,13 @@ class GridSearchService:
         # Check if a model exists and has same search method
         existing_model = self.model_service.get_model(pipeline=pipeline, dataset=dataset, target=target, symbol=symbol)
         if existing_model:
-            mp = ModelService.get_model_parameters(existing_model, method='gridsearch')
-            if mp:
-                logging.info(f"Grid search already performed for {pipeline}({dataset}.{symbol}) -> {target}")
-                return mp
+            mp_exists = ModelService.get_model_parameters(existing_model, method='gridsearch')
+            if mp_exists:
+                if kwargs.get('replace'):
+                    self.model_service.remove_parameters(model=existing_model, method='gridsearch')
+                else:
+                    if kwargs.get('save'):
+                        raise MessageException(f"Grid search already performed for {pipeline}({dataset}.{symbol}) -> {target}")
 
         # Retrieve dataset to use
         ds = self.dataset_service.get_dataset(dataset, symbol)
@@ -314,8 +316,8 @@ class GridSearchService:
 
         # Save grid search results on storage
         if kwargs.get('save', True):
-            self.storage.upload_json_obj(mp.parameters, 'grid-search-results', 'parameters-{}.json'.format(tag))
-            self.storage.save_df(results_df, 'grid-search-results', mp.result_file)
+            storage_service.upload_json_obj(mp.parameters, 'grid-search-results', 'parameters-{}.json'.format(tag))
+            storage_service.save_df(results_df, 'grid-search-results', mp.result_file)
         return mp
 
 

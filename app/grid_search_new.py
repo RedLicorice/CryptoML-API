@@ -9,7 +9,7 @@ import json
 from joblib import cpu_count
 
 
-def main(symbol: str, dataset: str, target: str, pipeline: str, feature_selection_method: Optional[str] = 'importances_shap', split: Optional[float] = 0.7, save: Optional[bool] = True):
+def main(symbol: str, dataset: str, target: str, pipeline: str, feature_selection_method: Optional[str] = 'importances_shap', split: Optional[float] = 0.7, replace: Optional[bool] = True, save: Optional[bool] = True):
     service = GridSearchService()
     n_jobs = int(cpu_count() / 2)
     multithread_pipeline = ['mlp', 'xgboost']
@@ -25,6 +25,7 @@ def main(symbol: str, dataset: str, target: str, pipeline: str, feature_selectio
         feature_selection_method=feature_selection_method,
         verbose=1,
         n_jobs=n_jobs,
+        replace=replace,
         save=save
     )
     logging.info("[{}] End grid search\n".format(get_timestamp()))

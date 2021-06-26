@@ -122,6 +122,20 @@
             </Attribute>
           </value>
         </entry>
+        <entry key="\app\build_all_target.cmd">
+          <value>
+            <Attribute>
+              <option name="separator" value="," />
+            </Attribute>
+          </value>
+        </entry>
+        <entry key="\app\check_models.py">
+          <value>
+            <Attribute>
+              <option name="separator" value=":" />
+            </Attribute>
+          </value>
+        </entry>
         <entry key="\app\config.yml">
           <value>
             <Attribute>
@@ -360,6 +374,13 @@
             </Attribute>
           </value>
         </entry>
+        <entry key="\app\cryptoml_core\services\storage_service.py">
+          <value>
+            <Attribute>
+              <option name="separator" value="," />
+            </Attribute>
+          </value>
+        </entry>
         <entry key="\app\cryptoml_core\services\trading_service.py">
           <value>
             <Attribute>
@@ -389,6 +410,20 @@
           </value>
         </entry>
         <entry key="\app\dataset.py">
+          <value>
+            <Attribute>
+              <option name="separator" value="," />
+            </Attribute>
+          </value>
+        </entry>
+        <entry key="\app\export_testing_shap_dataframes.py">
+          <value>
+            <Attribute>
+              <option name="separator" value="," />
+            </Attribute>
+          </value>
+        </entry>
+        <entry key="\app\export_training_windows_shap_dataframes.py">
           <value>
             <Attribute>
               <option name="separator" value="," />
@@ -437,6 +472,13 @@
             </Attribute>
           </value>
         </entry>
+        <entry key="\app\gridsearch_merged_new_class_2.sh">
+          <value>
+            <Attribute>
+              <option name="separator" value="," />
+            </Attribute>
+          </value>
+        </entry>
         <entry key="\app\gridsearch_merged_new_class_all.cmd">
           <value>
             <Attribute>
@@ -458,10 +500,52 @@
             </Attribute>
           </value>
         </entry>
+        <entry key="\app\plot_blockchain_features_table.py">
+          <value>
+            <Attribute>
+              <option name="separator" value=":" />
+            </Attribute>
+          </value>
+        </entry>
+        <entry key="\app\plot_feature_selection.py">
+          <value>
+            <Attribute>
+              <option name="separator" value="," />
+            </Attribute>
+          </value>
+        </entry>
+        <entry key="\app\plot_feature_selection_dataframe.py">
+          <value>
+            <Attribute>
+              <option name="separator" value="," />
+            </Attribute>
+          </value>
+        </entry>
+        <entry key="\app\plot_feature_selection_shap.py">
+          <value>
+            <Attribute>
+              <option name="separator" value="," />
+            </Attribute>
+          </value>
+        </entry>
         <entry key="\app\plot_features.py">
           <value>
             <Attribute>
               <option name="separator" value=":" />
+            </Attribute>
+          </value>
+        </entry>
+        <entry key="\app\plot_shap.py">
+          <value>
+            <Attribute>
+              <option name="separator" value="," />
+            </Attribute>
+          </value>
+        </entry>
+        <entry key="\app\plot_shap_test_study.py">
+          <value>
+            <Attribute>
+              <option name="separator" value="," />
             </Attribute>
           </value>
         </entry>
@@ -494,6 +578,13 @@
           </value>
         </entry>
         <entry key="\app\test_model.py">
+          <value>
+            <Attribute>
+              <option name="separator" value="," />
+            </Attribute>
+          </value>
+        </entry>
+        <entry key="\app\test_model_new.py">
           <value>
             <Attribute>
               <option name="separator" value="," />

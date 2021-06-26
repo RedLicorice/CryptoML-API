@@ -47,7 +47,7 @@ features:
       - close_volatility_30d
 
   technical:
-    volume:
+    volume_indicators:
       - pvo_12_26
       - adi
       - adi_pct
@@ -57,7 +57,7 @@ features:
       - obv_mean3_pct
       - ao_14
       - ao_14_div100
-    volatility:
+    volatility_indicators:
       - adx_14
       - wd_14
       - atrp_14
@@ -65,7 +65,7 @@ features:
       - fi_50
       - fi_13_pct
       - fi_50_pct
-    momentum:
+    momentum_indicators:
       - stoch_14
       - stoch_14_mean3_div100  # Stoch 14d, rolling mean over 3 days (to decrease sensitivity), divided by 100
       - rsi_14
@@ -77,7 +77,7 @@ features:
       - cmo_14_signal # SMA 10 of cmo_14
       - cmo_14_diff_signal
       - tsi
-    trend:
+    trend_indicators:
       - rsma_5_20
       - rsma_8_15
       - rsma_20_50

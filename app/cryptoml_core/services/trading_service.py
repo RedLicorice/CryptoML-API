@@ -1,5 +1,5 @@
 from cryptoml_core.exceptions import MessageException
-from cryptoml_core.repositories.trading_repository import AssetRepository, Order, Position, Asset, Equity, get_uuid
+from cryptoml_core.repositories.trading_repository import AssetRepository, Order, Position, Asset, Equity, Baseline, get_uuid
 import pandas as pd
 from cryptoml_core.util.timestamp import timestamp_diff
 
@@ -9,7 +9,7 @@ MARGIN_LONG_FIXED_FEE = 0.0001  # 0.01% fee at position open
 MARGIN_LONG_DAILY_FEE = 0.0001 * 5  # Kraken applies 0.02% fee every 4 hours period after the first so 24/4 - 1
 SPOT_FIXED_FEE = 0.0026  # 0.16-0.26% fee at every spot transaction (maker-taker)
 FIAT_LOAN_LIMIT = 5000
-COLL_LOAN_LIMIT = 0.5
+COLL_LOAN_LIMIT = 5000
 
 class TradingService:
     def __init__(self):
@@ -41,10 +41,35 @@ class TradingService:
         # Update the asset instance in DB and return the result
         return self.repo.update(asset.id, asset)
 
+    def update_baseline(self, asset: Asset, day: str, name: str, value: float):
+        e = Baseline(
+            name=name,
+            timestamp=day,
+            equity=value,
+            num_long=0,
+            num_short=0,
+            num_spot=0
+        )
+        # Append open order
+        asset.baselines.append(e)
+
+        # Update the asset instance in DB and return the result
+        return self.repo.update(asset.id, asset)
+
     @staticmethod
     def parse_equity_df(asset: Asset):
         # Re-convert asset's equity history to a DataFrame
         results = pd.DataFrame([e.dict() for e in asset.equities])
+        # Parse index so it's a DateTimeIndex, because Mongo stores it as a string
+        results.index = pd.to_datetime(results.timestamp)
+
+        return results.drop(labels='timestamp', axis=1)
+
+    @staticmethod
+    def parse_baseline_df(asset: Asset, name):
+        # Re-convert asset's equity history to a DataFrame
+        results = pd.DataFrame([e.dict() for e in asset.baselines if e.name == name])
+        results = results.drop(labels='name', axis='columns')
         # Parse index so it's a DateTimeIndex, because Mongo stores it as a string
         results.index = pd.to_datetime(results.timestamp)
 
@@ -234,11 +259,13 @@ class TradingService:
             raise MessageException("Not enough fiat to open SHORT position on "
                                    f"{asset.symbol}: Wallet: {asset.fiat} Needed: {need_fiat}")
         new_loan = round(asset.coll_loan + amount, 8)
-        if new_loan > COLL_LOAN_LIMIT:
+        coll_loan_ub = COLL_LOAN_LIMIT/close_price
+        if new_loan > coll_loan_ub:
             raise MessageException("Not enough allowance to open SHORT position on "
                                    f"{asset.symbol}: Cur_loan: {asset.coll_loan} "
                                    f"New loan: {new_loan} "
-                                   f"Need allowance: {new_loan - COLL_LOAN_LIMIT}")
+                                   f"Upperbound for collateral loan: {coll_loan_ub} "
+                                   f"Need allowance: {new_loan - coll_loan_ub}")
         # In short orders, we immediately sell borrowed collateral for fiat at market price
         # Since fees are paid immediately, they are paid from this sale's revenue
         sell_revenue = op_value - op_fee

@@ -1,0 +1,23 @@
+@echo off
+python export_feature_selection_dataframe.py merged_new class ADAUSD
+python export_feature_selection_dataframe.py merged_new class BCHUSD
+python export_feature_selection_dataframe.py merged_new class BNBUSD
+python export_feature_selection_dataframe.py merged_new class BTCUSD
+python export_feature_selection_dataframe.py merged_new class BTGUSD
+python export_feature_selection_dataframe.py merged_new class DASHUSD
+python export_feature_selection_dataframe.py merged_new class DOGEUSD
+python export_feature_selection_dataframe.py merged_new class EOSUSD
+python export_feature_selection_dataframe.py merged_new class ETCUSD
+python export_feature_selection_dataframe.py merged_new class ETHUSD
+python export_feature_selection_dataframe.py merged_new class LINKUSD
+python export_feature_selection_dataframe.py merged_new class LTCUSD
+python export_feature_selection_dataframe.py merged_new class NEOUSD
+python export_feature_selection_dataframe.py merged_new class QTUMUSD
+python export_feature_selection_dataframe.py merged_new class TRXUSD
+python export_feature_selection_dataframe.py merged_new class VENUSD
+python export_feature_selection_dataframe.py merged_new class WAVESUSD
+python export_feature_selection_dataframe.py merged_new class XEMUSD
+python export_feature_selection_dataframe.py merged_new class XMRUSD
+python export_feature_selection_dataframe.py merged_new class XRPUSD
+python export_feature_selection_dataframe.py merged_new class ZECUSD
+python export_feature_selection_dataframe.py merged_new class ZRXUSD

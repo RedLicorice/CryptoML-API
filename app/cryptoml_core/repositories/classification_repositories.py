@@ -27,9 +27,13 @@ class ModelRepository(DocumentRepository):
             cursor = self.collection.find(query)
             return [self.__model__.parse_obj(document) for document in cursor]
 
-    def find_tests(self, *, symbol, dataset, target):
+    def find_tests(self, *, symbol, dataset, target, pipeline = None):
+        if pipeline:
+            _match = {"pipeline": pipeline, "symbol": symbol, "dataset": dataset, "target": target}
+        else:
+            _match = {"symbol": symbol, "dataset": dataset, "target": target}
         cursor = self.collection.aggregate([
-            {"$match": {"symbol": symbol, "dataset": dataset, "target": target}},
+            {"$match": _match},
             {"$unwind": "$tests"},
             {"$unset": ["features", "parameters"]}
         ])
@@ -52,6 +56,10 @@ class ModelRepository(DocumentRepository):
         if not result.modified_count:
             raise DocumentNotFoundException(collection=self.__collection__, identifier=id)
         self.touch(model_id)
+
+    def append_test_new(self, model: Model, test: ModelTest):
+        model.tests.append(test)
+        return self.update(model.id, model)
 
     def append_features(self, model_id: str, features: ModelFeatures):
         result = self.collection.update_one(
@@ -130,20 +138,8 @@ class ModelRepository(DocumentRepository):
         return result.modified_count
 
     def get_model_test(self, pipeline, dataset, target, symbol, window):
-        result = self.collection.aggregate([
-            {
-                '$match': {'pipeline': pipeline, 'dataset': dataset, 'target': target, 'symbol': symbol}
-            },
-            {
-                '$project': {
-                    'tests': {
-                        '$filter': {
-                            'input': '$tests',
-                            'as': 'test',
-                            'cond': {'$eq': ['$$test.window.days', window]}
-                        }
-                    }
-                }
-            }
-        ])
-        return [ModelTest.parse_obj(p) for p in [d['tests'] for d in result][0]]
+        tests = self.find_tests(symbol=symbol, dataset=dataset, target=target, pipeline=pipeline)
+        for t in tests:
+            if t['window']['days'] == window:
+                return t
+        return None

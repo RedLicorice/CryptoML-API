@@ -1,10 +1,11 @@
 from cryptoml_core.deps.mongodb.document_repository import DocumentNotFoundException
+from cryptoml_core.exceptions import MessageException
 from cryptoml_core.repositories.feature_repository import FeatureRepository
 from cryptoml_core.models.dataset import Dataset
 from cryptoml_core.repositories.dataset_repository import DatasetRepository, FeatureSelection
 from cryptoml_core.util.timestamp import to_timestamp, from_timestamp, add_interval, mul_interval
 from cryptoml_core.services.dataset_building_service import DatasetBuildingService
-from cryptoml_core.services.storage_service import StorageService
+import cryptoml_core.services.storage_service as storage_service
 import logging
 import math
 from typing import List, Optional
@@ -37,8 +38,7 @@ class DatasetService:
     def __init__(self):
         self.repo: DatasetRepository = DatasetRepository()
         self.feature_repo: FeatureRepository = FeatureRepository()
-        self.storage: StorageService = StorageService()
-
+        
     # Use "DatasetBuildingService" to build a dataset from existing bases
     def build_dataset(self, symbol, builder, args):
         service = DatasetBuildingService()
@@ -47,7 +47,7 @@ class DatasetService:
 
     # Import dataset from s3 storage
     def import_from_storage(self, bucket: str, filename: str, name: str, symbol: str, **kwargs):
-        df = self.storage.load_df(bucket, filename, parse_dates=True, index_col=kwargs.get('index_col', 'Date'))
+        df = storage_service.load_df(bucket, filename, parse_dates=True, index_col=kwargs.get('index_col', 'Date'))
         df = df.astype({c: 'float64' for c in df.columns})
         return self.create_dataset(df, name, symbol)
 
@@ -56,7 +56,7 @@ class DatasetService:
         storage_path = '{}-{}.csv'.format(name, symbol)
         _first, _last, _indices = get_feature_indices(df)
 
-        self.storage.save_df(df, 'datasets', storage_path)
+        storage_service.save_df(df, 'datasets', storage_path)
         self.feature_repo.delete_features(dataset=name, symbol=symbol)
         self.feature_repo.put_features(df, name, symbol)
         item = Dataset(
@@ -116,12 +116,12 @@ class DatasetService:
 
     def get_features(self, name, symbol, begin, end, **kwargs):
         # storage_path = '{}-{}.csv'.format(name, symbol)
-        # self.storage.load_df('datasets', storage_path)
+        # storage_service.load_df('datasets', storage_path)
         return self.feature_repo.get_features(name, symbol, first=begin, last=end, **kwargs)
 
     def get_dataset_features(self, ds: Dataset, **kwargs):  # begin and end
         # storage_path = '{}-{}.csv'.format(name, symbol)
-        # self.storage.load_df('datasets', storage_path)
+        # storage_service.load_df('datasets', storage_path)
         begin = kwargs.get('begin', ds.index_min)
         end = kwargs.get('end', ds.index_max)
         if 'begin' in kwargs:
@@ -130,12 +130,14 @@ class DatasetService:
             del kwargs['end']
         if 'method' in kwargs and 'target' in kwargs:
             fs = DatasetService.get_feature_selection(ds, kwargs.get('method'), kwargs.get('target'))
+            if not fs:
+                raise MessageException(f"Failed to find feature selection {kwargs.get('method')} for dataset {ds.name}.{ds.symbol}")
             return self.get_features(name=ds.name, symbol=ds.symbol, begin=begin, end=end, columns=fs.features)
-        return self.get_features(name=ds.name, symbol=ds.symbol, begin=begin, end=end)
+        return self.get_features(name=ds.name, symbol=ds.symbol, begin=begin, end=end, columns=kwargs.get('columns'))
 
     def get_target(self, name, symbol, begin, end):
         # storage_path = '{}-{}.csv'.format(name, symbol)
-        # self.storage.load_df('datasets', storage_path)
+        # storage_service.load_df('datasets', storage_path)
         return self.feature_repo.get_target(name, symbol, first=begin, last=end)
 
     def get_dataset_target(self, ds: Dataset, name: str, **kwargs):
@@ -203,3 +205,16 @@ class DatasetService:
             self.repo.update(ds.id, ds)
             return True
         return False
+
+    def get_x_y(self, dataset, symbol, target, features, begin, end):
+        # Load features from the dataset, using indicated feature selection method
+        ds = self.get_dataset(name=dataset, symbol=symbol)
+        fs = DatasetService.get_feature_selection(ds=ds, method=features, target=target)
+        if not fs:
+            logging.warning(f"Feature selection with method {features} does not exist in dataset"
+                            f" {dataset}.{symbol}")
+
+        X_train = self.get_dataset_features(ds=ds, begin=begin, end=end, columns=fs.features)
+        y_train = self.get_target(target, symbol, begin=begin, end=end)
+
+        return X_train, y_train

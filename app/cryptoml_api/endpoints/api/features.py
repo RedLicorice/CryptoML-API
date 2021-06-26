@@ -1,7 +1,7 @@
 from fastapi import APIRouter, Form, File, UploadFile, Depends, HTTPException, Body
 from werkzeug.utils import secure_filename
 from cryptoml_core.deps.celery import current_app
-from cryptoml_core.services.storage_service import StorageService
+import cryptoml_core.services.storage_service as storage_service
 from cryptoml_core.services.dataset_building_service import DatasetBuildingService
 from cryptoml_core.services.dataset_service import DatasetService
 from cryptoml_core.services.task_service import TaskService
@@ -32,7 +32,7 @@ def upload(
         name: str = Form(...),
         symbol: str = Form(...),
         file: UploadFile = File(...),
-        storage: StorageService = Depends(StorageService),
+        storage: storage_service = Depends(storage_service),
 ) -> ImportRequest:
     # CSV mime-type is "text/csv"
     if file.content_type != 'text/csv':
@@ -42,7 +42,7 @@ def upload(
     storage_name = "{}.{}.csv".format(symbol, filename)
     bucket = config['storage']['s3']['uploads_bucket'].get(str)
     try:
-        storage.upload_file(file.file, bucket, storage_name)
+        storage.save_file(file.file, bucket, storage_name)
         return ImportRequest(bucket=bucket, name=storage_name, dataset=name, symbol=symbol)
     except Exception as e:
         raise HTTPException(status_code=500, detail='Failed to save file on storage')

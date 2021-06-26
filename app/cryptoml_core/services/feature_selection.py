@@ -165,11 +165,13 @@ class FeatureSelectionService:
 
     def feature_selection_new(self, *, symbol: str, dataset: str, target: str, split: float, method: str, **kwargs) -> ModelFeatures:
         ds = self.dataset_service.get_dataset(dataset, symbol)
-        if DatasetService.has_feature_selection(ds=ds, method=method, target=target):
+        fs_exists = DatasetService.has_feature_selection(ds=ds, method=method, target=target)
+        if fs_exists:
             if kwargs.get('replace'):
                 self.dataset_service.remove_feature_selection(ds=ds, method=method, target=target)
             else:
-                raise MessageException(f"Feature selection with method '{method}' alrady performed for '{dataset}.{symbol}' and target '{target}'")
+                if kwargs.get('save'):
+                    raise MessageException(f"Feature selection with method '{method}' alrady performed for '{dataset}.{symbol}' and target '{target}'")
 
         splits = DatasetService.get_train_test_split_indices(ds, split)
         fs = FeatureSelection(
@@ -207,7 +209,7 @@ class FeatureSelectionService:
                 selector = select_from_model(X, y)
             fs.feature_importances = label_feature_importances(selector.estimator_, X.columns)
             if '_shap' in fs.method:
-                fs.shap_values = get_shap_values(selector.estimator_.named_steps.c, X)
+                fs.shap_values = get_shap_values(model=selector.estimator_.named_steps.c, X=X, X_train=X)
                 shap_values = parse_shap_values(fs.shap_values)
         elif fs.method == 'fscore':
             selector = select_percentile(X, y, percentile=10)
@@ -223,4 +225,6 @@ class FeatureSelectionService:
         # Update search request with results
         fs.features = label_support(selector.get_support(), X.columns)
 
+        if not kwargs.get('save'):
+            return fs
         return self.dataset_service.append_feature_selection(ds, fs)

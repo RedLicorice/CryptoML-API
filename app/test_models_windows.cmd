@@ -1,0 +1,35 @@
+@echo off
+set symbol=%1
+python test_model_new.py bagging_decisiontree merged_new %symbol% class 90 --features importances_shap --parameters gridsearch
+python test_model_new.py bagging_poly_svc merged_new %symbol% class 90 --features importances_shap --parameters gridsearch
+python test_model_new.py plain_knn merged_new %symbol% class 90 --features importances_shap --parameters gridsearch
+python test_model_new.py plain_mnb merged_new %symbol% class 90 --features importances_shap --parameters gridsearch
+python test_model_new.py plain_poly_svc merged_new %symbol% class 90 --features importances_shap --parameters gridsearch
+python test_model_new.py plain_randomforest merged_new %symbol% class 90 --features importances_shap --parameters gridsearch
+python test_model_new.py smote_knn merged_new %symbol% class 90 --features importances_shap --parameters gridsearch
+python test_model_new.py smote_poly_svc merged_new %symbol% class 90 --features importances_shap --parameters gridsearch
+python test_model_new.py plain_mlp merged_new %symbol% class 90 --features importances_shap --parameters gridsearch
+python test_model_new.py smote_mlp merged_new %symbol% class 90 --features importances_shap --parameters gridsearch
+python test_model_new.py plain_xgboost merged_new %symbol% class 90 --features importances_shap --parameters gridsearch
+python test_model_new.py bagging_decisiontree merged_new %symbol% class 180 --features importances_shap --parameters gridsearch
+python test_model_new.py bagging_poly_svc merged_new %symbol% class 180 --features importances_shap --parameters gridsearch
+python test_model_new.py plain_knn merged_new %symbol% class 180 --features importances_shap --parameters gridsearch
+python test_model_new.py plain_mnb merged_new %symbol% class 180 --features importances_shap --parameters gridsearch
+python test_model_new.py plain_poly_svc merged_new %symbol% class 180 --features importances_shap --parameters gridsearch
+python test_model_new.py plain_randomforest merged_new %symbol% class 180 --features importances_shap --parameters gridsearch
+python test_model_new.py smote_knn merged_new %symbol% class 180 --features importances_shap --parameters gridsearch
+python test_model_new.py smote_poly_svc merged_new %symbol% class 180 --features importances_shap --parameters gridsearch
+python test_model_new.py plain_mlp merged_new %symbol% class 180 --features importances_shap --parameters gridsearch
+python test_model_new.py smote_mlp merged_new %symbol% class 180 --features importances_shap --parameters gridsearch
+python test_model_new.py plain_xgboost merged_new %symbol% class 180 --features importances_shap --parameters gridsearch
+python test_model_new.py bagging_decisiontree merged_new %symbol% class 240 --features importances_shap --parameters gridsearch
+python test_model_new.py bagging_poly_svc merged_new %symbol% class 240 --features importances_shap --parameters gridsearch
+python test_model_new.py plain_knn merged_new %symbol% class 240 --features importances_shap --parameters gridsearch
+python test_model_new.py plain_mnb merged_new %symbol% class 240 --features importances_shap --parameters gridsearch
+python test_model_new.py plain_poly_svc merged_new %symbol% class 240 --features importances_shap --parameters gridsearch
+python test_model_new.py plain_randomforest merged_new %symbol% class 240 --features importances_shap --parameters gridsearch
+python test_model_new.py smote_knn merged_new %symbol% class 240 --features importances_shap --parameters gridsearch
+python test_model_new.py smote_poly_svc merged_new %symbol% class 240 --features importances_shap --parameters gridsearch
+python test_model_new.py plain_mlp merged_new %symbol% class 240 --features importances_shap --parameters gridsearch
+python test_model_new.py smote_mlp merged_new %symbol% class 240 --features importances_shap --parameters gridsearch
+python test_model_new.py plain_xgboost merged_new %symbol% class 240 --features importances_shap --parameters gridsearch

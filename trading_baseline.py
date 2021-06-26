@@ -8,7 +8,6 @@ from cryptoml_core.util.timestamp import to_timestamp
 from cryptoml.features.technical_indicators import percent_b
 from cryptoml.features.technical_indicators import volatility
 from cryptoml.util.discretization import to_discrete_double
-from cryptoml_core.util.timestamp import add_interval
 from sklearn.metrics import precision_score
 
 import numpy as np
@@ -26,7 +25,7 @@ def main(pipeline: str, dataset: str, symbol: str, window: int):
     ms = ModelService()
     ts = TradingService()
     ohlcv_ds = ds.get_dataset('ohlcv', symbol=symbol)
-    ohlcv = ds.get_dataset_features(ohlcv_ds, end=add_interval(ohlcv_ds.valid_index_max, {'days': 1}))  # [ohlcv_ds.valid_index_min:ohlcv_ds.valid_index_max]
+    ohlcv = ds.get_dataset_features(ohlcv_ds)  # [ohlcv_ds.valid_index_min:ohlcv_ds.valid_index_max]
 
     # boll = pd.Series(percent_b(ohlcv.close, 21), index=ohlcv.index)
     boll = pd.Series(
@@ -52,7 +51,7 @@ def main(pipeline: str, dataset: str, symbol: str, window: int):
         cur_day = 0
         print(
             "%B_Precision = {}",
-            precision_score(results.label, boll[results.index], average='macro', zero_division=0)
+            precision_score(results.label, boll.loc[results.index], average='macro', zero_division=0)
         )
         # Amount to buy in coins for buy and hold: $10k divided by first price in test set
         bh_price = ohlcv.close.loc[test.test_interval.begin]

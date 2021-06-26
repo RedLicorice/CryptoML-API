@@ -12,8 +12,18 @@ import numpy as np
 from matplotlib import cm
 from typing import List
 
+symbols = [
+    "ADAUSD", "BCHUSD", "BNBUSD",
+    "BTCUSD", "BTGUSD", "DASHUSD",
+    "DOGEUSD", "EOSUSD", "ETCUSD",
+    "ETHUSD", "LINKUSD", "LTCUSD",
+    "NEOUSD", "QTUMUSD", "TRXUSD",
+    "VENUSD", "WAVESUSD", "XEMUSD",
+    "XMRUSD", "XRPUSD", "ZECUSD",
+    "ZRXUSD"
+]
 
-def main(dataset: str, target: str, symbols: List[str]):
+def main(dataset: str, target: str):
     models = ModelService()
     writer = pd.ExcelWriter("{}_{}.xlsx".format(dataset, target))
     for symbol in symbols:
@@ -22,14 +32,15 @@ def main(dataset: str, target: str, symbols: List[str]):
         for m in model_tests:
             test = m["tests"]
             report = test["classification_report"] if "classification_report" in test else None
-            duration = from_timestamp(test["end_at"]).timestamp() - from_timestamp(test["start_at"]).timestamp()
-            mean_dur = pd.Series(test["classification_results"]["duration"]).mean()
+            #duration = from_timestamp(test["end_at"]).timestamp() - from_timestamp(test["start_at"]).timestamp()
+            # mean_dur = pd.Series(test["classification_results"]["duration"]).mean()
+            results = ModelService.parse_test_results(test)
             result.append({
                 "pipeline": m["pipeline"],
                 "window": test['window']['days'],
                 #"step": str(test["step"]),
-                "duration": duration,
-                "duration_mean": mean_dur,
+                "mean_fit_time": results.fit_time.mean(),
+                "mean_predict_time": results.predict_time.mean(),
                 "support_all": report["total_support"] if report else np.nan,
                 "support_0": report["sup_0"] if report else np.nan,
                 "support_1": report["sup_1"] if report else np.nan,
@@ -57,10 +68,10 @@ def main(dataset: str, target: str, symbols: List[str]):
                 "index_balanced_accuracy_2": report["iba_2"] if report else np.nan,
 
                 # Roc-auc
-                "roc_auc_ovo_macro": report["roc_auc_ovo_macro"] if report else np.nan,
-                "roc_auc_ovo_weighted": report["roc_auc_ovo_weighted"] if report else np.nan,
-                "roc_auc_ovr_macro": report["roc_auc_ovr_macro"] if report else np.nan,
-                "roc_auc_ovr_weighted": report["roc_auc_ovr_weighted"] if report else np.nan,
+                # "roc_auc_ovo_macro": report["roc_auc_ovo_macro"] if report else np.nan,
+                # "roc_auc_ovo_weighted": report["roc_auc_ovo_weighted"] if report else np.nan,
+                # "roc_auc_ovr_macro": report["roc_auc_ovr_macro"] if report else np.nan,
+                # "roc_auc_ovr_weighted": report["roc_auc_ovr_weighted"] if report else np.nan,
                 # Averages
                 "precision_avg": report["avg_pre"] if report else np.nan,
                 "recall_avg": report["avg_rec"] if report else np.nan,

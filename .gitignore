@@ -8,3 +8,5 @@ __pycache__
 *.log
 test-failed.json
 app/images/*
+data/
+images/
