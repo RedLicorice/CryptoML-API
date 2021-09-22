@@ -24,7 +24,7 @@ def get_shap_values(estimator, X: pd.DataFrame, X_train: Optional[pd.DataFrame] 
         explainer = PipelineTree(model=estimator)
     else:
         replacement_data = X_train.astype(np.float64)
-        replacement_data = shap.kmeans(X=replacement_data, k=5, )
+        # replacement_data = shap.kmeans(X=replacement_data, k=5)
         explainer = shap.KernelExplainer(model=estimator.predict, data=replacement_data)
 
     shap_per_class = explainer.shap_values(X.astype(np.float64))

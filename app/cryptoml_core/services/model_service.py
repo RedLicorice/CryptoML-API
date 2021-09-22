@@ -47,6 +47,8 @@ def fit_estimator_new(model: Model, mp: ModelParameters, features: str, day: str
         )
         if existing and existing.is_fit:
             return existing
+    X = X[b: e]
+    y = y[b:e]
     X_train = X[:-1]
     y_train = y[:-1]
 
@@ -438,8 +440,8 @@ class ModelService:
                 features=features,
                 day=e,
                 window=test_window,
-                X=test_X[b:e],
-                y=test_y[b:e],
+                X=test_X,
+                y=test_y,
                 b=b,
                 e=e,
                 force=not kwargs.get('save')

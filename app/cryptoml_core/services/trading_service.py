@@ -15,12 +15,19 @@ class TradingService:
     def __init__(self):
         self.repo = AssetRepository()
 
+    def get_all_assets(self):
+        return self.repo.list()
+
     def get_asset(self, pipeline: str, dataset: str, target: str, symbol: str, window: int, create=True):
         res = self.repo.get_by_symbol(pipeline, dataset, target, symbol, window=window)
         if not res:
             if not create:
                 return None
-            res = self.repo.create_by_symbol(pipeline, dataset, target, symbol, window, fiat=10000, balance=0.0)
+            return self.create_asset(pipeline, dataset, target, symbol, window)
+        return res
+
+    def create_asset(self, pipeline: str, dataset: str, target: str, symbol: str, window: int):
+        res = self.repo.create_by_symbol(pipeline, dataset, target, symbol, window, fiat=10000, balance=0.0)
         return res
 
     @staticmethod

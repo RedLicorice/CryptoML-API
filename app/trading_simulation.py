@@ -13,6 +13,7 @@ from sklearn.metrics import precision_score
 
 import numpy as np
 import pandas as pd
+from typing import Optional
 
 SELL, HOLD, BUY = range(3)
 TARGETS = {
@@ -21,7 +22,8 @@ TARGETS = {
     2: "BUY"
 }
 
-def main(pipeline: str, dataset: str, symbol: str, window: int):
+
+def main(pipeline: str, dataset: str, symbol: str, window: int, existing: Optional[bool] = False):
     ds = DatasetService()
     ms = ModelService()
     ts = TradingService()
@@ -45,8 +47,13 @@ def main(pipeline: str, dataset: str, symbol: str, window: int):
         # Parse index so it's a DateTimeIndex, because Mongo stores it as a string
         # results.index = pd.to_datetime(results.index)
 
-        asset = ts.get_asset(pipeline=pipeline, dataset=dataset, target='class', symbol=symbol,
-                             window=test.window['days'])
+        asset = ts.get_asset(pipeline=pipeline, dataset=dataset, target='class', symbol=symbol, window=test.window['days'], create=False)
+        if not asset:
+            asset = ts.create_asset(pipeline=pipeline, dataset=dataset, target='class', symbol=symbol, window=test.window['days'])
+        elif not existing: # if asset exists and we don't want to overwrite it (default)
+            print(f"Simulation of {pipeline}({dataset}.{symbol}, W={window}) skipped as asset already exists.")
+            return
+
         # Now use classification results to trade!
         day_count = results.shape[0]
         cur_day = 0

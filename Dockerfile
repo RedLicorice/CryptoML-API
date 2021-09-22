@@ -1,3 +1,4 @@
+
 FROM ubuntu:20.04
 
 ENV PYTHONUNBUFFERED=1
@@ -22,20 +23,21 @@ RUN echo "**** install TA-Lib ****" && \
 # Add the requirements first to speed up further builds (leveraging Docker cache)
 # Separate layers so caching acts nicely and only one layer is rebuilt if requirements
 # change
-ADD ./app/cryptoml/requirements.txt /app/cryptoml/requirements.txt
-RUN echo "**** install CryptoML ****" && cd /app/cryptoml && pip3 install -r requirements.txt
+#ADD ./app/cryptoml/requirements.txt /app/cryptoml/requirements.txt
+#RUN echo "**** install CryptoML ****" && cd /app/cryptoml && pip3 install -r requirements.txt
 
-ADD ./app/cryptoml_core/requirements.txt /app/cryptoml_core/requirements.txt
-RUN echo "**** install CryptoML-Core ****" && cd /app/cryptoml_core && pip3 install -r requirements.txt
+#ADD ./app/cryptoml_core/requirements.txt /app/cryptoml_core/requirements.txt
+#RUN echo "**** install CryptoML-Core ****" && cd /app/cryptoml_core && pip3 install -r requirements.txt
 
-ADD ./app/cryptoml_api/requirements.txt /app/cryptoml_api/requirements.txt
-RUN echo "**** install CryptoML-API ****" && cd /app/cryptoml_api && pip3 install -r requirements.txt
+#ADD ./app/cryptoml_api/requirements.txt /app/cryptoml_api/requirements.txt
+#RUN echo "**** install CryptoML-API ****" && cd /app/cryptoml_api && pip3 install -r requirements.txt
 
 # Free up some space
-RUN echo "**** Cleaning up.. ****" && pip cache purge && apt-get clean
+#RUN echo "**** Cleaning up.. ****" && pip cache purge && apt-get clean
 
 # Copy over the rest of app sources
 COPY ./app /app
+RUN echo "**** install CryptoML ****" && cd /app && pip3 install -r requirements-frozen.txt
 
 # Allow mounting of dependencies from docker-compose
 ENV PYTHONPATH "${PYTHONPATH}:/python-dependencies"
@@ -46,4 +48,5 @@ RUN useradd -ms /bin/bash user && chown -R user:user /app
 WORKDIR /app
 USER user
 # Default entrypoint for FastAPI
-ENTRYPOINT python3 app.py
+#ENTRYPOINT python3 app.py
+ENTRYPOINT ["tail", "-f", "/dev/null"]

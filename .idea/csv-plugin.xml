@@ -122,6 +122,13 @@
             </Attribute>
           </value>
         </entry>
+        <entry key="\app\assets_to_latex.py">
+          <value>
+            <Attribute>
+              <option name="separator" value=":" />
+            </Attribute>
+          </value>
+        </entry>
         <entry key="\app\build_all_target.cmd">
           <value>
             <Attribute>
@@ -196,6 +203,13 @@
           <value>
             <Attribute>
               <option name="separator" value="&#9;" />
+            </Attribute>
+          </value>
+        </entry>
+        <entry key="\app\cryptoml\pipelines\__init__.py">
+          <value>
+            <Attribute>
+              <option name="separator" value="," />
             </Attribute>
           </value>
         </entry>
@@ -500,10 +514,24 @@
             </Attribute>
           </value>
         </entry>
+        <entry key="\app\model_tests_to_latex.py">
+          <value>
+            <Attribute>
+              <option name="separator" value="," />
+            </Attribute>
+          </value>
+        </entry>
         <entry key="\app\plot_blockchain_features_table.py">
           <value>
             <Attribute>
               <option name="separator" value=":" />
+            </Attribute>
+          </value>
+        </entry>
+        <entry key="\app\plot_dataset_insights.py">
+          <value>
+            <Attribute>
+              <option name="separator" value="," />
             </Attribute>
           </value>
         </entry>
@@ -515,6 +543,13 @@
           </value>
         </entry>
         <entry key="\app\plot_feature_selection_dataframe.py">
+          <value>
+            <Attribute>
+              <option name="separator" value="," />
+            </Attribute>
+          </value>
+        </entry>
+        <entry key="\app\plot_feature_selection_hierarchy.py">
           <value>
             <Attribute>
               <option name="separator" value="," />
@@ -543,6 +578,20 @@
           </value>
         </entry>
         <entry key="\app\plot_shap_test_study.py">
+          <value>
+            <Attribute>
+              <option name="separator" value="," />
+            </Attribute>
+          </value>
+        </entry>
+        <entry key="\app\plot_shap_test_study_hierarchy.py">
+          <value>
+            <Attribute>
+              <option name="separator" value="," />
+            </Attribute>
+          </value>
+        </entry>
+        <entry key="\app\plot_trades.cmd">
           <value>
             <Attribute>
               <option name="separator" value="," />
@@ -928,6 +977,13 @@
           </value>
         </entry>
         <entry key="\dind-swarm-node.sh">
+          <value>
+            <Attribute>
+              <option name="separator" value=":" />
+            </Attribute>
+          </value>
+        </entry>
+        <entry key="\docker-build.sh">
           <value>
             <Attribute>
               <option name="separator" value=":" />

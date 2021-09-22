@@ -11,6 +11,7 @@ from matplotlib import pyplot as plt
 
 from cryptoml_core.services.dataset_service import DatasetService
 from cryptoml.util.shap import parse_shap_values
+# from plot_feature_selection_hierarchy import load_hierarchy
 
 SYMBOLS = [
     "ADAUSD", "BCHUSD", "BNBUSD",
@@ -24,9 +25,9 @@ SYMBOLS = [
 ]
 
 def main(dataset: str, target: str):
-    # mean_df = get_mean_df(dataset, target)
-    # fig = df_to_faceted_figure(mean_df, False)
-    # fig.write_image("images/feature_selection/feature_selection_mean.png", width=800, height=1024, scale=1)
+    # hierarchy = load_hierarchy(f"{dataset}_{target}_feature_hierarchy.yml")
+    # hdf = pd.DataFrame(hierarchy)
+
     shapes = []
     for symbol in SYMBOLS:
         ds_service = DatasetService()
